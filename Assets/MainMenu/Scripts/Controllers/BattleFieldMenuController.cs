@@ -15,6 +15,6 @@ public class BattleFieldMenuController : MonoBehaviour
 
     public void Back()
     {
-        MenuManager.OpenMenu(Menu.MAIN_MENU, gameObject);
+        MenuManager.OpenMenu(Menu.GAME_MODE_MENU, gameObject);
     }
 }
