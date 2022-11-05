@@ -1,21 +1,15 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
-    public void Start()
-    {
-
-    }
-
     public void Play()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    {        
+        MenuManager.OpenMenu(Menu.GAME_MODE_MENU, gameObject);
     }
 
     public void Options()
     {
-        gameObject.SetActive(false); 
+        MenuManager.OpenMenu(Menu.OPTIONS_MENU, gameObject);
     }
 
     public void Quit()
