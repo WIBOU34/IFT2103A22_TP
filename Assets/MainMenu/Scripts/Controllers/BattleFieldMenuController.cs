@@ -5,11 +5,13 @@ public class BattleFieldMenuController : MonoBehaviour
 {
     public void Scene1()
     {
+        MenuManager.IsInitialised = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void Scene2()
     {
+        MenuManager.IsInitialised = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
