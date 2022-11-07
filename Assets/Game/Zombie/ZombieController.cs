@@ -34,7 +34,7 @@ public class ZombieController
         newSpawner.GetComponent<ZombieSpawner>().CreateZombie();
     }
 
-    public static GameObject GetClosestTarget(Vector3 position)
+    public static GameObject GetTarget(Vector3 position)
     {
         GameObject closest = null;
         float distanceClosest = 0;

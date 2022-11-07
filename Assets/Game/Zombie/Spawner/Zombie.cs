@@ -72,7 +72,7 @@ public class Zombie : MonoBehaviour
     {
         if (this.currentTarget == null)
         {
-            GameObject target = ZombieController.GetClosestTarget(this.transform.position);
+            GameObject target = ZombieController.GetTarget(this.transform.position);
             TargetFound(target);
         }
         return currentTarget.transform.position;
