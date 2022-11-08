@@ -1,6 +1,8 @@
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
 #endif
 
 namespace StarterAssets
@@ -12,6 +14,7 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool pause;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -43,6 +46,13 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
+
+		public void OnPause(InputValue value)
+		{
+			PauseInput(value.isPressed); //Pt innutile...
+            MenuManager.IsPaused = true;			
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);			
+        }
 #endif
 
 
@@ -64,6 +74,11 @@ namespace StarterAssets
 		public void SprintInput(bool newSprintState)
 		{
 			sprint = newSprintState;
+		}
+
+		public void PauseInput(bool newPauseState)
+		{
+			pause = newPauseState;
 		}
 
 		private void OnApplicationFocus(bool hasFocus)
