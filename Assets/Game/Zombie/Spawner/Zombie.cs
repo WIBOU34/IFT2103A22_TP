@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,8 +12,6 @@ public class Zombie : MonoBehaviour
     void Start()
     {
         this.GetComponent<Animator>().updateMode = AnimatorUpdateMode.Normal;
-        //this.gameObject.AddComponent<NavMeshAgent>();
-        //this.gameObject.GetComponent<NavMeshAgent>().speed = 1f;
 
         CanRun(false);
         this.GetComponent<NavMeshAgent>().radius = 0.3f;
@@ -22,24 +21,25 @@ public class Zombie : MonoBehaviour
         {
             CanRun(true);
         }
-        this.GetComponent<NavMeshAgent>().destination = CalculatePositionOfClosestTarget();
+        //this.GetComponent<NavMeshAgent>().destination = CalculatePositionAndPathOfClosestTarget();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void FixedUpdate()
     {
-        Vector3 targetPos = CalculatePositionOfClosestTarget();
-        if (IsTargetTooFar(targetPos) || this.GetComponent<NavMeshAgent>().pathStatus == NavMeshPathStatus.PathInvalid)
+        CalculatePositionAndPathOfClosestTarget();
+        if (currentTarget == null || IsTargetTooFar(currentTarget.transform.position) || !ValidatePath())
         {
             TargetLost();
-        } else
+        }
+        else
         {
-            this.GetComponent<NavMeshAgent>().destination = targetPos;
+            //this.GetComponent<NavMeshAgent>().destination = targetPos;
 
             float radius2 = this.GetComponent<NavMeshAgent>().radius * 2;
             if (ZombieController.DistanceSq(currentTarget.transform.position, this.transform.position) <= (radius2 * radius2) * 2)
@@ -62,14 +62,51 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    private Vector3 CalculatePositionOfClosestTarget()
+    //private Vector3 CalculatePositionAndPathOfClosestTarget()
+    //{
+
+    //    if (this.currentTarget == null || ValidatePath())
+    //    {
+    //        Debug.Log("Getting Closest Target");
+    //        this.GetComponent<NavMeshAgent>().ResetPath();
+    //        NavMeshPath path = ZombieController.GetTarget(this.transform.position, out currentTarget);
+
+    //        if (path == null)
+    //        {
+    //            TargetLost();
+    //            return Vector3.zero;
+    //        }
+    //        TargetFound(path);
+    //    }
+    //    return currentTarget.transform.position;
+    //}
+
+    private void CalculatePositionAndPathOfClosestTarget()
     {
-        if (this.currentTarget == null)
+
+        if (this.currentTarget == null || !ValidatePath())
         {
-            GameObject target = ZombieController.GetTarget(this.transform.position);
-            TargetFound(target);
+            this.GetComponent<NavMeshAgent>().ResetPath();
+            NavMeshPath path = ZombieController.GetTarget(this.transform.position, out currentTarget);
+
+            if (path == null || path.corners.Length == 0)
+            {
+                TargetLost();
+                return;
+            }
+            TargetFound(path);
         }
-        return currentTarget.transform.position;
+        //return currentTarget.transform.position;
+    }
+
+    private bool ValidatePath()
+    {
+        if (ZombieController.DistanceSq(this.GetComponent<NavMeshAgent>().destination, currentTarget.transform.position) < 0.5f)
+        {
+            return true;
+        }
+        Debug.Log("PathInvalid");
+        return false;
     }
 
     private bool IsTargetTooFar(Vector3 target)
@@ -82,15 +119,16 @@ public class Zombie : MonoBehaviour
         return false;
     }
 
-    private void TargetFound(GameObject target)
+    private void TargetFound(NavMeshPath path)
     {
-        currentTarget = target;
+        this.GetComponent<NavMeshAgent>().SetPath(path);
         this.GetComponent<Animator>().SetBool("FoundTarget", true);
     }
 
     private void TargetLost()
     {
         currentTarget = null;
+        this.GetComponent<NavMeshAgent>().ResetPath();
         this.GetComponent<Animator>().SetBool("FoundTarget", false);
         TargetNotHittable();
     }
@@ -110,7 +148,8 @@ public class Zombie : MonoBehaviour
         if (value)
         {
             this.GetComponent<NavMeshAgent>().speed = 3f;
-        } else
+        }
+        else
         {
             this.GetComponent<NavMeshAgent>().speed = 1f;
         }

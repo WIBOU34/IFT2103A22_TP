@@ -13,13 +13,10 @@ public class ZombieSpawner : MonoBehaviour
     private uint counter = 0;
     public uint maxZombies = 10;
     public GameObject typeToSpawn;
-    //private GameObject childContainer = new GameObject();
     public String spawnerNumber;
     // Start is called before the first frame update
     void Start()
     {
-        //childContainer.name = "SpawnedZombies_" + spawnerNumber;
-        //childContainer.transform.position = this.transform.position;
         // Add effects maybe?
     }
 
