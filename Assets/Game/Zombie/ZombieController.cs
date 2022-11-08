@@ -59,4 +59,10 @@ public class ZombieController
         float num3 = a.z - b.z;
         return (float)(num * num + num2 * num2 + num3 * num3);
     }
+    public static float DistanceSqNoY(Vector3 a, Vector3 b)
+    {
+        float num = a.x - b.x;
+        float num3 = a.z - b.z;
+        return (float)(num * num + num3 * num3);
+    }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem.Android;
+using UnityEngine.UIElements;
 
 public class ZombieSpawner : MonoBehaviour
 {
@@ -12,10 +13,13 @@ public class ZombieSpawner : MonoBehaviour
     private uint counter = 0;
     public uint maxZombies = 10;
     public GameObject typeToSpawn;
+    //private GameObject childContainer = new GameObject();
     public String spawnerNumber;
     // Start is called before the first frame update
     void Start()
     {
+        //childContainer.name = "SpawnedZombies_" + spawnerNumber;
+        //childContainer.transform.position = this.transform.position;
         // Add effects maybe?
     }
 
@@ -35,13 +39,14 @@ public class ZombieSpawner : MonoBehaviour
     {
         //targets = GameObject.FindGameObjectsWithTag("Player").ToList();
         GameObject tmp = Instantiate(typeToSpawn);
-        tmp.name = "Zombie_" + counter.ToString() + "_" + spawnerNumber;
+        tmp.name = "Zombie_" + spawnerNumber + "_" + counter.ToString();
         counter++;
 
         tmp.transform.position = CalculatePositionToSpawn();
         tmp.GetComponent<Animator>();
         tmp.AddComponent<Zombie>();
         tmp.AddComponent<LocomotionSimpleAgent>();
+        tmp.transform.SetParent(this.transform);
 
         zombies.Add(tmp);
     }
@@ -55,7 +60,7 @@ public class ZombieSpawner : MonoBehaviour
     {
         foreach (var zombie in zombies)
         {
-            if (ZombieController.DistanceSq(zombie.transform.position, this.transform.position) <= 0.8f)
+            if (ZombieController.DistanceSqNoY(zombie.transform.position, this.transform.position) <= 0.8f)
             {
                 return false;
             }
