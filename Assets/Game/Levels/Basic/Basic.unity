@@ -422,9 +422,9 @@ NavMeshObstacle:
   m_Extents: {x: 0.5, y: 0.5, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0
 --- !u!65 &196722494
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -650,9 +650,9 @@ NavMeshObstacle:
   m_Extents: {x: 0.5, y: 0.5, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0
 --- !u!65 &317633706
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -764,9 +764,9 @@ NavMeshObstacle:
   m_Extents: {x: 0.5, y: 0.5, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0
 --- !u!65 &366982064
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1148,9 +1148,9 @@ NavMeshObstacle:
   m_Extents: {x: 0.5, y: 0.5, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0
 --- !u!65 &1257271312
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1262,9 +1262,9 @@ NavMeshObstacle:
   m_Extents: {x: 0.5, y: 0.5, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0
 --- !u!65 &1450953733
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2921,9 +2921,9 @@ NavMeshObstacle:
   m_Extents: {x: 0.5, y: 0.5, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0
 --- !u!65 &1471037723
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3285,9 +3285,9 @@ NavMeshObstacle:
   m_Extents: {x: 0.5, y: 0.5, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0
 --- !u!65 &1659008500
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3896,9 +3896,9 @@ NavMeshObstacle:
   m_Extents: {x: 0.5, y: 0.5, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  m_TimeToStationary: 0
 --- !u!65 &2137540270
 BoxCollider:
   m_ObjectHideFlags: 0

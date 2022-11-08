@@ -8,6 +8,7 @@ public class Zombie : MonoBehaviour
 {
     public float health = 100;
     private GameObject currentTarget;
+    private uint nbrTimesPathUpdatedWithObstacleAsTarget = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +22,6 @@ public class Zombie : MonoBehaviour
         {
             CanRun(true);
         }
-        //this.GetComponent<NavMeshAgent>().destination = CalculatePositionAndPathOfClosestTarget();
     }
 
     // Update is called once per frame
@@ -32,8 +32,8 @@ public class Zombie : MonoBehaviour
 
     private void FixedUpdate()
     {
-        CalculatePositionAndPathOfClosestTarget();
-        if (currentTarget == null || IsTargetTooFar(currentTarget.transform.position) || !ValidatePath())
+        FindBestTarget();
+        if (currentTarget == null || IsTargetTooFar(currentTarget.transform.position))
         {
             TargetLost();
         }
@@ -62,50 +62,60 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    //private Vector3 CalculatePositionAndPathOfClosestTarget()
-    //{
-
-    //    if (this.currentTarget == null || ValidatePath())
-    //    {
-    //        Debug.Log("Getting Closest Target");
-    //        this.GetComponent<NavMeshAgent>().ResetPath();
-    //        NavMeshPath path = ZombieController.GetTarget(this.transform.position, out currentTarget);
-
-    //        if (path == null)
-    //        {
-    //            TargetLost();
-    //            return Vector3.zero;
-    //        }
-    //        TargetFound(path);
-    //    }
-    //    return currentTarget.transform.position;
-    //}
+    private void FindBestTarget()
+    {
+        // verify currentTarget is still the best target (if currentTarget is a Destructible)
+        if (currentTarget != null)
+        {
+            if (currentTarget.tag.Equals("Destructible") && nbrTimesPathUpdatedWithObstacleAsTarget++ > 30)
+            {
+                nbrTimesPathUpdatedWithObstacleAsTarget = 0;
+                //VerifyCurrentTargetIsStillValid(); // not good enough for objects until we can check if players moved
+                CalculatePositionAndPathOfClosestTarget();
+            }
+            else if (currentTarget.tag.Equals("Player"))
+            {
+                VerifyCurrentTargetIsStillValid();
+                //CalculatePositionAndPathOfClosestTarget();
+            }
+        }
+        else if (currentTarget == null)
+        {
+            CalculatePositionAndPathOfClosestTarget();
+        }
+    }
 
     private void CalculatePositionAndPathOfClosestTarget()
     {
+        NavMeshPath path = ZombieController.GetTarget(this.transform.position, out currentTarget);
 
-        if (this.currentTarget == null || !ValidatePath())
+        if (path == null || path.corners.Length == 0)
         {
-            this.GetComponent<NavMeshAgent>().ResetPath();
-            NavMeshPath path = ZombieController.GetTarget(this.transform.position, out currentTarget);
-
-            if (path == null || path.corners.Length == 0)
-            {
-                TargetLost();
-                return;
-            }
-            TargetFound(path);
+            TargetLost();
+            return;
         }
-        //return currentTarget.transform.position;
+        TargetFound(path);
     }
 
+    private void VerifyCurrentTargetIsStillValid()
+    {
+        if (ZombieController.ValidateTargetIsStillBestTarget(this.transform.position, currentTarget, out NavMeshPath path))
+        {
+            TargetFound(path);
+        }
+        else
+        {
+            CalculatePositionAndPathOfClosestTarget();
+        }
+    }
+
+    // Validates if the destination corresponds with the current target position (only use with players to test if they moved)
     private bool ValidatePath()
     {
         if (ZombieController.DistanceSq(this.GetComponent<NavMeshAgent>().destination, currentTarget.transform.position) < 0.5f)
         {
             return true;
         }
-        Debug.Log("PathInvalid");
         return false;
     }
 
@@ -121,7 +131,7 @@ public class Zombie : MonoBehaviour
 
     private void TargetFound(NavMeshPath path)
     {
-        this.GetComponent<NavMeshAgent>().SetPath(path);
+        this.GetComponent<NavMeshAgent>().path = (path);
         this.GetComponent<Animator>().SetBool("FoundTarget", true);
     }
 
