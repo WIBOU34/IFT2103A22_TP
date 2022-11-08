@@ -14,6 +14,7 @@ public class LevelBasicStart : MonoBehaviour
         zombieController.Start();
         ZombieController.typeToSpawn = zombieTypeToSpawn;
         this.gameObject.AddComponent<MapCreator>();
+        ZombieController.CreateZombieSpawner(new Vector3(-10, 0, 5));
     }
 
     // Update is called once per frame

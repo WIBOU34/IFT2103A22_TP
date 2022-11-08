@@ -14,8 +14,8 @@ public class MapCreator : MonoBehaviour
         //GameObject wall2 = CreateWallContinuation(new Vector3(5, 0, 5), 6);
         //wall2.transform.Rotate(new Vector3(0, 1, 0), 270);
 
-        GameObject corner = CreateCorner(new Vector3(0, 0, -10), 6, 6);
-        GameObject corner2 = CreateCorner(new Vector3(-5, 0, -5), 6, 6);
+        //GameObject corner = CreateCorner(new Vector3(0, 0, -10), 6, 6);
+        //GameObject corner2 = CreateCorner(new Vector3(-5, 0, -5), 6, 6);
         //CreateTower(new Vector3(-6, 0, 1));
     }
 

@@ -5,12 +5,14 @@ using UnityEngine;
 using UnityEngine.AI;
 
 // Source: https://docs.unity3d.com/Manual/nav-CouplingAnimationAndNavigation.html
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Animator))]
 public class LocomotionSimpleAgent : MonoBehaviour
 {
     Animator anim;
     NavMeshAgent agent;
-    Vector2 smoothDeltaPosition = Vector2.zero;
-    Vector2 velocity = Vector2.zero;
+    public Vector2 smoothDeltaPosition = Vector2.zero;
+    public Vector2 velocity = Vector2.zero;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +21,7 @@ public class LocomotionSimpleAgent : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         // Don’t update position automatically
         agent.updatePosition = false;
+        //transform.position = agent.nextPosition;
     }
 
     void FixedUpdate()
@@ -45,19 +48,28 @@ public class LocomotionSimpleAgent : MonoBehaviour
         anim.SetFloat("velx", velocity.x);
         anim.SetFloat("vely", velocity.y);
 
-        // Pull agent towards character
         if (worldDeltaPosition.magnitude > agent.radius)
-            agent.nextPosition = transform.position + 0.9f * worldDeltaPosition;
+        {
+            // Pull agent towards character (le joueur passe a travers des murs)
+            //agent.nextPosition = transform.position + 0.9f * worldDeltaPosition;
+            // Pull character towards agent (peux causer des glissements, mais respecte les obstacles)
+            transform.position = agent.nextPosition - 0.9f * worldDeltaPosition;
+        }
 
         LookAt lookAt = GetComponent<LookAt>();
         if (lookAt)
             lookAt.lookAtTargetPosition = agent.steeringTarget + transform.forward;
-
     }
 
     void OnAnimatorMove()
     {
+
         // Update position to agent position
+        // Sync bien la position, mais empêche de sync l'Animation à la vitesse (glissement galore)
+        //transform.position = agent.nextPosition;
+
+        // Update position based on animation movement using navigation surface height
+        // Cause l'agent à être décalé à droite du character (pas dramatique), mais permet de sync l'animation à la vitesse
         Vector3 position = anim.rootPosition;
         position.y = agent.nextPosition.y;
         transform.position = position;

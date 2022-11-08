@@ -1,14 +1,14 @@
 fileFormatVersion: 2
 guid: 55edd2c9d257d3f4481dfd16015bf8c1
 ModelImporter:
-  serializedVersion: 26
+  serializedVersion: 21300
   internalIDToNameTable:
   - first:
       74: -6257440219318784398
     second: Z_Run
   externalObjects: {}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -17,28 +17,29 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'ZombieFree@animation' has import animation warnings
-      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'Base HumanRibcage' is inbetween humanoid
-      transforms and has rotation animation that will be discarded.\n\t'Base HumanRArmDigit12'
-      has scale animation that will be discarded.\n\t'Base HumanRArmDigit22' has scale
-      animation that will be discarded.\n\t'Base HumanRArmDigit23' has scale animation
-      that will be discarded.\n\t'Base HumanRArmDigit32' has scale animation that
-      will be discarded.\n\t'Base HumanRArmDigit33' has scale animation that will
-      be discarded.\n\t'Base HumanRArmDigit42' has scale animation that will be discarded.\n\t'Base
-      HumanRArmDigit43' has scale animation that will be discarded.\n\t'Base HumanRArmDigit52'
-      has scale animation that will be discarded.\n\t'Base HumanRArmDigit53' has scale
-      animation that will be discarded.\n\t'Base HumanLArmDigit22' has scale animation
-      that will be discarded.\n\t'Base HumanLArmDigit23' has scale animation that
-      will be discarded.\n\t'Base HumanLArmDigit32' has scale animation that will
-      be discarded.\n\t'Base HumanLArmDigit33' has scale animation that will be discarded.\n\t'Base
-      HumanLArmDigit42' has scale animation that will be discarded.\n\t'Base HumanLArmDigit43'
-      has scale animation that will be discarded.\n\t'Base HumanLArmDigit53' has scale
-      animation that will be discarded.\n"
+    animationImportWarnings: "\nClip 'ZombieFree@animation' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'Base HumanRibcage' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'Base
+      HumanRArmDigit12' has scale animation that will be discarded.\n\t'Base HumanRArmDigit22'
+      has scale animation that will be discarded.\n\t'Base HumanRArmDigit23' has
+      scale animation that will be discarded.\n\t'Base HumanRArmDigit32' has scale
+      animation that will be discarded.\n\t'Base HumanRArmDigit33' has scale animation
+      that will be discarded.\n\t'Base HumanRArmDigit42' has scale animation that
+      will be discarded.\n\t'Base HumanRArmDigit43' has scale animation that will
+      be discarded.\n\t'Base HumanRArmDigit52' has scale animation that will be discarded.\n\t'Base
+      HumanRArmDigit53' has scale animation that will be discarded.\n\t'Base HumanLArmDigit22'
+      has scale animation that will be discarded.\n\t'Base HumanLArmDigit23' has
+      scale animation that will be discarded.\n\t'Base HumanLArmDigit32' has scale
+      animation that will be discarded.\n\t'Base HumanLArmDigit33' has scale animation
+      that will be discarded.\n\t'Base HumanLArmDigit42' has scale animation that
+      will be discarded.\n\t'Base HumanLArmDigit43' has scale animation that will
+      be discarded.\n\t'Base HumanLArmDigit53' has scale animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -92,20 +93,27 @@ ModelImporter:
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
+    optimizeBones: 1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
   tangentSpace:
@@ -118,7 +126,6 @@ ModelImporter:
     normalSmoothingSource: 0
   referencedClips: []
   importAnimation: 1
-  copyAvatar: 1
   humanDescription:
     serializedVersion: 3
     human:
@@ -901,10 +908,13 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 8f7380da49034cd488ddff94b1ac35d1,
-    type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 8f7380da49034cd488ddff94b1ac35d1, type: 3}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
+  avatarSetup: 2
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

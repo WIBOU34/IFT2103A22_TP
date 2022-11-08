@@ -10,17 +10,25 @@ public class ZombieSpawner : MonoBehaviour
 {
     private List<GameObject> zombies = new List<GameObject>();
     private uint counter = 0;
+    public uint maxZombies = 10;
     public GameObject typeToSpawn;
     public String spawnerNumber;
     // Start is called before the first frame update
     void Start()
     {
+        // Add effects maybe?
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (zombies.Count < maxZombies)
+        {
+            if (IsSpawnFree())
+            {
+                CreateZombie();
+            }
+        }
     }
 
     public void CreateZombie()
@@ -34,21 +42,24 @@ public class ZombieSpawner : MonoBehaviour
         tmp.GetComponent<Animator>();
         tmp.AddComponent<Zombie>();
         tmp.AddComponent<LocomotionSimpleAgent>();
-        //tmp.AddComponent<ArticulationBody>();
-        //tmp.AddComponent<CharacterController>();
-        //tmp.GetComponent<CharacterController>().radius = 0.3f;
-        //tmp.GetComponent<CharacterController>().height = 1.8f;
-        //tmp.GetComponent<CharacterController>().center = new Vector3(0, 0.98f, 0);
-
-        //tmp.AddComponent<NavMeshAgent>();
-        //tmp.GetComponent<NavMeshAgent>().destination = CalculatePositionOfClosestTarget(tmp);
 
         zombies.Add(tmp);
     }
 
     private Vector3 CalculatePositionToSpawn()
     {
-        Vector3 spawnPos = this.transform.position;
-        return spawnPos;
+        return this.transform.position;
+    }
+
+    private bool IsSpawnFree()
+    {
+        foreach (var zombie in zombies)
+        {
+            if (ZombieController.DistanceSq(zombie.transform.position, this.transform.position) <= 0.8f)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

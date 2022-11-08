@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 // Source: https://docs.unity3d.com/Manual/nav-CouplingAnimationAndNavigation.html
+[RequireComponent(typeof(Animator))]
 public class LookAt : MonoBehaviour
 {
     public Transform head = null;
