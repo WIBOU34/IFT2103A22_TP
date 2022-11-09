@@ -1,12 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Zombie : MonoBehaviour
 {
-    public float health = 100;
+    private bool isDead = false;
+    public float damagePerAttack = 20;
     private GameObject currentTarget;
     private uint nbrTimesPathUpdatedWithObstacleAsTarget = 0;
     // Start is called before the first frame update
@@ -22,6 +21,12 @@ public class Zombie : MonoBehaviour
         {
             CanRun(true);
         }
+
+        this.AddComponent<CapsuleCollider>();
+        this.GetComponent<CapsuleCollider>().height = this.GetComponent<NavMeshAgent>().height;
+        this.GetComponent<CapsuleCollider>().radius = this.GetComponent<NavMeshAgent>().radius;
+        this.GetComponent<CapsuleCollider>().center = new Vector3(0, 0.8f, 0);
+        this.GetComponent<CapsuleCollider>().isTrigger = true;
     }
 
     // Update is called once per frame
@@ -30,8 +35,32 @@ public class Zombie : MonoBehaviour
 
     }
 
+    void Attack()
+    {
+        if (ValidateCurrentTargetForAttack())
+        {
+            currentTarget.GetComponent<Damageable>().TakeDamage(damagePerAttack);
+            //this.GetComponent<Damageable>().TakeDamage(damagePerAttack);
+        }
+    }
+
+    private bool ValidateCurrentTargetForAttack()
+    {
+        float radius2 = this.GetComponent<NavMeshAgent>().radius * 2;
+        if (ZombieController.DistanceSq(currentTarget.transform.position, this.transform.position) <= (radius2 * radius2) * 2)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void FixedUpdate()
     {
+        if (isDead)
+            return;
         FindBestTarget();
         if (currentTarget == null || IsTargetTooFar(currentTarget.transform.position))
         {
@@ -42,7 +71,8 @@ public class Zombie : MonoBehaviour
             //this.GetComponent<NavMeshAgent>().destination = targetPos;
 
             float radius2 = this.GetComponent<NavMeshAgent>().radius * 2;
-            if (ZombieController.DistanceSq(currentTarget.transform.position, this.transform.position) <= (radius2 * radius2) * 2)
+            //if (ZombieController.DistanceSq(currentTarget.transform.position, this.transform.position) <= (radius2 * radius2) * 2)
+            if (ValidateCurrentTargetForAttack())
             {
                 TargetHittable();
             }
@@ -50,15 +80,6 @@ public class Zombie : MonoBehaviour
             {
                 TargetNotHittable();
             }
-        }
-    }
-
-    public void TakeDamage(float damageAmount)
-    {
-        health -= damageAmount;
-        if (health <= 0)
-        {
-            Killed();
         }
     }
 
@@ -166,8 +187,17 @@ public class Zombie : MonoBehaviour
         //this.gameObject.GetComponent<Animator>().SetBool("CanRun", value);
     }
 
-    private void Killed()
+    public void OnKilled()
     {
         this.GetComponent<Animator>().SetBool("Killed", true);
+        TargetLost();
+        isDead = true;
+        this.GetComponent<CapsuleCollider>().enabled = false;
+        GameObject.Destroy(this.gameObject, 10);
+    }
+
+    private void OnDestroy()
+    {
+        this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieDestroyed(this.gameObject);
     }
 }

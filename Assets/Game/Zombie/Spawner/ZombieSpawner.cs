@@ -1,17 +1,16 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.Tracing;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.InputSystem.Android;
-using UnityEngine.UIElements;
+using UnityEngine.Events;
 
 public class ZombieSpawner : MonoBehaviour
 {
     private List<GameObject> zombies = new List<GameObject>();
     private uint counter = 0;
-    public uint maxZombies = 10;
+    public uint maxZombiesAtOnce = 10;
+    public uint maxZombiesTotal = 15;
     public GameObject typeToSpawn;
     public String spawnerNumber;
     // Start is called before the first frame update
@@ -23,7 +22,7 @@ public class ZombieSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (zombies.Count < maxZombies)
+        if (zombies.Count < maxZombiesAtOnce && counter < maxZombiesTotal)
         {
             if (IsSpawnFree())
             {
@@ -41,11 +40,17 @@ public class ZombieSpawner : MonoBehaviour
 
         tmp.transform.position = CalculatePositionToSpawn();
         tmp.GetComponent<Animator>();
+        tmp.AddComponent<Damageable>();
         tmp.AddComponent<Zombie>();
         tmp.AddComponent<LocomotionSimpleAgent>();
         tmp.transform.SetParent(this.transform);
 
         zombies.Add(tmp);
+    }
+
+    public void ZombieDestroyed(GameObject zombie)
+    {
+        zombies.Remove(zombie);
     }
 
     private Vector3 CalculatePositionToSpawn()

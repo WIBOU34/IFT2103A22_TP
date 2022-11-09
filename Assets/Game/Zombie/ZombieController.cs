@@ -1,12 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UIElements;
 
 public class ZombieController
 {
@@ -95,36 +90,6 @@ public class ZombieController
         return false;
     }
 
-    //// Not used right now because I don't pass the playerTarget to the Zombie class, but would ensure we keep following the same player
-    //// maybe not good.
-    //public static bool ValidateDestructibleTargetIsStillBestTarget(Vector3 position, GameObject currentTarget, GameObject playerTarget, out NavMeshPath path)
-    //{
-    //    path = new NavMeshPath();
-    //    if (currentTarget.tag.Equals(TAG_DESTRUCTIBLE))
-    //    {
-    //        // Until we have a way to change carving value for this execution, we cannot check if a player moved and has no obstacles
-    //        NavMeshPath playerPath = new NavMeshPath();
-    //        // cannot really search for players as destructibles will have no carving
-    //        if (VerifyCompletePathingPossible(position, playerTarget, ref playerPath))
-    //        {
-    //            GameObject closestDestructible = GetClosestDestructible(position, playerPath, ref path);
-
-    //            // if null, it means the tracked player moved and there are no obstacles in the found playerPath
-    //            if (closestDestructible == null)
-    //            {
-    //                path = playerPath;
-    //                return false;
-    //            }
-    //            else if (!closestDestructible.Equals(currentTarget) // closestDestructible not null, but another destructible found (path will be different)
-    //                || closestDestructible.Equals(currentTarget)) // same destructible found
-    //            {
-    //                return true;
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
-
     public static NavMeshPath GetTarget(Vector3 position, out GameObject target)
     {
         NavMeshPath path = new NavMeshPath();
@@ -151,10 +116,6 @@ public class ZombieController
             target = GetClosestDestructibleRequiredToReachClosestPlayer(position, ref path);
             if (target != null)
             {
-                //foreach (GameObject destructibleTarget in zombieDestructibleTargets)
-                //{
-                //    destructibleTarget.GetComponent<NavMeshObstacle>().carving = true;
-                //}
                 return path;
             }
         }
