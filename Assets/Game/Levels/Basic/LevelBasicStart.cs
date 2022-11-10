@@ -39,8 +39,6 @@ public class LevelBasicStart : MonoBehaviour
         {
             player.AddComponent<PlayableCharacter>();
             player.GetComponent<PlayableCharacter>().weapons = weapons;
-            player.GetComponent<PlayableCharacter>().bulletTrailMaterial = bulletTrailMaterial;
-
         }
     }
 }

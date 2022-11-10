@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
@@ -165,8 +166,8 @@ public class ZombieController
     private static GameObject GetClosestDestructible(Vector3 position, NavMeshPath path, ref NavMeshPath pathToDestructible)
     {
         GameObject closest = null;
-        Vector3 point = Vector3.zero;
         RaycastHit hit;
+        Vector3 point = Vector3.zero;
         Vector3 lastCorner = Vector3.zero;
 
         for (int i = 0; i < path.corners.Length; i++)
@@ -178,6 +179,16 @@ public class ZombieController
             }
             Vector3 direction = Vector3.Normalize(path.corners[i] - lastCorner);
             float distance = Vector3.Distance(path.corners[i], lastCorner);
+            // lance un rayon sur le path trouvé et vérifie si l'objet frappé est un destructible
+            //if (Physics.Raycast(lastCorner, direction, out hit, distance))
+            //{
+            //    if (hit.collider.gameObject.CompareTag("Destructible"))
+            //    {
+            //        closest = hit.transform.gameObject;
+            //        NavMesh.CalculatePath(position, hit.point, 1, pathToDestructible);
+            //        return closest;
+            //    }
+            //}
             foreach (var destructible in zombieDestructibleTargets)
             {
                 if (destructible.GetComponent<BoxCollider>().Raycast(new Ray(lastCorner, direction), out hit, distance))
@@ -189,9 +200,14 @@ public class ZombieController
                     //Vector3 newYIgnored = new Vector3(closest.transform.position.x, position.y, closest.transform.position.z);
                 }
             }
+            if (closest != null)
+            {
+                NavMesh.CalculatePath(position, point, 1, pathToDestructible);
+                return closest;
+            }
             lastCorner = path.corners[i];
         }
-        NavMesh.CalculatePath(position, point, 1, pathToDestructible);
+        //NavMesh.CalculatePath(position, point, 1, pathToDestructible);
         return closest;
     }
 
@@ -202,6 +218,10 @@ public class ZombieController
     private static bool VerifyCompletePathingPossible(Vector3 position, GameObject target, ref NavMeshPath path)
     {
         bool result = NavMesh.CalculatePath(position, target.transform.position, 1, path);
+        //if (!NoPlayerReachable)
+        //{
+            //return result;
+        //}
         // Vérifie si le pathing est possible
         return result && path.status == NavMeshPathStatus.PathComplete;
     }
@@ -233,12 +253,21 @@ public class ZombieController
 
         NoPlayerReachable = false;
         nbrTimesObjectTargeted = 0;
+
+        //foreach (GameObject spawners in zombieSpawners)
+        //{
+        //    spawners.SendMessage("PlayerReachable");
+        //}
+    }
+
+    public static void DestructibleAdded(GameObject destructible)
+    {
+        zombieDestructibleTargets.Add(destructible);
     }
 
     public static void DestructibleDestroyed(GameObject destructible)
     {
         zombieDestructibleTargets.Remove(destructible);
-        GameObject.Destroy(destructible);
 
         ResetNoPlayerReachable();
     }

@@ -1,95 +1,69 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
-    public int totalAmmo = 10000;
-    public List<GameObject> weapons;
+    public Dictionary<int, GameObject> weapons = new Dictionary<int, GameObject>();
     private GameObject equippedWeapon;
-    //private Vector3 position;
     public GameObject parent;
-    public Material bulletTrailMaterial;
-    private Vector3 position;
-    //private List<KeyValuePair<GameObject, Vector3>> bulletsToUpdate = new();
+    public int selectedWeapon = -1;
     // Start is called before the first frame update
     void Start()
     {
-        EquipWeapon(0);
-        position = new Vector3(0.5f, 0.5f, 0);
+        this.EquipWeapon(1);
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        //if (bulletsToUpdate.Count > 0)
-        //{
-        //    bulletsToUpdate.First().Key.GetComponent<TrailRenderer>().transform.position = bulletsToUpdate.First().Value;
-        //    bulletsToUpdate.Remove(bulletsToUpdate.First());
-        //}
-        //Debug.DrawLine(position + Vector3.one, position - Vector3.one, Color.magenta, 1);
     }
 
     // Changer pour tirer à partir du bout le l'arme à feu à la place du centre de l'écran
     // mais on a pas d'animation pour les armes, alors bon...
     public void OnFireWeapon()
     {
-        Weapon weapon = equippedWeapon.GetComponent<Weapon>();
-        if (equippedWeapon.GetComponent<Weapon>().FireWeapon())
-        {
-            // See https://forum.unity.com/threads/bullet-trails.3761/#post-27850 for bullet trail, i'm tired
-            Ray bullet = Camera.main.ViewportPointToRay(position);
-            //GameObject bullet1 = new GameObject();
-            //bullet1.name = "BulletTrail";
-            //bullet1.transform.position = position;
-            //bullet1.AddComponent<LineRenderer>();
-            //bullet1.GetComponent<LineRenderer>().startWidth = 0.01f;
-            //bullet1.GetComponent<LineRenderer>().endWidth = 0.01f;
-            //bullet1.GetComponent<LineRenderer>().startColor = Color.grey;
-            //bullet1.GetComponent<LineRenderer>().endColor = Color.white;
-            ////bullet1.GetComponent<LineRenderer>().time = 1f;
-            ////bullet1.GetComponent<LineRenderer>().autodestruct = true;
-            //bullet1.GetComponent<LineRenderer>().material = bulletTrailMaterial;
-            //bullet1.GetComponent<LineRenderer>().materials[0] = bulletTrailMaterial;
-            //bullet1.GetComponent<LineRenderer>().motionVectorGenerationMode = MotionVectorGenerationMode.Object;
-            //bullet1.GetComponent<LineRenderer>().numCornerVertices = 50;
-            //bullet1.GetComponent<LineRenderer>().numCapVertices = 50;
-
-            if (Physics.Raycast(bullet, out RaycastHit hit, Mathf.Infinity))
-            {
-                //bullet1.transform.position = hit.point;
-                //bulletsToUpdate.Add(KeyValuePair.Create(bullet1, hit.point));
-                if (hit.transform.gameObject.TryGetComponent<Damageable>(out Damageable damageableEntity))
-                {
-                    damageableEntity.TakeDamage(equippedWeapon.GetComponent<Weapon>().damage);
-                }
-            }
-            Debug.DrawRay(bullet.origin, bullet.direction * 100, Color.grey, 1, false);
-        }
+        //weapon.cs ou placeable.cs
+        equippedWeapon.SendMessage("OnFireWeapon", SendMessageOptions.RequireReceiver);
     }
 
     public void Reload()
     {
-        Debug.Log("Reloading");
-        totalAmmo -= equippedWeapon.GetComponent<Weapon>().Reload(totalAmmo);
+        equippedWeapon.SendMessage("Reload", SendMessageOptions.DontRequireReceiver);
     }
 
-    private void EquipWeapon(int index)
+    public void EquipWeapon(int index)
     {
-        if (index > weapons.Count)
+        if (index == selectedWeapon)
         {
-            index = 0;
+            return;
+        }
+        if (!weapons.TryGetValue(index, out GameObject tmpWeapon))
+        {
+            Debug.LogWarning("Selected Weapon Invalid");
+            return;
         }
         Destroy(equippedWeapon);
-        equippedWeapon = Instantiate(weapons.ElementAt(index));
-        equippedWeapon.AddComponent<Weapon>();
+        equippedWeapon = Instantiate(tmpWeapon);
+        switch (index)
+        {
+            case 0: // wall
+                equippedWeapon.AddComponent<Placeable>().objectToPlace = tmpWeapon;
+                equippedWeapon.GetComponent<Placeable>().playerPlacingTheObject = this.gameObject;
+                break;
+            case 1: // handgun
+                equippedWeapon.GetComponent<Weapon>();
+                break;
+            default:
+                break;
+        }
 
-        equippedWeapon.transform.position = new Vector3(parent.transform.position.x, parent.transform.position.y, parent.transform.position.z);
+        equippedWeapon.transform.position = parent.transform.position;
         equippedWeapon.transform.SetParent(parent.transform);
+        selectedWeapon = index;
     }
 
-    void PickupWeapon(GameObject weapon)
-    {
-        weapons.Add(weapon);
-    }
+    //void PickupWeapon(GameObject weapon)
+    //{
+    //    weapons.Add(weapon);
+    //}
 }

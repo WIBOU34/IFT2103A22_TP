@@ -4,7 +4,6 @@ using UnityEngine;
 public class PlayableCharacter : MonoBehaviour
 {
     public List<GameObject> weapons;
-    public Material bulletTrailMaterial;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,9 +18,11 @@ public class PlayableCharacter : MonoBehaviour
             .Find("Right_Shoulder")
             .Find("Right_UpperArm")
             .Find("Right_LowerArm")
-            .Find("Right_Hand").gameObject; ;
-        this.gameObject.GetComponent<WeaponManager>().weapons = weapons;
-        this.gameObject.GetComponent<WeaponManager>().bulletTrailMaterial = bulletTrailMaterial;
+            .Find("Right_Hand").gameObject;
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            this.gameObject.GetComponent<WeaponManager>().weapons.Add(i, weapons[i]);
+        }
     }
 
     // Update is called once per frame
@@ -29,16 +30,27 @@ public class PlayableCharacter : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
+            //this.SendMessage("Reload", SendMessageOptions.DontRequireReceiver);
             this.GetComponent<WeaponManager>().Reload();
         }
         else if (Input.GetKeyDown(KeyCode.Mouse0))
         {
+            //this.SendMessage("OnFireWeapon", SendMessageOptions.DontRequireReceiver);
             this.GetComponent<WeaponManager>().OnFireWeapon();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-
+            this.gameObject.GetComponent<WeaponManager>().EquipWeapon(0);
         }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            this.gameObject.GetComponent<WeaponManager>().EquipWeapon(1);
+        }
+    }
+
+    public void OnKilled()
+    {
+        this.OnGameOver();
     }
 
     public void OnGameOver()

@@ -21,7 +21,10 @@ public class Damageable : MonoBehaviour
         if (health <= 0)
         {
             health = 0;
-            this.gameObject.BroadcastMessage("OnKilled");
+            this.gameObject.SendMessage("OnKilled", SendMessageOptions.RequireReceiver);
+        } else
+        {
+            this.gameObject.SendMessage("OnDamageTaken", health, SendMessageOptions.DontRequireReceiver);
         }
     }
 }

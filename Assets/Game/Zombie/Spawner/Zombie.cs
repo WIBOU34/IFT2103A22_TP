@@ -1,3 +1,5 @@
+using System.IO;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,6 +10,13 @@ public class Zombie : MonoBehaviour
     public float damagePerAttack = 20;
     private GameObject currentTarget;
     private uint nbrTimesPathUpdatedWithObstacleAsTarget = 0;
+    private const uint MAX_nbrTimesPathUpdatedWithObstacleAsTarget = 30;
+
+    public Vector3 target;
+    public bool isPathStale;
+    public NavMeshPathStatus pathStatus;
+    public int areaMask;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,7 +41,15 @@ public class Zombie : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        target = this.GetComponent<NavMeshAgent>().destination;
+        isPathStale = this.GetComponent<NavMeshAgent>().isPathStale;
+        pathStatus = this.GetComponent<NavMeshAgent>().pathStatus;
+        areaMask = this.GetComponent<NavMeshAgent>().areaMask;
+    }
 
+    public void PlayerReachableStatusChanged()
+    {
+        nbrTimesPathUpdatedWithObstacleAsTarget = MAX_nbrTimesPathUpdatedWithObstacleAsTarget + 1;
     }
 
     void Attack()
@@ -47,14 +64,13 @@ public class Zombie : MonoBehaviour
     private bool ValidateCurrentTargetForAttack()
     {
         float radius2 = this.GetComponent<NavMeshAgent>().radius * 2;
-        if (ZombieController.DistanceSq(currentTarget.transform.position, this.transform.position) <= (radius2 * radius2) * 2)
+        Vector3 target = currentTarget.transform.position;
+        if (currentTarget.CompareTag("Destructible"))
         {
-            return true;
+            // le point ciblé sur le destructible (le centre peux être trop loin)
+            target = this.GetComponent<NavMeshAgent>().destination;
         }
-        else
-        {
-            return false;
-        }
+        return ZombieController.DistanceSq(target, this.transform.position) <= (radius2 * radius2) * 2;
     }
 
     private void FixedUpdate()
@@ -88,7 +104,7 @@ public class Zombie : MonoBehaviour
         // verify currentTarget is still the best target (if currentTarget is a Destructible)
         if (currentTarget != null)
         {
-            if (currentTarget.tag.Equals("Destructible") && nbrTimesPathUpdatedWithObstacleAsTarget++ > 30)
+            if (currentTarget.tag.Equals("Destructible") && nbrTimesPathUpdatedWithObstacleAsTarget++ > MAX_nbrTimesPathUpdatedWithObstacleAsTarget)
             {
                 nbrTimesPathUpdatedWithObstacleAsTarget = 0;
                 //VerifyCurrentTargetIsStillValid(); // not good enough for objects until we can check if players moved
@@ -104,6 +120,11 @@ public class Zombie : MonoBehaviour
         {
             CalculatePositionAndPathOfClosestTarget();
         }
+        //else
+        //{
+        //    //TargetFound(currentTarget.transform.position);
+        //    this.GetComponent<NavMeshAgent>().destination = currentTarget.transform.position;
+        //}
     }
 
     private void CalculatePositionAndPathOfClosestTarget()
@@ -150,9 +171,15 @@ public class Zombie : MonoBehaviour
         return false;
     }
 
+    private void TargetFound(Vector3 position)
+    {
+        this.GetComponent<NavMeshAgent>().SetDestination(position);
+        this.GetComponent<Animator>().SetBool("FoundTarget", true);
+    }
+
     private void TargetFound(NavMeshPath path)
     {
-        this.GetComponent<NavMeshAgent>().path = (path);
+        this.GetComponent<NavMeshAgent>().SetPath(path);
         this.GetComponent<Animator>().SetBool("FoundTarget", true);
     }
 
@@ -184,7 +211,6 @@ public class Zombie : MonoBehaviour
         {
             this.GetComponent<NavMeshAgent>().speed = 1f;
         }
-        //this.gameObject.GetComponent<Animator>().SetBool("CanRun", value);
     }
 
     public void OnKilled()
@@ -194,10 +220,11 @@ public class Zombie : MonoBehaviour
         isDead = true;
         this.GetComponent<CapsuleCollider>().enabled = false;
         GameObject.Destroy(this.gameObject, 10);
+        // permet de libérer l'espace dans la liste et donc de permettre un nouveau de spawner
+        this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieDestroyed(this.gameObject);
     }
 
     private void OnDestroy()
     {
-        this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieDestroyed(this.gameObject);
     }
 }

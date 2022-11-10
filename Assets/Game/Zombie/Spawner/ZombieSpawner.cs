@@ -48,6 +48,14 @@ public class ZombieSpawner : MonoBehaviour
         zombies.Add(tmp);
     }
 
+    public void PlayerReachable()
+    {
+        foreach (var zombie in zombies)
+        {
+            zombie.SendMessage("PlayerReachableStatusChanged", SendMessageOptions.RequireReceiver);
+        }
+    }
+
     public void ZombieDestroyed(GameObject zombie)
     {
         zombies.Remove(zombie);
