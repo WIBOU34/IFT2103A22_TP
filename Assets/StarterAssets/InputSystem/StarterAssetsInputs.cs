@@ -49,9 +49,8 @@ namespace StarterAssets
 
 		public void OnPause(InputValue value)
 		{
-			PauseInput(value.isPressed); //Pt innutile...
-            MenuManager.IsPaused = true;			
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);			
+			PauseInput(value.isPressed);
+			MenuManager.IsPaused = true;
         }
 #endif
 
