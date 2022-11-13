@@ -1,4 +1,5 @@
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -63,7 +64,10 @@ public class OptionsMenuController : MonoBehaviour
     {
         if (MenuManager.OptionsMenuOpenedFromPauseMenu)
         {
-            MenuManager.OpenMenu(Menu.PAUSE_MENU, gameObject);
+            GameObject menu = GameObject.Find("Menu");
+            GameObject pauseMenu = menu.transform.Find("Pause Menu").gameObject;
+            pauseMenu.SetActive(true);
+            gameObject.SetActive(false);
         }
         else
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PauseMenuController : MonoBehaviour
@@ -51,13 +52,15 @@ public class PauseMenuController : MonoBehaviour
 
     public void Options()
     {
-        MenuManager.OpenMenu(Menu.OPTIONS_MENU, gameObject);
+        //MenuManager.OpenMenu(Menu.OPTIONS_MENU, gameObject);
         MenuManager.OptionsMenuOpenedFromPauseMenu = true;
+        optionsMenu.SetActive(true);
+        pauseMenu.SetActive(false);
     }
 
     public void LeaveGame()
     {
         Time.timeScale = 1f;
-        MenuManager.OpenMenu(Menu.MAIN_MENU, gameObject);
+        SceneManager.LoadScene(0);       
     }
 }
