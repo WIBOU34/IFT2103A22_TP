@@ -51,6 +51,8 @@ namespace StarterAssets
 		{
 			PauseInput(value.isPressed);
 			MenuManager.IsPaused = true;
+			PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
+			pauseMenuController.Pause();
         }
 #endif
 
@@ -82,7 +84,14 @@ namespace StarterAssets
 
 		private void OnApplicationFocus(bool hasFocus)
 		{
-			SetCursorState(cursorLocked);
+			if (pause)
+			{
+                SetCursorState(false);
+            }
+			else
+			{
+                SetCursorState(cursorLocked);
+            }			
 		}
 
 		private void SetCursorState(bool newState)
