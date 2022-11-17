@@ -38,8 +38,8 @@ public class LevelBasicStart : MonoBehaviour
         players = GameObject.FindGameObjectsWithTag("Player").ToList();
         foreach (var player in players)
         {
-            //player.AddComponent<PlayableCharacter>();
-            //player.GetComponent<PlayableCharacter>().weapons = weapons;
+            player.AddComponent<PlayableCharacter>();
+            player.GetComponent<PlayableCharacter>().weapons = weapons;
             player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>();
         }
     }

@@ -1,0 +1,1 @@
+{"player1Controls":{"MoveUp":"W","MoveLeft":"A","MoveDown":"S","MoveRight":"D","Fire":"LeftClick","Jump":"Space","NextWeapon":"1","PreviousWeapon":"2"},"player2Controls":{"MoveUp":"ArrowUp","MoveLeft":"ArrowLeft","MoveDown":"ArrowDown","MoveRight":"ArrowRight","Fire":"4","Jump":"0","NextWeapon":"5","PreviousWeapon":"6"}}

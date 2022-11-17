@@ -1,10 +1,10 @@
+using System;
 using UnityEngine;
 
-public class OptionsViewModel : MonoBehaviour
+[Serializable]
+public class OptionsViewModel
 {
-    [SerializeField]
-    PlayerControlsViewModel player1Controls { get; set; }
+    public PlayerControlsViewModel player1Controls { get; set; }
 
-    [SerializeField]
-    PlayerControlsViewModel player2Controls { get; set; }
+    public PlayerControlsViewModel player2Controls { get; set; }
 }

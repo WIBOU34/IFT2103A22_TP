@@ -2,14 +2,6 @@ using UnityEngine;
 
 public class MainMenuController : MonoBehaviour
 {
-    public void Start()
-    {
-        if (MenuManager.IsPaused)
-        {
-            MenuManager.OpenMenu(Menu.PAUSE_MENU, gameObject);
-        }
-    }
-
     public void Play()
     {        
         MenuManager.OpenMenu(Menu.GAME_MODE_MENU, gameObject);

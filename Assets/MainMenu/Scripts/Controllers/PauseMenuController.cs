@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PauseMenuController : MonoBehaviour
 {
@@ -23,7 +22,7 @@ public class PauseMenuController : MonoBehaviour
     {
         menu = GameObject.Find("Menu");
         pauseMenu = menu.transform.Find("Pause Menu").gameObject;
-        optionsMenu = GameObject.Find("Menu").transform.Find("Options Menu").gameObject;
+        optionsMenu = menu.transform.Find("Options Menu").gameObject;
         player = GameObject.FindGameObjectsWithTag("Player").Where(x => x.GetComponent<StarterAssetsInputs>().pause).FirstOrDefault();
         if (player != null)
         {
