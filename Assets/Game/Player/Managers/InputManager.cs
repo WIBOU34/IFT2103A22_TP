@@ -1,16 +1,32 @@
+using Newtonsoft.Json;
 using System.IO;
 using UnityEngine;
 
 public sealed class InputManager
 {
     private static InputManager instance = null;
-    private static readonly object padlock = new object();
+    private static readonly object padlock = new object();    
+    private static readonly string fileName = @".\playersSettings.json";
+
+    public static OptionsViewModel OptionsViewModel = new OptionsViewModel();
 
     public static KeyCode FowardP1 { get; set; }
     public static KeyCode BackwardP1 { get; set; }
     public static KeyCode LeftP1 { get; set; }
     public static KeyCode RightP1 { get; set; }
     public static KeyCode JumpP1 { get; set; }
+    public static KeyCode FireP1 { get; set; }
+    public static KeyCode NextWeaponP1 { get; set; }
+    public static KeyCode PreviousWeaponP1 { get; set; }
+
+    public static KeyCode FowardP2 { get; set; }
+    public static KeyCode BackwardP2 { get; set; }
+    public static KeyCode LeftP2 { get; set; }
+    public static KeyCode RightP2 { get; set; }
+    public static KeyCode JumpP2 { get; set; }
+    public static KeyCode FireP2 { get; set; }
+    public static KeyCode NextWeaponP2 { get; set; }
+    public static KeyCode PreviousWeaponP2 { get; set; }
 
     InputManager()
     {
@@ -32,78 +48,76 @@ public sealed class InputManager
         }
     }
 
+    private static void InitOptionsViewModel()
+    {
+        PlayerControlsViewModel player1ControlsViewModel = new PlayerControlsViewModel
+        {
+            MoveFoward = "W",
+            MoveBackward = "S",
+            MoveLeft = "A",
+            MoveRight = "D",
+            Jump = "Space",
+            Fire = "LeftClick",
+            NextWeapon = "1",
+            PreviousWeapon = "2"
+        };
+
+        PlayerControlsViewModel player2ControlsViewModel = new PlayerControlsViewModel
+        {
+            MoveFoward = "ArrowUp",
+            MoveBackward = "ArrowDown",
+            MoveLeft = "ArrowLeft",
+            MoveRight = "ArrowRight",
+            Jump = "0",
+            Fire = "4",
+            NextWeapon = "5",
+            PreviousWeapon = "6"
+        };
+
+        OptionsViewModel.player1Controls = player1ControlsViewModel;
+        OptionsViewModel.player2Controls = player2ControlsViewModel;
+    }
+
     private static void InitPlayerPrefs()
     {
-        //File.Exists()
-        InitPlayer1Prefs();
-        InitPlayer2Prefs();
+        if (File.Exists(fileName))
+        {
+            string json = File.ReadAllText(fileName);
+            OptionsViewModel = JsonConvert.DeserializeObject<OptionsViewModel>(json);
+        }
+        else
+        {
+            InitOptionsViewModel();
+        }
+        //InitPlayer1Prefs();
+        //InitPlayer2Prefs();
     }
 
     private static void InitPlayer1Prefs()
     {
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("fowardKeyP1", "W")))
-        {
-            PlayerPrefs.SetString("fowardKeyP1", "W");
-        }
+        PlayerControlsViewModel playerControls = OptionsViewModel.player1Controls;
 
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("backwardfKeyP1", "S")))
-        {
-            PlayerPrefs.SetString("backwardfKeyP1", "S");
-        }
-
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("leftKeyP1", "A")))
-        {
-            PlayerPrefs.SetString("leftKeyP1", "A");
-        }
-
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("rightKeyP1", "D")))
-        {
-            PlayerPrefs.SetString("rightKeyP1", "D");
-        }
-
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("jumpKeyP1", "Space")))
-        {
-            PlayerPrefs.SetString("jumpKeyP1", "Space");
-        }
-
-        FowardP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("fowardKeyP1", "W"));
-        BackwardP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("backwardfKeyP1", "S"));
-        LeftP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("leftKeyP1", "A"));
-        RightP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rightKeyP1", "D"));
-        JumpP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("jumpKeyP1", "Space"));
+        FowardP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveFoward);
+        BackwardP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveBackward);
+        LeftP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveLeft);
+        RightP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveRight);
+        JumpP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Jump);
+        FireP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Fire);
+        NextWeaponP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.NextWeapon);
+        PreviousWeaponP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.PreviousWeapon);
     }
 
     private static void InitPlayer2Prefs()
     {
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("fowardKeyP2", "ArrowUp")))
-        {
-            PlayerPrefs.SetString("fowardKeyP2", "ArrowUp");
-        }
+        PlayerControlsViewModel playerControls = OptionsViewModel.player2Controls;
 
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("backwardfKeyP2", "ArrowDown")))
-        {
-            PlayerPrefs.SetString("backwardfKeyP2", "S");
-        }
-
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("leftKeyP2", "A")))
-        {
-            PlayerPrefs.SetString("leftKeyP2", "A");
-        }
-
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("rightKeyP2", "D")))
-        {
-            PlayerPrefs.SetString("rightKeyP2", "D");
-        }
-
-        if (string.IsNullOrWhiteSpace(PlayerPrefs.GetString("jumpKeyP2", "Space")))
-        {
-            PlayerPrefs.SetString("jumpKeyP2", "Space");
-        }
-
-        FowardP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("fowardKeyP2", "W"));
-        BackwardP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("backwardfKeyP2", "S"));
-        LeftP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("leftKeyP2", "A"));
-        RightP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rightKeyP2", "D"));
-        JumpP1 = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("jumpKeyP2", "Space"));
+        FowardP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveFoward);
+        BackwardP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveBackward);
+        LeftP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveLeft);
+        RightP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveRight);
+        JumpP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Jump);
+        FireP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Fire);
+        NextWeaponP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.NextWeapon);
+        PreviousWeaponP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.PreviousWeapon);
     }
 }

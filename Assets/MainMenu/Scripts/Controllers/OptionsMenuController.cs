@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -26,6 +27,7 @@ public class OptionsMenuController : MonoBehaviour
     private InputActionRebindingExtensions.RebindingOperation rebindingOperation;
     private GameObject rebindingScreen, optionsMenu;
     private List<GameObject> players;
+    private List<PlayerInput> playersInputs = new List<PlayerInput>();
     private List<Button> player1Buttons = new List<Button>();
     private List<Button> player2Buttons = new List<Button>();
     private TextMeshProUGUI actionText = null;
@@ -40,6 +42,11 @@ public class OptionsMenuController : MonoBehaviour
         optionsMenu = GameObject.Find("Menu").transform.Find("Options Menu").gameObject;
 
         players = GameObject.FindGameObjectsWithTag("Player").ToList();
+        
+        foreach (GameObject player in players)
+        {
+            playersInputs.Add(player.GetComponent<PlayerInput>());
+        }
 
         GameObject player1Section = GameObject.Find("Player1 Section");
         player1Buttons = player1Section.GetComponentsInChildren<Button>().ToList();
@@ -66,11 +73,11 @@ public class OptionsMenuController : MonoBehaviour
 
         GetInputActionReference(button);
 
-        //startRebindObject.SetActive(false);
-        //waitingForInputObject.SetActive(true);
-
-        jumpAction.action.Disable();
-        //playerInput.SwitchCurrentActionMap("Menu");
+        //jumpAction.action.Disable();
+        foreach (PlayerInput playerInput in playersInputs)
+        {
+            playerInput.SwitchCurrentActionMap("Menu");
+        }
 
         rebindingOperation = jumpAction.action.PerformInteractiveRebinding()
             .OnMatchWaitForAnother(0.1f)
@@ -90,14 +97,18 @@ public class OptionsMenuController : MonoBehaviour
 
         rebindingOperation.Dispose();
 
-        //startRebindObject.SetActive(true);
-        //waitingForInputObject.SetActive(false);
-
-        //playerInput.SwitchCurrentActionMap("Player");
-
+        foreach (PlayerInput playerInput in playersInputs)
+        {
+            playerInput.SwitchCurrentActionMap("Player");
+        }
 
         optionsMenu.SetActive(true);
         rebindingScreen.SetActive(false);
+    }
+
+    private void GetInputAction()
+    {
+
     }
 
     public void Save()
@@ -182,8 +193,8 @@ public class OptionsMenuController : MonoBehaviour
     {
         PlayerControlsViewModel player1ControlsViewModel = new PlayerControlsViewModel
         {
-            MoveUp = "W",
-            MoveDown = "S",
+            MoveFoward = "W",
+            MoveBackward = "S",
             MoveLeft = "A",
             MoveRight = "D",
             Jump = "Space",
@@ -194,8 +205,8 @@ public class OptionsMenuController : MonoBehaviour
 
         PlayerControlsViewModel player2ControlsViewModel = new PlayerControlsViewModel
         {
-            MoveUp = "ArrowUp",
-            MoveDown = "ArrowDown",
+            MoveFoward = "ArrowUp",
+            MoveBackward = "ArrowDown",
             MoveLeft = "ArrowLeft",
             MoveRight = "ArrowRight",
             Jump = "0",
@@ -222,14 +233,14 @@ public class OptionsMenuController : MonoBehaviour
 
             switch (actionText)
             {
-                case "Move Up":
-                    button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.MoveUp;
+                case "Move Foward":
+                    button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.MoveFoward;
                     break;
                 case "Move Left":
                     button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.MoveLeft;
                     break;
-                case "Move Down":
-                    button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.MoveDown;
+                case "Move Backward":
+                    button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.MoveBackward;
                     break;
                 case "Move Right":
                     button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.MoveRight;

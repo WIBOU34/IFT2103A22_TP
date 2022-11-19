@@ -3,12 +3,13 @@ using UnityEngine;
 
 public class PlayableCharacter : MonoBehaviour
 {
-    private InputManager InputManager;
+    private InputManager inputManager;
+    public int playerNumber;
     public List<GameObject> weapons;
     // Start is called before the first frame update
     void Start()
     {
-        InputManager = InputManager.Instance;
+        inputManager = InputManager.Instance;
         this.gameObject.AddComponent<Damageable>();
         //this.gameObject.AddComponent<WeaponManager>().parent = this.transform.Find("Right_MiddleIntermediate").gameObject;
         this.gameObject.AddComponent<WeaponManager>().parent = this.gameObject.transform
