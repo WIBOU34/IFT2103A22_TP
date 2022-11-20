@@ -1,8 +1,12 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class HomeScreen : MonoBehaviour
 {
+    private void Start()
+    {
+        MenuManager.loadingScreen = GameObject.Find("LoadingScreen");
+    }
+
     void Update()
     {
         if (Input.anyKey)
