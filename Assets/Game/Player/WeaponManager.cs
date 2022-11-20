@@ -51,7 +51,7 @@ public class WeaponManager : MonoBehaviour
                 equippedWeapon.GetComponent<Placeable>().playerPlacingTheObject = this.gameObject;
                 break;
             case 1: // handgun
-                equippedWeapon.GetComponent<Weapon>();
+                equippedWeapon.GetComponent<Weapon>().playerDoingTheAction = this.gameObject;
                 break;
             default:
                 break;

@@ -63,8 +63,6 @@ public class PlayableCharacter : MonoBehaviour
         Debug.Log("Game Over");
     }
 
-
-    // Maybe move to PlayableCharacter
     public void SetupCameraTopDown()
     {
         GameObject virtualPlayerCam = this.transform.parent.Find("PlayerFollowCamera").gameObject;
@@ -99,6 +97,7 @@ public class PlayableCharacter : MonoBehaviour
         body.CameraDistance = 4;
         body.CameraRadius = 0.15f;
         body.IgnoreTag = "Player";
+        Set3rdPersonSettingForMovement();
     }
 
     private void SetTopDownSettingForMovement()

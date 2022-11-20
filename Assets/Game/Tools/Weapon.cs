@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.WSA;
 
 public class Weapon : MonoBehaviour
 {
@@ -8,8 +9,11 @@ public class Weapon : MonoBehaviour
     public int currentClipAmmo = 15;
     public float rateOfFire = 0;
     public float damage = 20;
+    public float maxBulletTravelDistance = 100;
+    public GameObject playerDoingTheAction; // for position
     public Material bulletTrailMaterial;
     private Vector3 position = new Vector3(0.5f, 0.5f, 0);
+    private bool isGameIn3rdPerson = false;
 
     // Start is called before the first frame update
     void Start()
@@ -30,13 +34,12 @@ public class Weapon : MonoBehaviour
 
     public void OnFireWeapon()
     {
-        Debug.Log("Firing weapon");
         // Add effect on fire...
         if (currentClipAmmo > 0)
         {
             currentClipAmmo--;
             Vector3 bulletStartPosition = this.transform.position; // maybe change to tip of the barrel
-            Ray ray = Camera.main.ViewportPointToRay(position);
+            Ray ray = GetRay(bulletStartPosition);
             GameObject bullet = new GameObject();
             bullet.name = "BulletTrail";
             bullet.AddComponent<LineRenderer>();
@@ -48,7 +51,7 @@ public class Weapon : MonoBehaviour
             bullet.GetComponent<LineRenderer>().numCornerVertices = 2;
             bullet.GetComponent<LineRenderer>().numCapVertices = 2;
 
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
+            if (Physics.Raycast(ray, out RaycastHit hit, maxBulletTravelDistance))
             {
                 bullet.GetComponent<LineRenderer>().SetPosition(0, bulletStartPosition);
                 bullet.GetComponent<LineRenderer>().SetPosition(1, hit.point);
@@ -57,10 +60,26 @@ public class Weapon : MonoBehaviour
             else
             {
                 bullet.GetComponent<LineRenderer>().SetPosition(0, bulletStartPosition);
-                bullet.GetComponent<LineRenderer>().SetPosition(1, bulletStartPosition + ray.direction * 100);
+                bullet.GetComponent<LineRenderer>().SetPosition(1, bulletStartPosition + ray.direction * maxBulletTravelDistance);
             }
-            Destroy(bullet, 1f);
+            Destroy(bullet, 0.5f);
         }
+    }
+
+    private Ray GetRay(Vector3 bulletStartPosition)
+    {
+        Ray ray;
+        Camera cam = playerDoingTheAction.transform.parent.Find("MainCamera").gameObject.GetComponent<Camera>();
+        if (isGameIn3rdPerson)
+        {
+            ray = cam.ViewportPointToRay(position);
+        }
+        else
+        {
+            //ray = new Ray(bulletStartPosition, this.transform.forward); // would work if we have an animation that moves the weapon
+            ray = new Ray(bulletStartPosition, playerDoingTheAction.transform.forward); // is kinda annoying to have to jiggle the player to shoot backwards
+        }
+        return ray;
     }
 
     private int CalculateAmmoToReload(int totalAmmo)
