@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,9 +12,12 @@ public class LevelBasicStart : MonoBehaviour
     private List<GameObject> players;
     public List<GameObject> weapons;
     public Material bulletTrailMaterial;
+    public GameObject cinemachineUpOverrideObject;
     // Start is called before the first frame update
     void Start()
     {
+        cinemachineUpOverrideObject = new GameObject("CinemachineUpOverrideObject");
+        cinemachineUpOverrideObject.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
         CreatePlayers(2);
 
         zombieController = new ZombieController();
@@ -52,10 +56,11 @@ public class LevelBasicStart : MonoBehaviour
             SetupPlayerCameraLayerAndMask(player, playerNumber);
 
             PlayableCharacter playableCharacter = player.AddComponent<PlayableCharacter>();
+            playableCharacter.SetupCameraTopDown();
             playableCharacter.weapons = weapons;
             playableCharacter.playerNumber = playerNumber + 1;
             playableCharacter.totalNumberOfPlayers = nbrPlayers;
-            player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>();            
+            player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>();
             player.AddComponent<HealthBarManager>().playerNumber = playableCharacter.playerNumber;
             playerNumber++;
         }
@@ -67,6 +72,7 @@ public class LevelBasicStart : MonoBehaviour
         GameObject virtualPlayerCam = player.transform.parent.Find("PlayerFollowCamera").gameObject;
         GameObject playerCameraRoot = player.transform.Find("PlayerCameraRoot").gameObject;
         GameObject camera = player.transform.parent.Find("MainCamera").gameObject;
+
         int layer = playerNumber + 10;
 
         virtualPlayerCam.layer = layer;
