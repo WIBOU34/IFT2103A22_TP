@@ -11,6 +11,7 @@ public class PlayableCharacter : MonoBehaviour
     public int totalNumberOfPlayers;
     public List<GameObject> weapons;
     public Transform cinemachineUpOverrideObjectTransform;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,11 +28,10 @@ public class PlayableCharacter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(InputManager.FowardP1))
-        {
-            var test = true;
-        }
-
+        //if (Input.GetKey(InputManager.FowardP1))
+        //{
+        //    var test = true;
+        //}        
 
         if (Input.GetKeyDown(KeyCode.R))
         {

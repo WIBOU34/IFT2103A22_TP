@@ -18,4 +18,10 @@ public class PlayerControlsViewModel
     public string NextWeapon { get; set; }
 
     public string PreviousWeapon { get; set; }
+
+    public string Pause { get; set; }
+
+    public string Zoom { get; set; }
+
+    public string UnZoom { get; set; }
 }
