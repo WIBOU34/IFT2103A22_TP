@@ -56,6 +56,7 @@ public class LevelBasicStart : MonoBehaviour
             SetupPlayerCameraLayerAndMask(player, playerNumber);
 
             PlayableCharacter playableCharacter = player.AddComponent<PlayableCharacter>();
+            playableCharacter.cinemachineUpOverrideObjectTransform = cinemachineUpOverrideObject.transform;
             playableCharacter.SetupCameraTopDown();
             playableCharacter.weapons = weapons;
             playableCharacter.playerNumber = playerNumber + 1;
