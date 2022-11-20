@@ -7,6 +7,8 @@ public class PlayableCharacter : MonoBehaviour
     public int playerNumber;
     public int totalNumberOfPlayers;
     public List<GameObject> weapons;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,8 +28,7 @@ public class PlayableCharacter : MonoBehaviour
         if (Input.GetKey(InputManager.FowardP1))
         {
             var test = true;
-        }
-
+        }        
 
         if (Input.GetKeyDown(KeyCode.R))
         {

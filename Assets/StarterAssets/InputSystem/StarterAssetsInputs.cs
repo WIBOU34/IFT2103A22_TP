@@ -9,19 +9,37 @@ namespace StarterAssets
 {
 	public class StarterAssetsInputs : MonoBehaviour
 	{
-		[Header("Character Input Values")]
+        private InputManager inputManager;
+		private PlayerKeyCodes playerKeyCodes;
+
+        [Header("Character Input Values")]
 		public Vector2 move;
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
-		public bool pause;
+        public bool pause;
 
-		[Header("Movement Settings")]
+        [Header("Movement Settings")]
 		public bool analogMovement;
 
 		[Header("Mouse Cursor Settings")]
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
+
+		private void Start()
+		{
+			inputManager = InputManager.Instance;
+		}
+
+		private void Update()
+		{
+			//if (Input.GetKeyDown(InputManager.playerKeyCodes.Pause))
+			//{
+   //             PauseInput(true);
+   //             PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
+   //             pauseMenuController.Pause();
+   //         }	
+        }
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 		public void OnMove(InputValue value)
@@ -47,12 +65,12 @@ namespace StarterAssets
 			SprintInput(value.isPressed);
 		}
 
-		public void OnPause(InputValue value)
-		{
-			PauseInput(value.isPressed);
-			PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
-			pauseMenuController.Pause();
-        }
+		//public void OnPause(InputValue value)
+		//{
+		//	PauseInput(value.isPressed);
+		//	PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
+		//	pauseMenuController.Pause();
+		//}
 #endif
 
 

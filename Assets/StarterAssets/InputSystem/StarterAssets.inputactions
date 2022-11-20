@@ -40,15 +40,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Pause",
-                    "type": "Button",
-                    "id": "1e0585e3-ad70-4a1f-93f5-b7831d85b89e",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -225,17 +216,6 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Sprint",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e6aaa53f-adc6-479c-93b6-4f0b9953ad9e",
-                    "path": "<Keyboard>/#(P)",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
