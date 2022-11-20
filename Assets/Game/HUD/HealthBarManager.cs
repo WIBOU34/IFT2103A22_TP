@@ -12,12 +12,13 @@ public class HealthBarManager : MonoBehaviour
     private GameObject healthBar2;
     private Slider player2HealthBar;
     private Damageable player2Health;
+    public List<GameObject> players;
 
     // Start is called before the first frame update
     public void Start()
     {
-        List<GameObject> players = new List<GameObject>();
-        players = GameObject.FindGameObjectsWithTag("Player").ToList();
+        //List<GameObject> players = new List<GameObject>();
+        //players = GameObject.FindGameObjectsWithTag("Player").ToList();
 
         foreach (GameObject player in players)
         {

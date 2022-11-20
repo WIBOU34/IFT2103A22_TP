@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1093567058347445506}
   - component: {fileID: 1093567058347445505}
   - component: {fileID: 1093567058347445504}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 1093567058531166331}
   - component: {fileID: 1093567058531166330}
   - component: {fileID: 1093567058531166329}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 1093567058570998380}
   - component: {fileID: 1093567058570998379}
   - component: {fileID: 1093567058570998378}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -301,7 +301,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1093567060051439308}
   - component: {fileID: -2677273951115247887}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Handgun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -338,8 +338,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be883a717909f424fa11ebfdd4cc2167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentClipAmmo: 0
+  totalAmmo: 10000
   clipCapacity: 15
+  currentClipAmmo: 0
   rateOfFire: 0
   damage: 20
   bulletTrailMaterial: {fileID: 2100000, guid: 815eca29caf737445a61d1d5f8739b25, type: 2}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2490314750989214536}
   - component: {fileID: 2490314750989214538}
   - component: {fileID: 2490314750989214537}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2490314751203606117}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DestructibleWallHold
   m_TagString: Untagged
   m_Icon: {fileID: 0}

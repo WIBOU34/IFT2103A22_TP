@@ -5,23 +5,15 @@ public class PlayableCharacter : MonoBehaviour
 {
     private InputManager inputManager;
     public int playerNumber;
+    public int totalNumberOfPlayers;
     public List<GameObject> weapons;
     // Start is called before the first frame update
     void Start()
     {
         inputManager = InputManager.Instance;
         this.gameObject.AddComponent<Damageable>();
-        //this.gameObject.AddComponent<WeaponManager>().parent = this.transform.Find("Right_MiddleIntermediate").gameObject;
         this.gameObject.AddComponent<WeaponManager>().parent = this.gameObject.transform
-            .Find("Skeleton")
-            .Find("Hips")
-            .Find("Spine")
-            .Find("Chest")
-            .Find("UpperChest")
-            .Find("Right_Shoulder")
-            .Find("Right_UpperArm")
-            .Find("Right_LowerArm")
-            .Find("Right_Hand").gameObject;
+            .Find("Skeleton/Hips/Spine/Chest/UpperChest/Right_Shoulder/Right_UpperArm/Right_LowerArm/Right_Hand").gameObject;
         for (int i = 0; i < weapons.Count; i++)
         {
             this.gameObject.GetComponent<WeaponManager>().weapons.Add(i, weapons[i]);
@@ -66,4 +58,5 @@ public class PlayableCharacter : MonoBehaviour
     {
         Debug.Log("Game Over");
     }
+
 }

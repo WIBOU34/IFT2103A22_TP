@@ -14,7 +14,7 @@ public class LevelBasicStart : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CreatePlayers(1);
+        CreatePlayers(2);
 
         zombieController = new ZombieController();
         zombieController.Start();
@@ -23,7 +23,7 @@ public class LevelBasicStart : MonoBehaviour
         ZombieController.CreateZombieSpawner(new Vector3(-10, 0, 5));
 
         GameObject hud = GameObject.Find("HUD");
-        hud.AddComponent<HealthBarManager>();        
+        hud.AddComponent<HealthBarManager>().players = players;
     }
 
     // Update is called once per frame
@@ -42,11 +42,48 @@ public class LevelBasicStart : MonoBehaviour
         int playerNumber = 0;
         foreach (var player in players)
         {
-            player.AddComponent<PlayableCharacter>();
-            PlayableCharacter playableCharacter = player.GetComponent<PlayableCharacter>();
+            player.transform.parent.name = "Player_" + (playerNumber + 1) + "_Container";
+            player.name = "Player_" + (playerNumber + 1);
+
+            GameObject camera = player.transform.parent.Find("MainCamera").gameObject;
+            camera.GetComponent<Camera>().depth = playerNumber;
+            if (playerNumber > 0)
+            {
+                camera.GetComponent<AudioListener>().enabled = false;
+            }
+
+            SetupPlayerCameraLayerAndMask(player, playerNumber);
+
+            PlayableCharacter playableCharacter = player.AddComponent<PlayableCharacter>();
             playableCharacter.weapons = weapons;
             playableCharacter.playerNumber = playerNumber + 1;
+            playableCharacter.totalNumberOfPlayers = nbrPlayers;
             player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>();
+            playerNumber++;
         }
+    }
+
+    //Set the layer and bitmask of the camera and its required parts for it to follow its designed player
+    private void SetupPlayerCameraLayerAndMask(GameObject player, int playerNumber)
+    {
+        GameObject virtualPlayerCam = player.transform.parent.Find("PlayerFollowCamera").gameObject;
+        GameObject playerCameraRoot = player.transform.Find("PlayerCameraRoot").gameObject;
+        GameObject camera = player.transform.parent.Find("MainCamera").gameObject;
+        int layer = playerNumber + 10;
+
+        virtualPlayerCam.layer = layer;
+
+        var bitMask = (1 << layer)
+            | (1 << 0)
+            | (1 << 1)
+            | (1 << 2)
+            | (1 << 4)
+            | (1 << 5)
+            | (1 << 6);
+
+        camera.GetComponent<Camera>().cullingMask = bitMask;
+        camera.layer = layer;
+        virtualPlayerCam.layer = layer;
+        playerCameraRoot.layer = layer;
     }
 }
