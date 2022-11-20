@@ -21,9 +21,6 @@ public class LevelBasicStart : MonoBehaviour
         ZombieController.typeToSpawn = zombieTypeToSpawn;
         this.gameObject.AddComponent<MapCreator>();
         ZombieController.CreateZombieSpawner(new Vector3(-10, 0, 5));
-
-        GameObject hud = GameObject.Find("HUD");
-        hud.AddComponent<HealthBarManager>().players = players;
     }
 
     // Update is called once per frame
@@ -58,7 +55,8 @@ public class LevelBasicStart : MonoBehaviour
             playableCharacter.weapons = weapons;
             playableCharacter.playerNumber = playerNumber + 1;
             playableCharacter.totalNumberOfPlayers = nbrPlayers;
-            player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>();
+            player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>();            
+            player.AddComponent<HealthBarManager>().playerNumber = playableCharacter.playerNumber;
             playerNumber++;
         }
     }
