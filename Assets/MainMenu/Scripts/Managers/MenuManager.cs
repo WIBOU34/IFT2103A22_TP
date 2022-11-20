@@ -4,7 +4,7 @@ public static class MenuManager
 {
     public static bool IsInitialised { get; set; }
     public static bool OptionsMenuOpenedFromPauseMenu { get; set; }
-    public static GameObject homeScreen, loadingScreen, mainMenu, optionsMenu, gameModeMenu;
+    public static GameObject homeScreen, loadingScreen, mainMenu, optionsMenu, gameModeMenu, persistence;
 
     public static void Init()
     {

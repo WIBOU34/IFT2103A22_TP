@@ -14,7 +14,13 @@ public class LevelBasicStart : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CreatePlayers(2);
+        int totalPlayers = 2;
+        if (MenuManager.persistence != null)
+        {
+            totalPlayers = MenuManager.persistence.GetComponent<GameLoader>().totalPlayers;
+        }
+
+        CreatePlayers(totalPlayers);
 
         zombieController = new ZombieController();
         zombieController.Start();

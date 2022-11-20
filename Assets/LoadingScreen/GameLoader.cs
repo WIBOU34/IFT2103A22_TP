@@ -10,6 +10,7 @@ public class GameLoader : MonoBehaviour
     public Slider loadingBar;
     public TextMeshProUGUI progessText;
     public int sceneIndex = 1;
+    public int totalPlayers = 1;
 
     public void Start()
     {

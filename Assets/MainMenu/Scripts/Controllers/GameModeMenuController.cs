@@ -5,13 +5,13 @@ public class GameModeMenuController : MonoBehaviour
     public void Solo()
     {
         MenuManager.IsInitialised = false;
-        ActivateLoadingScreenToLoadGame();
+        ActivateLoadingScreenToLoadGame(1);
     }
 
     public void Multiplayer()
     {
         MenuManager.IsInitialised = false;
-        ActivateLoadingScreenToLoadGame();
+        ActivateLoadingScreenToLoadGame(2);
     }
 
     public void Back()
@@ -19,9 +19,10 @@ public class GameModeMenuController : MonoBehaviour
         MenuManager.OpenMenu(Menu.MAIN_MENU, gameObject);
     }
 
-    private void ActivateLoadingScreenToLoadGame()
+    private void ActivateLoadingScreenToLoadGame(int totalPlayers)
     {        
-        GameLoader gameLoader = MenuManager.loadingScreen.GetComponent<GameLoader>();        
+        GameLoader gameLoader = MenuManager.persistence.GetComponent<GameLoader>(); 
+        gameLoader.totalPlayers = totalPlayers;
         MenuManager.loadingScreen.SetActive(true);
         gameObject.SetActive(false);
         gameLoader.LoadGame(2);
