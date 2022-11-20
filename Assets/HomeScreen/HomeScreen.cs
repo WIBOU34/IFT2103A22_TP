@@ -7,7 +7,7 @@ public class HomeScreen : MonoBehaviour
     {
         if (Input.anyKey)
         {
-            SceneManager.LoadScene(0);
+            MenuManager.OpenMenu(Menu.MAIN_MENU, gameObject);
         }
     }
 }
