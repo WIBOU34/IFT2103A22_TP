@@ -18,7 +18,14 @@ public class LevelBasicStart : MonoBehaviour
     {
         cinemachineUpOverrideObject = new GameObject("CinemachineUpOverrideObject");
         cinemachineUpOverrideObject.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
-        CreatePlayers(2);
+
+        int totalPlayers = 2;
+        if (MenuManager.persistence != null)
+        {
+            totalPlayers = MenuManager.persistence.GetComponent<GameLoader>().totalPlayers;
+        }
+
+        CreatePlayers(totalPlayers);
 
         zombieController = new ZombieController();
         zombieController.Start();

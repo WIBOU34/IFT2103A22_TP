@@ -9,10 +9,14 @@ public class GameLoader : MonoBehaviour
     public GameObject loadingScreen;
     public Slider loadingBar;
     public TextMeshProUGUI progessText;
+    public int sceneIndex = 1;
+    public int totalPlayers = 1;
 
     public void Start()
     {
-        LoadGame(1);
+        gameObject.SetActive(true);
+        DontDestroyOnLoad(gameObject);
+        LoadGame(sceneIndex);
     }
 
     public void LoadGame(int sceneIndex)
@@ -35,5 +39,7 @@ public class GameLoader : MonoBehaviour
 
             yield return null;
         }
+
+        loadingScreen.SetActive(false);
     }
 }
