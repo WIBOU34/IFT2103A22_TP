@@ -25,6 +25,7 @@ namespace StarterAssets
 		[Header("Mouse Cursor Settings")]
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
+		public bool topDownViewCamera = false;
 
 		private void Start()
 		{
