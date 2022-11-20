@@ -11,4 +11,6 @@ public class PlayerKeyCodes
     public KeyCode NextWeapon { get; set; }
     public KeyCode PreviousWeapon { get; set; }
     public KeyCode Pause { get; set; }
+    public KeyCode Zoom { get; set; }
+    public KeyCode UnZoom { get; set; }
 }

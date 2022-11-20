@@ -9,6 +9,8 @@ namespace StarterAssets
 {
 	public class StarterAssetsInputs : MonoBehaviour
 	{
+		public int playerNumber = 1;
+
         private InputManager inputManager;
 		private PlayerKeyCodes playerKeyCodes;
 
@@ -36,11 +38,11 @@ namespace StarterAssets
 		{
 			//if (Input.GetKeyDown(InputManager.playerKeyCodes.Pause))
 			//{
-   //             PauseInput(true);
-   //             PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
-   //             pauseMenuController.Pause();
-   //         }	
-        }
+			//	PauseInput(true);
+			//	PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
+			//	pauseMenuController.Pause();
+			//}
+		}
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 		public void OnMove(InputValue value)
@@ -65,13 +67,6 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
-
-		//public void OnPause(InputValue value)
-		//{
-		//	PauseInput(value.isPressed);
-		//	PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
-		//	pauseMenuController.Pause();
-		//}
 #endif
 
 

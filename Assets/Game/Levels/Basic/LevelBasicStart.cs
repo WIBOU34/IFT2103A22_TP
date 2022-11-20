@@ -1,6 +1,8 @@
 using Cinemachine;
+using StarterAssets;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -69,7 +71,8 @@ public class LevelBasicStart : MonoBehaviour
             playableCharacter.playerNumber = playerNumber + 1;
             playableCharacter.totalNumberOfPlayers = nbrPlayers;
             player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>();
-            player.AddComponent<HealthBarManager>().playerNumber = playableCharacter.playerNumber;
+            player.AddComponent<HealthBarManager>().playerNumber = playerNumber + 1;
+            player.GetComponent<StarterAssetsInputs>().playerNumber = playerNumber + 1;
             playerNumber++;
         }
     }
