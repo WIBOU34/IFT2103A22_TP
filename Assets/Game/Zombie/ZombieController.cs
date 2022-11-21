@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -270,6 +272,49 @@ public class ZombieController
         zombieDestructibleTargets.Remove(destructible);
 
         ResetNoPlayerReachable();
+    }
+
+    public static bool IsDestructiblePositionAvailable(Vector3 position)
+    {
+        //foreach (GameObject elem in zombieDestructibleTargets)
+        //{
+        //    if (DistanceSq(elem.transform.position, position) < 0.2f)
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        GameObject LevelContainer = GameObject.Find("Environment/Level");
+        if (LevelContainer != null)
+        {
+            return VerifyPositionAvailableInChildren(position, LevelContainer);
+        }
+        Debug.LogWarning("Arborescence des fichiers du niveau n'est pas valide... 'Environment/Level' introuvable");
+        return true;
+    }
+    public static bool VerifyPositionAvailableInChildren(Vector3 position, GameObject element)
+    {
+        Collider collider;
+        if (element.TryGetComponent<Collider>(out collider))
+        {
+            if (collider.bounds.Contains(position))
+            {
+                return false;
+            }
+        }
+        if (element.transform.childCount == 0)
+        {
+            return true;
+        }
+
+        for (int i = 0; i < element.transform.childCount; i++)
+        {
+            if (!VerifyPositionAvailableInChildren(position, element.transform.GetChild(i).gameObject))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     // SquareRoot est très lourd à faire et comme on compare des distances, on peux simplement

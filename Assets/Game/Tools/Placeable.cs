@@ -26,6 +26,8 @@ public class Placeable : MonoBehaviour
     public void OnFireWeapon()
     {
         Vector3 position = CalculatePositionToPlaceObject();
+        if (!ZombieController.IsDestructiblePositionAvailable(position))
+            return;
         GameObject createdDestructible = Instantiate(objectToPlace.transform.GetChild(0).gameObject);
         createdDestructible.transform.position = position;
         createdDestructible.AddComponent<BoxCollider>();
