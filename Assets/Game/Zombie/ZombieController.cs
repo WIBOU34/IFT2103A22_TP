@@ -222,7 +222,7 @@ public class ZombieController
         bool result = NavMesh.CalculatePath(position, target.transform.position, 1, path);
         //if (!NoPlayerReachable)
         //{
-            //return result;
+        //return result;
         //}
         // Vérifie si le pathing est possible
         return result && path.status == NavMeshPathStatus.PathComplete;
@@ -276,14 +276,6 @@ public class ZombieController
 
     public static bool IsDestructiblePositionAvailable(Vector3 position)
     {
-        //foreach (GameObject elem in zombieDestructibleTargets)
-        //{
-        //    if (DistanceSq(elem.transform.position, position) < 0.2f)
-        //    {
-        //        return false;
-        //    }
-        //}
-
         GameObject LevelContainer = GameObject.Find("Environment/Level");
         if (LevelContainer != null)
         {
