@@ -5,6 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class ZombieController
 {
@@ -172,6 +173,13 @@ public class ZombieController
         Vector3 point = Vector3.zero;
         Vector3 lastCorner = Vector3.zero;
 
+        int layerMask = (1 << 0)
+            | (1 << 1)
+            | (1 << 2)
+            | (1 << 4)
+            | (1 << 5)
+            | (1 << 6);
+
         for (int i = 0; i < path.corners.Length; i++)
         {
             if (i == 0)
@@ -182,31 +190,31 @@ public class ZombieController
             Vector3 direction = Vector3.Normalize(path.corners[i] - lastCorner);
             float distance = Vector3.Distance(path.corners[i], lastCorner);
             // lance un rayon sur le path trouvé et vérifie si l'objet frappé est un destructible
-            //if (Physics.Raycast(lastCorner, direction, out hit, distance))
-            //{
-            //    if (hit.collider.gameObject.CompareTag("Destructible"))
-            //    {
-            //        closest = hit.transform.gameObject;
-            //        NavMesh.CalculatePath(position, hit.point, 1, pathToDestructible);
-            //        return closest;
-            //    }
-            //}
-            foreach (var destructible in zombieDestructibleTargets)
+            if (Physics.Raycast(lastCorner, direction, out hit, distance, layerMask))
             {
-                if (destructible.GetComponent<BoxCollider>().Raycast(new Ray(lastCorner, direction), out hit, distance))
+                if (hit.collider.gameObject.CompareTag("Destructible"))
                 {
                     closest = hit.transform.gameObject;
-                    point = hit.point;
-                    // transforme la position de l'objet pour ignorer sa hauteur puisque sa position est au centre de celui-ci.
-                    // Maybe recuperer un point sur la bordure de l'objet avec le collisionneur
-                    //Vector3 newYIgnored = new Vector3(closest.transform.position.x, position.y, closest.transform.position.z);
+                    NavMesh.CalculatePath(position, hit.point, 1, pathToDestructible);
+                    return closest;
                 }
             }
-            if (closest != null)
-            {
-                NavMesh.CalculatePath(position, point, 1, pathToDestructible);
-                return closest;
-            }
+            //foreach (var destructible in zombieDestructibleTargets)
+            //{
+            //    if (destructible.GetComponent<BoxCollider>().Raycast(new Ray(lastCorner, direction), out hit, distance))
+            //    {
+            //        closest = hit.transform.gameObject;
+            //        point = hit.point;
+            //        // transforme la position de l'objet pour ignorer sa hauteur puisque sa position est au centre de celui-ci.
+            //        // Maybe recuperer un point sur la bordure de l'objet avec le collisionneur
+            //        //Vector3 newYIgnored = new Vector3(closest.transform.position.x, position.y, closest.transform.position.z);
+            //    }
+            //}
+            //if (closest != null)
+            //{
+            //    NavMesh.CalculatePath(position, point, 1, pathToDestructible);
+            //    return closest;
+            //}
             lastCorner = path.corners[i];
         }
         //NavMesh.CalculatePath(position, point, 1, pathToDestructible);

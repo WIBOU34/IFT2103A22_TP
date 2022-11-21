@@ -33,7 +33,6 @@ public class ZombieSpawner : MonoBehaviour
 
     public void CreateZombie()
     {
-        //targets = GameObject.FindGameObjectsWithTag("Player").ToList();
         GameObject tmp = Instantiate(typeToSpawn);
         tmp.name = "Zombie_" + spawnerNumber + "_" + counter.ToString();
         counter++;
