@@ -11,7 +11,7 @@ public class HealthBarManager : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
-        playerHealth = gameObject.AddComponent<Damageable>();
+        playerHealth = gameObject.GetComponent<Damageable>();
 
         GameObject hud = GameObject.Find("HUD");
 
