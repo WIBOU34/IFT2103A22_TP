@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -33,26 +34,52 @@ public class OptionsMenuController : MonoBehaviour
     private TextMeshProUGUI actionText = null;
     private OptionsViewModel optionsViewModel = new OptionsViewModel();
     private string fileName = @".\playersSettings.json";
+    private InputManager inputManager;
+    private Dictionary<Button, string> buttonActionsPairsPlayer1 = new Dictionary<Button, string>();
+    private Dictionary<Button, string> buttonActionsPairsPlayer2 = new Dictionary<Button, string>();
+    private Button rebindButton;
+    private string currentRebindAction;
+    private int currentRebindPlayer;
 
     private void Start()
     {
+        inputManager = InputManager.Instance;
+
         Load();
 
-        rebindingScreen = GameObject.Find("Menu").transform.Find("BindingInProcess").gameObject;
-        optionsMenu = GameObject.Find("Menu").transform.Find("Options Menu").gameObject;
-
         players = GameObject.FindGameObjectsWithTag("Player").ToList();
-        
+
         foreach (GameObject player in players)
         {
             playersInputs.Add(player.GetComponent<PlayerInput>());
         }
 
         GameObject player1Section = GameObject.Find("Player1 Section");
-        player1Buttons = player1Section.GetComponentsInChildren<Button>().ToList();
+        GameObject player1Grid = player1Section.transform.Find("Input Section").transform.Find("Grid").gameObject;
+        int totalChilds = player1Grid.transform.childCount;
+
+        int i;
+        for (i = 0; i < totalChilds; i++)
+        {
+            GameObject textAndButton = player1Grid.transform.GetChild(i).gameObject;
+            TextMeshProUGUI actionText = textAndButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            Button button = textAndButton.transform.GetChild(1).GetComponent<Button>();
+            buttonActionsPairsPlayer1.Add(button, actionText.text);
+            player1Buttons.Add(button);
+        }
 
         GameObject player2Section = GameObject.Find("Player2 Section");
-        player2Buttons = player2Section.GetComponentsInChildren<Button>().ToList();
+        GameObject player2Grid = player2Section.transform.Find("Input Section").transform.Find("Grid").gameObject;
+        totalChilds = player2Grid.transform.childCount;
+
+        for (i = 0; i < totalChilds; i++)
+        {
+            GameObject textAndButton = player2Grid.transform.GetChild(i).gameObject;
+            TextMeshProUGUI actionText = textAndButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            Button button = textAndButton.transform.GetChild(1).GetComponent<Button>();
+            buttonActionsPairsPlayer2.Add(button, actionText.text);
+            player2Buttons.Add(button);
+        }
 
         foreach (Button button in player1Buttons)
         {
@@ -67,48 +94,66 @@ public class OptionsMenuController : MonoBehaviour
         UpdatePlayersButtonsText();
     }
 
+    private void Update()
+    {
+        if (InputManager.currentlyRebindingKey)
+        {
+            if (currentRebindPlayer == 1)
+            {
+                UpdatePlayerControlsViewModel(optionsViewModel.player1Controls, currentRebindAction, InputManager.rebindKey.ToString());
+                UpdateButtonsText(optionsViewModel.player1Controls, new List<Button>() { rebindButton });
+            }
+            else if (currentRebindPlayer == 2)
+            {
+                UpdatePlayerControlsViewModel(optionsViewModel.player2Controls, currentRebindAction, InputManager.rebindKey.ToString());
+                UpdateButtonsText(optionsViewModel.player2Controls, new List<Button>() { rebindButton });
+            }
+
+            InputManager.currentlyRebindingKey = false;
+        }
+    }
+
     public void StartRebinding(Button button)
     {
-        bindingActionText = button.GetComponentInChildren<TextMeshProUGUI>();
+        //bindingActionText = button.GetComponentInChildren<TextMeshProUGUI>();
 
-        GetInputActionReference(button);
+        //GetInputActionReference(button);
 
         //jumpAction.action.Disable();
-        foreach (PlayerInput playerInput in playersInputs)
+        //foreach (PlayerInput playerInput in playersInputs)
+        //{
+        //    playerInput.SwitchCurrentActionMap("Menu");
+        //}
+
+        //rebindingOperation = jumpAction.action.PerformInteractiveRebinding()
+        //    .OnMatchWaitForAnother(0.1f)
+        //    .OnComplete(operation => RebindComplete())
+        //    .Start();       
+        string resultPlayer1;
+        buttonActionsPairsPlayer1.TryGetValue(button, out resultPlayer1);
+
+        string resultPlayer2;
+        buttonActionsPairsPlayer2.TryGetValue(button, out resultPlayer2);
+
+        if (!string.IsNullOrWhiteSpace(resultPlayer1))
         {
-            playerInput.SwitchCurrentActionMap("Menu");
+            InputManager.currentRebindPlayer = 1;
+            InputManager.currentRebindAction = resultPlayer1;
+            currentRebindPlayer = 1;
+            currentRebindAction = resultPlayer1;
+        }
+        else
+        {
+            InputManager.currentRebindPlayer = 2;
+            InputManager.currentRebindAction = resultPlayer2;
+            currentRebindPlayer = 2;
+            currentRebindAction = resultPlayer2;
         }
 
-        rebindingOperation = jumpAction.action.PerformInteractiveRebinding()
-            .OnMatchWaitForAnother(0.1f)
-            .OnComplete(operation => RebindComplete())
-            .Start();
+        InputManager.currentRebindButton = button;
+        rebindButton = button;
 
-        rebindingScreen.SetActive(true);
-        optionsMenu.SetActive(false);
-    }
-
-    private void RebindComplete()
-    {
-        int bindingIndex = jumpAction.action.GetBindingIndexForControl(jumpAction.action.controls[0]);
-
-        //button.GetComponentInChildren<TextMeshProUGUI>().text = "test";
-        bindingActionText.text = InputControlPath.ToHumanReadableString(jumpAction.action.bindings[bindingIndex].effectivePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
-
-        rebindingOperation.Dispose();
-
-        foreach (PlayerInput playerInput in playersInputs)
-        {
-            playerInput.SwitchCurrentActionMap("Player");
-        }
-
-        optionsMenu.SetActive(true);
-        rebindingScreen.SetActive(false);
-    }
-
-    private void GetInputAction()
-    {
-
+        MenuManager.OpenMenu(Menu.BINDING_IN_PROCRESS, gameObject);
     }
 
     public void Save()
@@ -143,7 +188,7 @@ public class OptionsMenuController : MonoBehaviour
     {
         if (MenuManager.OptionsMenuOpenedFromPauseMenu)
         {
-            GameObject menu = GameObject.Find("Menu");
+            GameObject menu = GameObject.Find("Canvas");
             GameObject pauseMenu = menu.transform.Find("Pause Menu").gameObject;
             pauseMenu.SetActive(true);
             gameObject.SetActive(false);
@@ -151,68 +196,39 @@ public class OptionsMenuController : MonoBehaviour
         else
         {
             MenuManager.OpenMenu(Menu.MAIN_MENU, gameObject);
-        }        
-    }
-
-    private InputActionReference GetInputActionReference(Button button)
-    {
-        PlayerInput playerInput = GetPlayerInput(button);
-
-        actionText = button.gameObject.transform.parent.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-
-        string action = actionText.text.Contains("Move") ? "Move" : actionText.text;
-
-        InputAction inputAction = playerInput.actions[action];
-        //InputActionReference inputActionReference = InputActionReference.Create(inputAction);
-
-        return new InputActionReference();
-    }
-
-    private PlayerInput GetPlayerInput(Button button)
-    {
-        PlayerInput playerInput = new PlayerInput();
-
-        if (players.Count == 0)
-        {
-            players = GameObject.FindGameObjectsWithTag("Player").ToList();
         }
-
-        if (player1Buttons.Contains(button)) //Pt avoir menu adapté pour 1 joueur
-        {
-            playerInput = players.ElementAt(0).GetComponent<PlayerInput>();
-        }
-        else if (player2Buttons.Contains(button))
-        {
-            playerInput = players.ElementAt(0).GetComponent<PlayerInput>(); //changer pour index 1
-        }
-
-        return playerInput;
     }
 
     private void InitOptionsViewModel()
     {
         PlayerControlsViewModel player1ControlsViewModel = new PlayerControlsViewModel
         {
-            MoveFoward = "W",
-            MoveBackward = "S",
-            MoveLeft = "A",
-            MoveRight = "D",
-            Jump = "Space",
-            Fire = "LeftClick",
-            NextWeapon = "1",
-            PreviousWeapon = "2"
+            MoveFoward = KeyCode.W.ToString(),
+            MoveBackward = KeyCode.S.ToString(),
+            MoveLeft = KeyCode.A.ToString(),
+            MoveRight = KeyCode.D.ToString(),
+            Jump = KeyCode.Space.ToString(),
+            Fire = KeyCode.Mouse0.ToString(),
+            NextWeapon = KeyCode.Alpha1.ToString(),
+            PreviousWeapon = KeyCode.Alpha2.ToString(),
+            Pause = KeyCode.P.ToString(),
+            Zoom = KeyCode.Plus.ToString(),
+            UnZoom = KeyCode.Minus.ToString()
         };
 
         PlayerControlsViewModel player2ControlsViewModel = new PlayerControlsViewModel
         {
-            MoveFoward = "ArrowUp",
-            MoveBackward = "ArrowDown",
-            MoveLeft = "ArrowLeft",
-            MoveRight = "ArrowRight",
-            Jump = "0",
-            Fire = "4",
-            NextWeapon = "5",
-            PreviousWeapon = "6"
+            MoveFoward = KeyCode.UpArrow.ToString(),
+            MoveBackward = KeyCode.DownArrow.ToString(),
+            MoveLeft = KeyCode.LeftArrow.ToString(),
+            MoveRight = KeyCode.RightArrow.ToString(),
+            Jump = KeyCode.Keypad0.ToString(),
+            Fire = KeyCode.Keypad4.ToString(),
+            NextWeapon = KeyCode.Keypad5.ToString(),
+            PreviousWeapon = KeyCode.Keypad6.ToString(),
+            Pause = KeyCode.Keypad7.ToString(),
+            Zoom = KeyCode.KeypadPlus.ToString(),
+            UnZoom = KeyCode.KeypadMinus.ToString()
         };
 
         optionsViewModel.player1Controls = player1ControlsViewModel;
@@ -225,9 +241,49 @@ public class OptionsMenuController : MonoBehaviour
         UpdateButtonsText(optionsViewModel.player2Controls, player2Buttons);
     }
 
+    private void UpdatePlayerControlsViewModel(PlayerControlsViewModel playerControlsViewModel, string actionText, string rebindingKeySelected)
+    {
+        switch (actionText)
+        {
+            case "Move Foward":
+                playerControlsViewModel.MoveFoward = rebindingKeySelected;
+                break;
+            case "Move Left":
+                playerControlsViewModel.MoveLeft = rebindingKeySelected;
+                break;
+            case "Move Backward":
+                playerControlsViewModel.MoveBackward = rebindingKeySelected;
+                break;
+            case "Move Right":
+                playerControlsViewModel.MoveRight = rebindingKeySelected;
+                break;
+            case "Jump":
+                playerControlsViewModel.Jump = rebindingKeySelected;
+                break;
+            case "Fire":
+                playerControlsViewModel.Fire = rebindingKeySelected;
+                break;
+            case "Next Weapon":
+                playerControlsViewModel.NextWeapon = rebindingKeySelected;
+                break;
+            case "Previous Weapon":
+                playerControlsViewModel.PreviousWeapon = rebindingKeySelected;
+                break;
+            case "Pause":
+                playerControlsViewModel.Pause = rebindingKeySelected;
+                break;
+            case "Zoom":
+                playerControlsViewModel.Zoom = rebindingKeySelected;
+                break;
+            case "UnZoom":
+                playerControlsViewModel.UnZoom = rebindingKeySelected;
+                break;
+        }
+    }
+
     private void UpdateButtonsText(PlayerControlsViewModel playerControlsViewModel, List<Button> playerButtons)
     {
-        foreach(Button button in playerButtons)
+        foreach (Button button in playerButtons)
         {
             string actionText = button.gameObject.transform.parent.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text;
 
@@ -256,6 +312,15 @@ public class OptionsMenuController : MonoBehaviour
                     break;
                 case "Previous Weapon":
                     button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.PreviousWeapon;
+                    break;
+                case "Pause":
+                    button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.Pause;
+                    break;
+                case "Zoom":
+                    button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.Zoom;
+                    break;
+                case "UnZoom":
+                    button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.UnZoom;
                     break;
             }
         }

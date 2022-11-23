@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public sealed class InputManager
 {
@@ -12,6 +13,12 @@ public sealed class InputManager
 
     private static PlayerKeyCodes player1KeyCodes = new PlayerKeyCodes();
     private static PlayerKeyCodes player2KeyCodes = new PlayerKeyCodes();
+
+    public static KeyCode rebindKey;
+    public static bool currentlyRebindingKey = false;
+    public static Button currentRebindButton;
+    public static string currentRebindAction;
+    public static int currentRebindPlayer;
 
     InputManager()
     {
@@ -78,7 +85,7 @@ public sealed class InputManager
         }
 
         InitPlayer1Prefs();
-        //InitPlayer2Prefs();
+        InitPlayer2Prefs();
     }
 
     private static void InitPlayer1Prefs()
@@ -96,19 +103,20 @@ public sealed class InputManager
         player1KeyCodes.Pause = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Pause);
     }
 
-    //private static void InitPlayer2Prefs()
-    //{
-    //    PlayerControlsViewModel playerControls = OptionsViewModel.player2Controls;
+    private static void InitPlayer2Prefs()
+    {
+        PlayerControlsViewModel playerControls = OptionsViewModel.player2Controls;
 
-    //    FowardP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveFoward);
-    //    BackwardP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveBackward);
-    //    LeftP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveLeft);
-    //    RightP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveRight);
-    //    JumpP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Jump);
-    //    FireP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Fire);
-    //    NextWeaponP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.NextWeapon);
-    //    PreviousWeaponP2 = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.PreviousWeapon);
-    //}
+        //player2KeyCodes.Foward = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveFoward);
+        //player2KeyCodes.Backward = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveBackward);
+        //player2KeyCodes.Left = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveLeft);
+        //player2KeyCodes.Right = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.MoveRight);
+        //player2KeyCodes.Jump = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Jump);
+        //player2KeyCodes.Fire = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Fire);
+        //player2KeyCodes.NextWeapon = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.NextWeapon);
+        //player2KeyCodes.PreviousWeapon = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.PreviousWeapon);
+        player2KeyCodes.Pause = (KeyCode)System.Enum.Parse(typeof(KeyCode), playerControls.Pause);
+    }
 
     public static PlayerKeyCodes GetPlayerKeyCodes(int playerNumber)
     {

@@ -9,8 +9,6 @@ namespace StarterAssets
 {
 	public class StarterAssetsInputs : MonoBehaviour
 	{
-		public int playerNumber = 1;
-
         private InputManager inputManager;
 		private PlayerKeyCodes playerKeyCodes;
 
@@ -31,18 +29,25 @@ namespace StarterAssets
 
 		private void Start()
 		{
-			inputManager = InputManager.Instance;
+			inputManager = InputManager.Instance;			
 		}
 
 		private void Update()
 		{
-			//if (Input.GetKeyDown(InputManager.playerKeyCodes.Pause))
-			//{
-			//	PauseInput(true);
-			//	PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
-			//	pauseMenuController.Pause();
-			//}
-		}
+			if (Input.GetKeyDown(playerKeyCodes.Pause))
+			{
+				PauseInput(true);
+				PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
+				pauseMenuController.Pause();
+			}
+
+            if (Input.GetKeyDown("7"))
+            {
+                PauseInput(true);
+                PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
+                pauseMenuController.Pause();
+            }
+        }
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 		public void OnMove(InputValue value)
@@ -111,6 +116,11 @@ namespace StarterAssets
 		{
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 		}
+		
+		public void SetPlayerKeyCodes(PlayerKeyCodes playerCodes)
+		{
+			playerKeyCodes = playerCodes;
+        }
 	}
 	
 }
