@@ -15,6 +15,7 @@ public class LevelBasicStart : MonoBehaviour
     public List<GameObject> weapons;
     public Material bulletTrailMaterial;
     public GameObject cinemachineUpOverrideObject;
+    public GameObject NavMesh;
     // Start is called before the first frame update
     void Start()
     {

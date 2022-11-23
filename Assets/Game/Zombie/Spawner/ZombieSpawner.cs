@@ -40,6 +40,7 @@ public class ZombieSpawner : MonoBehaviour
         tmp.transform.position = CalculatePositionToSpawn();
         tmp.GetComponent<Animator>();
         tmp.AddComponent<Damageable>();
+        tmp.AddComponent<PathingAI>();
         tmp.AddComponent<Zombie>();
         tmp.AddComponent<LocomotionSimpleAgent>();
         tmp.transform.SetParent(this.transform);
