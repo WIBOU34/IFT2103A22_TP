@@ -8,7 +8,6 @@ public class PlayerInputController : MonoBehaviour
     public PlayerKeyCodes playerKeyCodes;
 
     private WeaponManager weaponManager;
-    int frames = 0;
     Vector2 orientation = Vector2.zero;
 
     // Start is called before the first frame update
@@ -27,48 +26,85 @@ public class PlayerInputController : MonoBehaviour
             pauseMenuController.Pause();
         }
 
-        //ControlMovement();
+        ControlMovement();
+
+        if (Input.GetKeyDown(playerKeyCodes.Sprint))
+        {
+            starterAssetsInputs.SprintInput(true);
+        }
+
+        if (Input.GetKeyUp(playerKeyCodes.Sprint))
+        {
+            starterAssetsInputs.SprintInput(false);
+        }
 
         if (Input.GetKeyDown(playerKeyCodes.Jump))
         {
             starterAssetsInputs.JumpInput(true);
         }
 
+        if (Input.GetKeyUp(playerKeyCodes.Jump))
+        {
+            starterAssetsInputs.SprintInput(false);
+        }
+
         if (Input.GetKeyDown(playerKeyCodes.Fire))
         {
             weaponManager.OnFireWeapon();
+        }
+
+        if (Input.GetKeyDown(playerKeyCodes.Reload))
+        {
+            weaponManager.Reload();
+        }
+
+        if (Input.GetKeyDown(playerKeyCodes.PreviousWeapon))
+        {
+            weaponManager.EquipWeapon(0);
+        }
+
+        if (Input.GetKeyDown(playerKeyCodes.NextWeapon))
+        {
+            weaponManager.EquipWeapon(1);
         }
     }
 
     private void ControlMovement()
     {
-        frames++;
-        //Vector2 orientation = Vector2.zero;
-        if (frames == 5)
-        {
-            Debug.Log($"x: {orientation.x} y: {orientation.y}");
-            frames = 0;
-            orientation = Vector2.zero;
-        }
-
         if (Input.GetKeyDown(playerKeyCodes.Foward))
         {
             orientation.y = 1;
+        }
+        else if (Input.GetKeyUp(playerKeyCodes.Foward))
+        {
+            orientation.y = 0;
         }
 
         if (Input.GetKeyDown(playerKeyCodes.Right))
         {
             orientation.x = 1;
         }
+        else if(Input.GetKeyUp(playerKeyCodes.Right))
+        {
+            orientation.x = 0;
+        }
 
         if (Input.GetKeyDown(playerKeyCodes.Left))
         {
-            orientation.x = 1;
+            orientation.x = -1;
+        }
+        else if(Input.GetKeyUp(playerKeyCodes.Left))
+        {
+            orientation.x = 0;
         }
 
         if (Input.GetKeyDown(playerKeyCodes.Backward))
         {
-            orientation.y = 1;
+            orientation.y = -1;
+        }
+        else if (Input.GetKeyUp(playerKeyCodes.Backward))
+        {
+            orientation.y = 0;
         }
 
         starterAssetsInputs.MoveInput(orientation);

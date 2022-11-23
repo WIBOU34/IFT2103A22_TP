@@ -28,30 +28,7 @@ public class PlayableCharacter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (Input.GetKey(InputManager.FowardP1))
-        //{
-        //    var test = true;
-        //}        
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            //this.SendMessage("Reload", SendMessageOptions.DontRequireReceiver);
-            this.GetComponent<WeaponManager>().Reload();
-            Debug.Log("Reload");
-        }
-        //else if (Input.GetKeyDown(KeyCode.Mouse0))
-        //{
-        //    //this.SendMessage("OnFireWeapon", SendMessageOptions.DontRequireReceiver);
-        //    this.GetComponent<WeaponManager>().OnFireWeapon();
-        //}
-        else if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            this.gameObject.GetComponent<WeaponManager>().EquipWeapon(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            this.gameObject.GetComponent<WeaponManager>().EquipWeapon(1);
-        }
     }
 
     public void OnKilled()
