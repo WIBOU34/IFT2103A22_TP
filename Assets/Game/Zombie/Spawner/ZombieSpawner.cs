@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class ZombieSpawner : MonoBehaviour
 {

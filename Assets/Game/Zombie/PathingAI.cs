@@ -162,7 +162,7 @@ public class PathingAI : MonoBehaviour
 
         if (target != null)
         {
-            TargetFound(path, target);
+            TargetFound(target, path);
         }
         return target != null;
     }
@@ -216,7 +216,7 @@ public class PathingAI : MonoBehaviour
         {
             if (!TargetDestructibleInPath(pathClosest))
             {
-                TargetFound(pathClosest, closest);
+                TargetFound(closest, pathClosest);
             }
             return true;
         }
@@ -245,8 +245,6 @@ public class PathingAI : MonoBehaviour
                 if (hit.collider.gameObject.CompareTag("Destructible"))
                 {
                     closest = hit.transform.gameObject;
-                    //NavMeshPath pathToDestructible = new NavMeshPath();
-                    //NavMesh.CalculatePath(position, hit.point, 1, pathToDestructible);
                     TargetFound(closest, hit.point);
                     return true;
                 }
@@ -288,7 +286,7 @@ public class PathingAI : MonoBehaviour
     }
 
     // Preffered since the path will not need to be recalculated
-    private void TargetFound(NavMeshPath path, GameObject target)
+    private void TargetFound(GameObject target, NavMeshPath path)
     {
         currentTarget = target;
         currentTargetPos = path.corners.Last();
