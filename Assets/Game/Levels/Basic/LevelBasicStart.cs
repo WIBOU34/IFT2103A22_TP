@@ -15,6 +15,8 @@ public class LevelBasicStart : MonoBehaviour
     public List<GameObject> weapons;
     public Material bulletTrailMaterial;
     public GameObject cinemachineUpOverrideObject;
+    private InputManager inputManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +36,7 @@ public class LevelBasicStart : MonoBehaviour
         ZombieController.typeToSpawn = zombieTypeToSpawn;
         this.gameObject.AddComponent<MapCreator>();
         ZombieController.CreateZombieSpawner(new Vector3(-10, 0, 5));
+        inputManager = InputManager.Instance;
     }
 
     // Update is called once per frame
@@ -72,7 +75,8 @@ public class LevelBasicStart : MonoBehaviour
             playableCharacter.totalNumberOfPlayers = nbrPlayers;
             player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>();
             player.AddComponent<HealthBarManager>().playerNumber = playerNumber + 1;
-            player.GetComponent<StarterAssetsInputs>().playerNumber = playerNumber + 1;
+            PlayerKeyCodes playerKeyCodes = InputManager.GetPlayerKeyCodes(playerNumber + 1);
+            player.GetComponent<StarterAssetsInputs>().SetPlayerKeyCodes(playerKeyCodes);
             playerNumber++;
         }
     }
