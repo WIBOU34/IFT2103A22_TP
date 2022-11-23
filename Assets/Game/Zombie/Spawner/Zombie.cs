@@ -56,6 +56,7 @@ public class Zombie : MonoBehaviour
     {
         if (ValidateCurrentTargetForAttack())
         {
+            Damageable damageable = currentTarget.GetComponent<Damageable>();
             currentTarget.GetComponent<Damageable>().TakeDamage(damagePerAttack);
             //this.GetComponent<Damageable>().TakeDamage(damagePerAttack);
         }

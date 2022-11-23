@@ -34,19 +34,7 @@ namespace StarterAssets
 
 		private void Update()
 		{
-			if (Input.GetKeyDown(playerKeyCodes.Pause))
-			{
-				PauseInput(true);
-				PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
-				pauseMenuController.Pause();
-			}
 
-            if (Input.GetKeyDown("7"))
-            {
-                PauseInput(true);
-                PauseMenuController pauseMenuController = gameObject.GetComponent<PauseMenuController>();
-                pauseMenuController.Pause();
-            }
         }
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -63,10 +51,10 @@ namespace StarterAssets
 			}
 		}
 
-		public void OnJump(InputValue value)
-		{
-			JumpInput(value.isPressed);
-		}
+		//public void OnJump(InputValue value)
+		//{
+		//	JumpInput(value.isPressed);
+		//}
 
 		public void OnSprint(InputValue value)
 		{
@@ -115,12 +103,7 @@ namespace StarterAssets
 		private void SetCursorState(bool newState)
 		{
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
-		}
-		
-		public void SetPlayerKeyCodes(PlayerKeyCodes playerCodes)
-		{
-			playerKeyCodes = playerCodes;
-        }
+		}	
 	}
 	
 }

@@ -6,13 +6,11 @@ public class BindingInProcessController : MonoBehaviour
 {
     InputManager inputManager;
 
-    // Start is called before the first frame update
     void Start()
     {
         inputManager = InputManager.Instance;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.anyKey)
@@ -24,9 +22,6 @@ public class BindingInProcessController : MonoBehaviour
                 {
                     InputManager.currentlyRebindingKey = true;
                     InputManager.rebindKey = key;
-                    //string inputString = key.ToString();
-                    //Debug.Log(key + " was pressed.");
-                    //Debug.Log(inputString + " was pressed.");
                 }
             }
 

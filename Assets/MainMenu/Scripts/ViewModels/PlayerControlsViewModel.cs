@@ -11,7 +11,11 @@ public class PlayerControlsViewModel
 
     public string MoveRight { get; set; }
 
+    public string Sprint { get; set; }
+
     public string Fire { get; set; }
+
+    public string Reload { get; set; }
 
     public string Jump { get; set; }
 

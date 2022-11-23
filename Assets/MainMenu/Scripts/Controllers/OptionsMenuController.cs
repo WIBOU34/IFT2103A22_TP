@@ -207,8 +207,10 @@ public class OptionsMenuController : MonoBehaviour
             MoveBackward = KeyCode.S.ToString(),
             MoveLeft = KeyCode.A.ToString(),
             MoveRight = KeyCode.D.ToString(),
+            Sprint = KeyCode.LeftShift.ToString(),
             Jump = KeyCode.Space.ToString(),
             Fire = KeyCode.Mouse0.ToString(),
+            Reload = KeyCode.R.ToString(),
             NextWeapon = KeyCode.Alpha1.ToString(),
             PreviousWeapon = KeyCode.Alpha2.ToString(),
             Pause = KeyCode.P.ToString(),
@@ -222,8 +224,10 @@ public class OptionsMenuController : MonoBehaviour
             MoveBackward = KeyCode.DownArrow.ToString(),
             MoveLeft = KeyCode.LeftArrow.ToString(),
             MoveRight = KeyCode.RightArrow.ToString(),
+            Sprint = KeyCode.RightControl.ToString(),
             Jump = KeyCode.Keypad0.ToString(),
             Fire = KeyCode.Keypad4.ToString(),
+            Reload= KeyCode.Keypad8.ToString(),
             NextWeapon = KeyCode.Keypad5.ToString(),
             PreviousWeapon = KeyCode.Keypad6.ToString(),
             Pause = KeyCode.Keypad7.ToString(),
@@ -257,11 +261,17 @@ public class OptionsMenuController : MonoBehaviour
             case "Move Right":
                 playerControlsViewModel.MoveRight = rebindingKeySelected;
                 break;
+            case "Sprint":
+                playerControlsViewModel.Sprint = rebindingKeySelected;
+                break;
             case "Jump":
                 playerControlsViewModel.Jump = rebindingKeySelected;
                 break;
             case "Fire":
                 playerControlsViewModel.Fire = rebindingKeySelected;
+                break;
+            case "Reload":
+                playerControlsViewModel.Reload = rebindingKeySelected;
                 break;
             case "Next Weapon":
                 playerControlsViewModel.NextWeapon = rebindingKeySelected;
@@ -301,11 +311,17 @@ public class OptionsMenuController : MonoBehaviour
                 case "Move Right":
                     button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.MoveRight;
                     break;
+                case "Sprint":
+                    button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.Sprint;
+                    break;
                 case "Jump":
                     button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.Jump;
                     break;
                 case "Fire":
                     button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.Fire;
+                    break;
+                case "Reload":
+                    button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.Reload;
                     break;
                 case "Next Weapon":
                     button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.NextWeapon;

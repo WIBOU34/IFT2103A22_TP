@@ -73,10 +73,14 @@ public class LevelBasicStart : MonoBehaviour
             playableCharacter.weapons = weapons;
             playableCharacter.playerNumber = playerNumber + 1;
             playableCharacter.totalNumberOfPlayers = nbrPlayers;
-            player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>();
+            player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>(); //PT retirer
             player.AddComponent<HealthBarManager>().playerNumber = playerNumber + 1;
-            PlayerKeyCodes playerKeyCodes = InputManager.GetPlayerKeyCodes(playerNumber + 1);
-            player.GetComponent<StarterAssetsInputs>().SetPlayerKeyCodes(playerKeyCodes);
+            player.AddComponent<PlayerInputController>();
+            PlayerInputController playerInputController = player.GetComponent<PlayerInputController>();
+            playerInputController.pauseMenuController = player.GetComponent<PauseMenuController>();
+            playerInputController.starterAssetsInputs = player.GetComponent<StarterAssetsInputs>();
+            playerInputController.playerKeyCodes = InputManager.GetPlayerKeyCodes(playerNumber + 1);
+
             playerNumber++;
         }
     }
