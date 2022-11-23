@@ -16,6 +16,7 @@ public class ZombieController
 
     public void Start()
     {
+        NavMesh.pathfindingIterationsPerFrame = 10;
         zombieSpawners = GameObject.FindGameObjectsWithTag("ZombieSpawner").ToList();
         zombiePlayerTargets = GameObject.FindGameObjectsWithTag(TAG_PLAYER).ToList();
         var tmpDestructibleList = GameObject.FindGameObjectsWithTag(TAG_DESTRUCTIBLE).ToList();
