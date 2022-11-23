@@ -37,12 +37,13 @@ public class PlayableCharacter : MonoBehaviour
         {
             //this.SendMessage("Reload", SendMessageOptions.DontRequireReceiver);
             this.GetComponent<WeaponManager>().Reload();
+            Debug.Log("Reload");
         }
-        else if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            //this.SendMessage("OnFireWeapon", SendMessageOptions.DontRequireReceiver);
-            this.GetComponent<WeaponManager>().OnFireWeapon();
-        }
+        //else if (Input.GetKeyDown(KeyCode.Mouse0))
+        //{
+        //    //this.SendMessage("OnFireWeapon", SendMessageOptions.DontRequireReceiver);
+        //    this.GetComponent<WeaponManager>().OnFireWeapon();
+        //}
         else if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             this.gameObject.GetComponent<WeaponManager>().EquipWeapon(0);
