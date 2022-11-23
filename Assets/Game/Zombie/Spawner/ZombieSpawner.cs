@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class ZombieSpawner : MonoBehaviour
 {
@@ -40,6 +37,7 @@ public class ZombieSpawner : MonoBehaviour
         tmp.transform.position = CalculatePositionToSpawn();
         tmp.GetComponent<Animator>();
         tmp.AddComponent<Damageable>();
+        tmp.AddComponent<PathingAI>();
         tmp.AddComponent<Zombie>();
         tmp.AddComponent<LocomotionSimpleAgent>();
         tmp.transform.SetParent(this.transform);

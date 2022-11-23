@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Placeable : MonoBehaviour
 {
@@ -29,6 +26,7 @@ public class Placeable : MonoBehaviour
         if (!ZombieController.IsDestructiblePositionAvailable(position))
             return;
         GameObject createdDestructible = Instantiate(objectToPlace.transform.GetChild(0).gameObject);
+        createdDestructible.layer = 0;
         createdDestructible.transform.position = position;
         createdDestructible.AddComponent<BoxCollider>();
         createdDestructible.AddComponent<Destructible>();
