@@ -13,12 +13,6 @@ public class PathingAI : MonoBehaviour
     private const uint nbrTimesMax = 120;
     private bool isDead = false;
     public int difficulty = 1;
-
-
-    public Vector3 target;
-    public bool isPathStale;
-    public NavMeshPathStatus pathStatus;
-    public int areaMask;
     private bool secondPass = false;
 
     private const int layerMaskForCarvingDisabled = (1 << 0)
@@ -57,11 +51,16 @@ public class PathingAI : MonoBehaviour
                 agent.destination = currentTarget.transform.position;
             }
         }
+    }
 
-        target = agent.destination;
-        isPathStale = agent.isPathStale;
-        pathStatus = agent.pathStatus;
-        areaMask = agent.areaMask;
+    // Validates if the destination corresponds with the current target position (only use with players to test if they moved)
+    private bool ValidatePath()
+    {
+        if (ZombieController.DistanceSqNoY(agent.destination, currentTarget.transform.position) < 1)
+        {
+            return true;
+        }
+        return false;
     }
 
     private bool GetTarget()

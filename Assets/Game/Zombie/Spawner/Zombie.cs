@@ -17,6 +17,7 @@ public class Zombie : MonoBehaviour
         this.GetComponent<Animator>().updateMode = AnimatorUpdateMode.Normal;
 
         CanRun(false);
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
         agent.radius = 0.3f;
         agent.height = 1.8f;
         agent.angularSpeed = 360;
@@ -75,16 +76,6 @@ public class Zombie : MonoBehaviour
             target = agent.destination;
         }
         return ZombieController.DistanceSq(target, this.transform.position) <= (radius2 * radius2) * 2;
-    }
-
-    // Validates if the destination corresponds with the current target position (only use with players to test if they moved)
-    private bool ValidatePath()
-    {
-        if (ZombieController.DistanceSq(agent.destination, pathingAI.currentTarget.transform.position) < 0.5f)
-        {
-            return true;
-        }
-        return false;
     }
 
     private void TargetHittable()
