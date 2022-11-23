@@ -11188,7 +11188,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 295781833}
         m_TargetAssemblyTypeName: OptionsMenuController, Assembly-CSharp
-        m_MethodName: Back
+        m_MethodName: Save
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
