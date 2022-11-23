@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.UIElements;
-using UnityEngine.WSA;
 
 public class Weapon : MonoBehaviour
 {
@@ -18,7 +16,7 @@ public class Weapon : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        Reload();
     }
 
     // Update is called once per frame
