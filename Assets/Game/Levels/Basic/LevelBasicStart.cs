@@ -41,6 +41,7 @@ public class LevelBasicStart : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        var test = true;
     }
 
     private void CreatePlayers(int nbrPlayers)

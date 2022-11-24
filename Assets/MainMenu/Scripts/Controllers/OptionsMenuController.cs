@@ -24,14 +24,10 @@ public class OptionsMenuController : MonoBehaviour
     [SerializeField]
     private GameObject waitingForInputObject = null;
 
-
-    private InputActionRebindingExtensions.RebindingOperation rebindingOperation;
-    private GameObject rebindingScreen, optionsMenu;
     private List<GameObject> players;
     private List<PlayerInput> playersInputs = new List<PlayerInput>();
     private List<Button> player1Buttons = new List<Button>();
     private List<Button> player2Buttons = new List<Button>();
-    private TextMeshProUGUI actionText = null;
     private OptionsViewModel optionsViewModel = new OptionsViewModel();
     private string fileName = @".\playersSettings.json";
     private InputManager inputManager;
@@ -114,21 +110,7 @@ public class OptionsMenuController : MonoBehaviour
     }
 
     public void StartRebinding(Button button)
-    {
-        //bindingActionText = button.GetComponentInChildren<TextMeshProUGUI>();
-
-        //GetInputActionReference(button);
-
-        //jumpAction.action.Disable();
-        //foreach (PlayerInput playerInput in playersInputs)
-        //{
-        //    playerInput.SwitchCurrentActionMap("Menu");
-        //}
-
-        //rebindingOperation = jumpAction.action.PerformInteractiveRebinding()
-        //    .OnMatchWaitForAnother(0.1f)
-        //    .OnComplete(operation => RebindComplete())
-        //    .Start();       
+    {   
         string resultPlayer1;
         buttonActionsPairsPlayer1.TryGetValue(button, out resultPlayer1);
 
