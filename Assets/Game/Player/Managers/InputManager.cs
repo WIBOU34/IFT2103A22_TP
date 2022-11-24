@@ -14,11 +14,12 @@ public sealed class InputManager
     private static PlayerKeyCodes player1KeyCodes = new PlayerKeyCodes();
     private static PlayerKeyCodes player2KeyCodes = new PlayerKeyCodes();
 
+    public static bool UpdateBindNeeded = false;
     public static KeyCode rebindKey;
     public static bool currentlyRebindingKey = false;
-    public static Button currentRebindButton;
-    public static string currentRebindAction;
-    public static int currentRebindPlayer;
+    //public static Button currentRebindButton;
+    //public static string currentRebindAction;
+    //public static int currentRebindPlayer;
 
     InputManager()
     {
@@ -80,7 +81,7 @@ public sealed class InputManager
         OptionsViewModel.player2Controls = player2ControlsViewModel;
     }
 
-    private static void InitPlayerPrefs()
+    public static void InitPlayerPrefs()
     {
         if (File.Exists(fileName))
         {

@@ -11,6 +11,8 @@ public class PlayerControlsViewModel
 
     public string MoveRight { get; set; }
 
+    public bool ReverseMovement { get; set; }
+
     public string Sprint { get; set; }
 
     public string Fire { get; set; }

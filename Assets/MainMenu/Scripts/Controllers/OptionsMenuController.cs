@@ -24,10 +24,10 @@ public class OptionsMenuController : MonoBehaviour
     [SerializeField]
     private GameObject waitingForInputObject = null;
 
-    private List<GameObject> players;
-    private List<PlayerInput> playersInputs = new List<PlayerInput>();
     private List<Button> player1Buttons = new List<Button>();
     private List<Button> player2Buttons = new List<Button>();
+    private Toggle toggleReverseMovementPlayer1;
+    private Toggle toggleReverseMovementPlayer2;
     private OptionsViewModel optionsViewModel = new OptionsViewModel();
     private string fileName = @".\playersSettings.json";
     private InputManager inputManager;
@@ -43,13 +43,6 @@ public class OptionsMenuController : MonoBehaviour
 
         Load();
 
-        players = GameObject.FindGameObjectsWithTag("Player").ToList();
-
-        foreach (GameObject player in players)
-        {
-            playersInputs.Add(player.GetComponent<PlayerInput>());
-        }
-
         GameObject player1Section = GameObject.Find("Player1 Section");
         GameObject player1Grid = player1Section.transform.Find("Input Section").transform.Find("Grid").gameObject;
         int totalChilds = player1Grid.transform.childCount;
@@ -60,8 +53,16 @@ public class OptionsMenuController : MonoBehaviour
             GameObject textAndButton = player1Grid.transform.GetChild(i).gameObject;
             TextMeshProUGUI actionText = textAndButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             Button button = textAndButton.transform.GetChild(1).GetComponent<Button>();
-            buttonActionsPairsPlayer1.Add(button, actionText.text);
-            player1Buttons.Add(button);
+            if (button != null)
+            {
+                buttonActionsPairsPlayer1.Add(button, actionText.text);
+                player1Buttons.Add(button);
+            }
+            else
+            {
+                toggleReverseMovementPlayer1 = textAndButton.transform.GetChild(1).GetComponent<Toggle>();
+                toggleReverseMovementPlayer1.isOn = optionsViewModel.player1Controls.ReverseMovement;
+            }
         }
 
         GameObject player2Section = GameObject.Find("Player2 Section");
@@ -73,8 +74,16 @@ public class OptionsMenuController : MonoBehaviour
             GameObject textAndButton = player2Grid.transform.GetChild(i).gameObject;
             TextMeshProUGUI actionText = textAndButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             Button button = textAndButton.transform.GetChild(1).GetComponent<Button>();
-            buttonActionsPairsPlayer2.Add(button, actionText.text);
-            player2Buttons.Add(button);
+            if (button != null)
+            {
+                buttonActionsPairsPlayer2.Add(button, actionText.text);
+                player2Buttons.Add(button);
+            }
+            else
+            {
+                toggleReverseMovementPlayer2 = textAndButton.transform.GetChild(1).GetComponent<Toggle>();
+                toggleReverseMovementPlayer2.isOn = optionsViewModel.player2Controls.ReverseMovement;
+            }
         }
 
         foreach (Button button in player1Buttons)
@@ -85,7 +94,7 @@ public class OptionsMenuController : MonoBehaviour
         foreach (Button button in player2Buttons)
         {
             button.onClick.AddListener(() => StartRebinding(button));
-        }
+        }        
 
         UpdatePlayersButtonsText();
     }
@@ -119,20 +128,20 @@ public class OptionsMenuController : MonoBehaviour
 
         if (!string.IsNullOrWhiteSpace(resultPlayer1))
         {
-            InputManager.currentRebindPlayer = 1;
-            InputManager.currentRebindAction = resultPlayer1;
+            //InputManager.currentRebindPlayer = 1;
+            //InputManager.currentRebindAction = resultPlayer1;
             currentRebindPlayer = 1;
             currentRebindAction = resultPlayer1;
         }
         else
         {
-            InputManager.currentRebindPlayer = 2;
-            InputManager.currentRebindAction = resultPlayer2;
+            //InputManager.currentRebindPlayer = 2;
+            //InputManager.currentRebindAction = resultPlayer2;
             currentRebindPlayer = 2;
             currentRebindAction = resultPlayer2;
         }
 
-        InputManager.currentRebindButton = button;
+        //InputManager.currentRebindButton = button;
         rebindButton = button;
 
         MenuManager.OpenMenu(Menu.BINDING_IN_PROCRESS, gameObject);
@@ -140,6 +149,8 @@ public class OptionsMenuController : MonoBehaviour
 
     public void Save()
     {
+        optionsViewModel.player1Controls.ReverseMovement = toggleReverseMovementPlayer1.isOn;
+        optionsViewModel.player2Controls.ReverseMovement = toggleReverseMovementPlayer2.isOn;
         string json = JsonConvert.SerializeObject(optionsViewModel);
 
         if (!File.Exists(fileName))
@@ -151,6 +162,8 @@ public class OptionsMenuController : MonoBehaviour
             File.Delete(fileName);
             File.WriteAllText(fileName, json);
         }
+
+        InputManager.UpdateBindNeeded = true;
     }
 
     private void Load()
@@ -189,6 +202,7 @@ public class OptionsMenuController : MonoBehaviour
             MoveBackward = KeyCode.S.ToString(),
             MoveLeft = KeyCode.A.ToString(),
             MoveRight = KeyCode.D.ToString(),
+            ReverseMovement = false,
             Sprint = KeyCode.LeftShift.ToString(),
             Jump = KeyCode.Space.ToString(),
             Fire = KeyCode.Mouse0.ToString(),
@@ -206,6 +220,7 @@ public class OptionsMenuController : MonoBehaviour
             MoveBackward = KeyCode.DownArrow.ToString(),
             MoveLeft = KeyCode.LeftArrow.ToString(),
             MoveRight = KeyCode.RightArrow.ToString(),
+            ReverseMovement = false,
             Sprint = KeyCode.RightControl.ToString(),
             Jump = KeyCode.Keypad0.ToString(),
             Fire = KeyCode.Keypad4.ToString(),

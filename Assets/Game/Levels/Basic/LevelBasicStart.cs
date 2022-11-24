@@ -41,7 +41,7 @@ public class LevelBasicStart : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var test = true;
+
     }
 
     private void CreatePlayers(int nbrPlayers)
@@ -73,10 +73,11 @@ public class LevelBasicStart : MonoBehaviour
             playableCharacter.weapons = weapons;
             playableCharacter.playerNumber = playerNumber + 1;
             playableCharacter.totalNumberOfPlayers = nbrPlayers;
-            player.AddComponent<PauseMenuController>().playerInput = player.GetComponent<PlayerInput>(); //PT retirer
+            PauseMenuController pauseMenuController = player.AddComponent<PauseMenuController>();
+            pauseMenuController.playerInput = player.GetComponent<PlayerInput>();
             player.AddComponent<HealthBarManager>().playerNumber = playerNumber + 1;
-            player.AddComponent<PlayerInputController>();
-            PlayerInputController playerInputController = player.GetComponent<PlayerInputController>();
+            PlayerInputController playerInputController = player.AddComponent<PlayerInputController>();
+            playerInputController.playableCharacter = playableCharacter;
             playerInputController.pauseMenuController = player.GetComponent<PauseMenuController>();
             playerInputController.starterAssetsInputs = player.GetComponent<StarterAssetsInputs>();
             playerInputController.playerKeyCodes = InputManager.GetPlayerKeyCodes(playerNumber + 1);
