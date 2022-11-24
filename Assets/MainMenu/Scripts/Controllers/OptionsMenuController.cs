@@ -12,22 +12,12 @@ using UnityEngine.UI;
 
 public class OptionsMenuController : MonoBehaviour
 {
-    //[SerializeField]
-    //private InputActionReference jumpAction = null;
-
-    //[SerializeField]
-    //private TextMeshProUGUI bindingActionText = null;
-
-    //[SerializeField]
-    //private GameObject startRebindObject = null;
-
-    //[SerializeField]
-    //private GameObject waitingForInputObject = null;
-
     private List<Button> player1Buttons = new List<Button>();
     private List<Button> player2Buttons = new List<Button>();
     private Toggle toggleReverseMovementPlayer1;
+    private Toggle toggleJoystickMovementPlayer1;
     private Toggle toggleReverseMovementPlayer2;
+    private Toggle toggleJoystickMovementPlayer2;
     private OptionsViewModel optionsViewModel = new OptionsViewModel();
     private string fileName = @".\playersSettings.json";
     private InputManager inputManager;
@@ -61,8 +51,16 @@ public class OptionsMenuController : MonoBehaviour
             }
             else
             {
-                toggleReverseMovementPlayer1 = textAndButton.transform.GetChild(1).GetComponent<Toggle>();
-                toggleReverseMovementPlayer1.isOn = optionsViewModel.player1Controls.ReverseMovement;
+                if (actionText.text == "Reverse Movement")
+                {
+                    toggleReverseMovementPlayer1 = textAndButton.transform.GetChild(1).GetComponent<Toggle>();
+                    toggleReverseMovementPlayer1.isOn = optionsViewModel.player1Controls.ReverseMovement;
+                }
+                else if (actionText.text == "Joystick Movement")
+                {
+                    toggleJoystickMovementPlayer1 = textAndButton.transform.GetChild(1).GetComponent<Toggle>();
+                    toggleJoystickMovementPlayer1.isOn = optionsViewModel.player1Controls.JoystickMovement;
+                }
             }
         }
 
@@ -83,8 +81,16 @@ public class OptionsMenuController : MonoBehaviour
             }
             else
             {
-                toggleReverseMovementPlayer2 = textAndButton.transform.GetChild(1).GetComponent<Toggle>();
-                toggleReverseMovementPlayer2.isOn = optionsViewModel.player2Controls.ReverseMovement;
+                if (actionText.text == "Reverse Movement")
+                {
+                    toggleReverseMovementPlayer2 = textAndButton.transform.GetChild(1).GetComponent<Toggle>();
+                    toggleReverseMovementPlayer2.isOn = optionsViewModel.player2Controls.ReverseMovement;
+                }
+                else if (actionText.text == "Joystick Movement")
+                {
+                    toggleJoystickMovementPlayer2 = textAndButton.transform.GetChild(1).GetComponent<Toggle>();
+                    toggleJoystickMovementPlayer2.isOn = optionsViewModel.player2Controls.JoystickMovement;
+                }
             }
         }
 
@@ -130,20 +136,15 @@ public class OptionsMenuController : MonoBehaviour
 
         if (!string.IsNullOrWhiteSpace(resultPlayer1))
         {
-            //InputManager.currentRebindPlayer = 1;
-            //InputManager.currentRebindAction = resultPlayer1;
             currentRebindPlayer = 1;
             currentRebindAction = resultPlayer1;
         }
         else
         {
-            //InputManager.currentRebindPlayer = 2;
-            //InputManager.currentRebindAction = resultPlayer2;
             currentRebindPlayer = 2;
             currentRebindAction = resultPlayer2;
         }
 
-        //InputManager.currentRebindButton = button;
         rebindButton = button;
 
         MenuManager.OpenMenu(Menu.BINDING_IN_PROCRESS, gameObject);
@@ -152,7 +153,9 @@ public class OptionsMenuController : MonoBehaviour
     public void Save()
     {
         optionsViewModel.player1Controls.ReverseMovement = toggleReverseMovementPlayer1.isOn;
+        optionsViewModel.player1Controls.JoystickMovement = toggleJoystickMovementPlayer1.isOn;
         optionsViewModel.player2Controls.ReverseMovement = toggleReverseMovementPlayer2.isOn;
+        optionsViewModel.player2Controls.JoystickMovement = toggleJoystickMovementPlayer2.isOn;
         string json = JsonConvert.SerializeObject(optionsViewModel);
 
         if (!File.Exists(fileName))
@@ -185,6 +188,7 @@ public class OptionsMenuController : MonoBehaviour
     {
         Load();
         UpdatePlayersButtonsText();
+        UpdatePlayersToggles();
 
         if (MenuManager.OptionsMenuOpenedFromPauseMenu)
         {
@@ -208,6 +212,7 @@ public class OptionsMenuController : MonoBehaviour
             MoveLeft = KeyCode.A.ToString(),
             MoveRight = KeyCode.D.ToString(),
             ReverseMovement = false,
+            JoystickMovement = false,
             Sprint = KeyCode.LeftShift.ToString(),
             Jump = KeyCode.Space.ToString(),
             Fire = KeyCode.Mouse0.ToString(),
@@ -226,6 +231,7 @@ public class OptionsMenuController : MonoBehaviour
             MoveLeft = KeyCode.LeftArrow.ToString(),
             MoveRight = KeyCode.RightArrow.ToString(),
             ReverseMovement = false,
+            JoystickMovement = false,
             Sprint = KeyCode.RightControl.ToString(),
             Jump = KeyCode.Keypad0.ToString(),
             Fire = KeyCode.Keypad4.ToString(),
@@ -245,6 +251,12 @@ public class OptionsMenuController : MonoBehaviour
     {
         UpdateButtonsText(optionsViewModel.player1Controls, player1Buttons);
         UpdateButtonsText(optionsViewModel.player2Controls, player2Buttons);
+    }
+
+    private void UpdatePlayersToggles()
+    {
+        UpdateToggles(optionsViewModel.player1Controls, 1);
+        UpdateToggles(optionsViewModel.player2Controls, 2);
     }
 
     private void UpdatePlayerControlsViewModel(PlayerControlsViewModel playerControlsViewModel, string actionText, string rebindingKeySelected)
@@ -341,6 +353,20 @@ public class OptionsMenuController : MonoBehaviour
                     button.GetComponentInChildren<TextMeshProUGUI>().text = playerControlsViewModel.UnZoom;
                     break;
             }
+        }
+    }
+
+    private void UpdateToggles(PlayerControlsViewModel playerControlsViewModel, int playerNumber)
+    {
+        if (playerNumber == 1)
+        {
+            toggleJoystickMovementPlayer1.isOn = playerControlsViewModel.JoystickMovement;
+            toggleReverseMovementPlayer1.isOn = playerControlsViewModel.ReverseMovement;
+        }
+        else if (playerNumber == 2)
+        {
+            toggleJoystickMovementPlayer2.isOn = playerControlsViewModel.JoystickMovement;
+            toggleReverseMovementPlayer2.isOn = playerControlsViewModel.ReverseMovement;
         }
     }
 }

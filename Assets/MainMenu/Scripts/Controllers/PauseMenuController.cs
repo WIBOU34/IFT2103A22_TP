@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class PauseMenuController : MonoBehaviour
 {
@@ -57,7 +56,6 @@ public class PauseMenuController : MonoBehaviour
 
     public void Options()
     {
-        //MenuManager.OpenMenu(Menu.OPTIONS_MENU, gameObject);
         MenuManager.OptionsMenuOpenedFromPauseMenu = true;
         optionsMenu.SetActive(true);
         pauseMenu.SetActive(false);
@@ -70,7 +68,6 @@ public class PauseMenuController : MonoBehaviour
         MenuManager.IsInitialised = false;
         MenuManager.loadingScreen.SetActive(true);
         gameObject.SetActive(false);
-        gameLoader.LoadGame(1);
-        //SceneManager.LoadScene(1);       
+        gameLoader.LoadGame(1); 
     }
 }

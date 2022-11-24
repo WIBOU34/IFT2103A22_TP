@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
 
 public sealed class InputManager
 {
@@ -17,9 +16,6 @@ public sealed class InputManager
     public static bool UpdateBindNeeded = false;
     public static KeyCode rebindKey;
     public static bool currentlyRebindingKey = false;
-    //public static Button currentRebindButton;
-    //public static string currentRebindAction;
-    //public static int currentRebindPlayer;
 
     InputManager()
     {
@@ -49,6 +45,8 @@ public sealed class InputManager
             MoveBackward = KeyCode.S.ToString(),
             MoveLeft = KeyCode.A.ToString(),
             MoveRight = KeyCode.D.ToString(),
+            ReverseMovement = false,
+            JoystickMovement = false,
             Sprint = KeyCode.LeftShift.ToString(),
             Jump = KeyCode.Space.ToString(),
             Fire = KeyCode.Mouse0.ToString(),
@@ -66,6 +64,8 @@ public sealed class InputManager
             MoveBackward = KeyCode.DownArrow.ToString(),
             MoveLeft = KeyCode.LeftArrow.ToString(),
             MoveRight = KeyCode.RightArrow.ToString(),
+            ReverseMovement = false,
+            JoystickMovement = false,
             Sprint = KeyCode.RightControl.ToString(),
             Jump = KeyCode.Keypad0.ToString(),
             Fire = KeyCode.Keypad4.ToString(),
