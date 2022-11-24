@@ -14,6 +14,8 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField]
     private GameObject optionsMenu;
 
+    private GameObject bindingInProcess; 
+
     private GameObject player;
     
     public PlayerInput playerInput;
@@ -23,6 +25,10 @@ public class PauseMenuController : MonoBehaviour
         menu = GameObject.Find("Menu");
         pauseMenu = menu.transform.Find("Pause Menu").gameObject;
         optionsMenu = menu.transform.Find("Options Menu").gameObject;
+        bindingInProcess = menu.transform.Find("BindingInProcess").gameObject;
+        MenuManager.optionsMenu = optionsMenu;
+        MenuManager.bindingInProcess = bindingInProcess;
+        MenuManager.IsInitialised = true;
         player = GameObject.FindGameObjectsWithTag("Player").Where(x => x.GetComponent<StarterAssetsInputs>().pause).FirstOrDefault();
         if (player != null)
         {

@@ -22,60 +22,63 @@ public class PlayerInputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (InputManager.UpdateBindNeeded)
+        if (!starterAssetsInputs.pause)
         {
-            InputManager.InitPlayerPrefs();
-            playerKeyCodes = InputManager.GetPlayerKeyCodes(playableCharacter.playerNumber);
-            InputManager.UpdateBindNeeded = false;
-        }
+            if (InputManager.UpdateBindNeeded)
+            {
+                InputManager.InitPlayerPrefs();
+                playerKeyCodes = InputManager.GetPlayerKeyCodes(playableCharacter.playerNumber);
+                InputManager.UpdateBindNeeded = false;
+            }
 
-        if (Input.GetKeyDown(playerKeyCodes.Pause))
-        {
-            starterAssetsInputs.PauseInput(true);
-            pauseMenuController.Pause();
-        }
+            if (Input.GetKeyDown(playerKeyCodes.Pause))
+            {
+                starterAssetsInputs.PauseInput(true);
+                pauseMenuController.Pause();
+            }
 
-        ControlMovement();
+            ControlMovement();
 
-        if (Input.GetKeyDown(playerKeyCodes.Sprint))
-        {
-            starterAssetsInputs.SprintInput(true);
-        }
+            if (Input.GetKeyDown(playerKeyCodes.Sprint))
+            {
+                starterAssetsInputs.SprintInput(true);
+            }
 
-        if (Input.GetKeyUp(playerKeyCodes.Sprint))
-        {
-            starterAssetsInputs.SprintInput(false);
-        }
+            if (Input.GetKeyUp(playerKeyCodes.Sprint))
+            {
+                starterAssetsInputs.SprintInput(false);
+            }
 
-        if (Input.GetKeyDown(playerKeyCodes.Jump))
-        {
-            starterAssetsInputs.JumpInput(true);
-        }
+            if (Input.GetKeyDown(playerKeyCodes.Jump))
+            {
+                starterAssetsInputs.JumpInput(true);
+            }
 
-        if (Input.GetKeyUp(playerKeyCodes.Jump))
-        {
-            starterAssetsInputs.SprintInput(false);
-        }
+            if (Input.GetKeyUp(playerKeyCodes.Jump))
+            {
+                starterAssetsInputs.SprintInput(false);
+            }
 
-        if (Input.GetKeyDown(playerKeyCodes.Fire))
-        {
-            weaponManager.OnFireWeapon();
-        }
+            if (Input.GetKeyDown(playerKeyCodes.Fire))
+            {
+                weaponManager.OnFireWeapon();
+            }
 
-        if (Input.GetKeyDown(playerKeyCodes.Reload))
-        {
-            weaponManager.Reload();
-        }
+            if (Input.GetKeyDown(playerKeyCodes.Reload))
+            {
+                weaponManager.Reload();
+            }
 
-        if (Input.GetKeyDown(playerKeyCodes.PreviousWeapon))
-        {
-            weaponManager.EquipWeapon(0);
-        }
+            if (Input.GetKeyDown(playerKeyCodes.PreviousWeapon))
+            {
+                weaponManager.EquipWeapon(0);
+            }
 
-        if (Input.GetKeyDown(playerKeyCodes.NextWeapon))
-        {
-            weaponManager.EquipWeapon(1);
-        }
+            if (Input.GetKeyDown(playerKeyCodes.NextWeapon))
+            {
+                weaponManager.EquipWeapon(1);
+            }
+        }        
     }
 
     private void ControlMovement()

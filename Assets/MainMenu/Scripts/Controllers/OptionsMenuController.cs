@@ -12,17 +12,17 @@ using UnityEngine.UI;
 
 public class OptionsMenuController : MonoBehaviour
 {
-    [SerializeField]
-    private InputActionReference jumpAction = null;
+    //[SerializeField]
+    //private InputActionReference jumpAction = null;
 
-    [SerializeField]
-    private TextMeshProUGUI bindingActionText = null;
+    //[SerializeField]
+    //private TextMeshProUGUI bindingActionText = null;
 
-    [SerializeField]
-    private GameObject startRebindObject = null;
+    //[SerializeField]
+    //private GameObject startRebindObject = null;
 
-    [SerializeField]
-    private GameObject waitingForInputObject = null;
+    //[SerializeField]
+    //private GameObject waitingForInputObject = null;
 
     private List<Button> player1Buttons = new List<Button>();
     private List<Button> player2Buttons = new List<Button>();
@@ -44,7 +44,8 @@ public class OptionsMenuController : MonoBehaviour
         Load();
 
         GameObject player1Section = GameObject.Find("Player1 Section");
-        GameObject player1Grid = player1Section.transform.Find("Input Section").transform.Find("Grid").gameObject;
+        GameObject inputSection = player1Section.transform.Find("Input Section").gameObject;
+        GameObject player1Grid = inputSection.transform.Find("Grid").gameObject;
         int totalChilds = player1Grid.transform.childCount;
 
         int i;
@@ -181,9 +182,12 @@ public class OptionsMenuController : MonoBehaviour
 
     public void Back()
     {
+        Load();
+        UpdatePlayersButtonsText();
+
         if (MenuManager.OptionsMenuOpenedFromPauseMenu)
         {
-            GameObject menu = GameObject.Find("Canvas");
+            GameObject menu = GameObject.Find("Menu");
             GameObject pauseMenu = menu.transform.Find("Pause Menu").gameObject;
             pauseMenu.SetActive(true);
             gameObject.SetActive(false);

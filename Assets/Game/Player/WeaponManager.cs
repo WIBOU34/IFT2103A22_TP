@@ -23,7 +23,6 @@ public class WeaponManager : MonoBehaviour
     public void OnFireWeapon()
     {
         //weapon.cs ou placeable.cs
-        Debug.Log("Fire");
         equippedWeapon.SendMessage("OnFireWeapon", SendMessageOptions.RequireReceiver);
     }
 
