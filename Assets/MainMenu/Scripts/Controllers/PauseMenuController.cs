@@ -66,6 +66,11 @@ public class PauseMenuController : MonoBehaviour
     public void LeaveGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(0);       
+        GameLoader gameLoader = MenuManager.persistence.GetComponent<GameLoader>();
+        MenuManager.IsInitialised = false;
+        MenuManager.loadingScreen.SetActive(true);
+        gameObject.SetActive(false);
+        gameLoader.LoadGame(1);
+        //SceneManager.LoadScene(1);       
     }
 }

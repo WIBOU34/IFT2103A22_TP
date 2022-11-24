@@ -19,6 +19,7 @@ public class ZombieController
         NavMesh.pathfindingIterationsPerFrame = 10;
         zombieSpawners = GameObject.FindGameObjectsWithTag("ZombieSpawner").ToList();
         zombiePlayerTargets = GameObject.FindGameObjectsWithTag(TAG_PLAYER).ToList();
+        zombieDestructibleTargets.Clear();
         var tmpDestructibleList = GameObject.FindGameObjectsWithTag(TAG_DESTRUCTIBLE).ToList();
         foreach (GameObject destructible in tmpDestructibleList)
         {
