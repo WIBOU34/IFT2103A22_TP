@@ -44,8 +44,8 @@ public class OptionsMenuController : MonoBehaviour
         Load();
 
         GameObject player1Section = GameObject.Find("Player1 Section");
-        GameObject inputSection = player1Section.transform.Find("Input Section").gameObject;
-        GameObject player1Grid = inputSection.transform.Find("Grid").gameObject;
+        GameObject inputSection1 = player1Section.transform.Find("Input Section").gameObject;
+        GameObject player1Grid = inputSection1.transform.Find("Grid").gameObject;
         int totalChilds = player1Grid.transform.childCount;
 
         int i;
@@ -67,7 +67,8 @@ public class OptionsMenuController : MonoBehaviour
         }
 
         GameObject player2Section = GameObject.Find("Player2 Section");
-        GameObject player2Grid = player2Section.transform.Find("Input Section").transform.Find("Grid").gameObject;
+        GameObject inputSection2 = player2Section.transform.Find("Input Section").gameObject;
+        GameObject player2Grid = inputSection2.transform.Find("Grid").gameObject;
         totalChilds = player2Grid.transform.childCount;
 
         for (i = 0; i < totalChilds; i++)
