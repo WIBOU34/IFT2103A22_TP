@@ -4,7 +4,7 @@ public class MainMenuController : MonoBehaviour
 {
     public void Play()
     {        
-        MenuManager.OpenMenu(Menu.GAME_MODE_MENU, gameObject);
+        MenuManager.OpenMenu(Menu.DIFFICULTY_MENU, gameObject);
     }
 
     public void Options()

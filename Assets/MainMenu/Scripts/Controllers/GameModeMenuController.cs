@@ -16,7 +16,7 @@ public class GameModeMenuController : MonoBehaviour
 
     public void Back()
     {
-        MenuManager.OpenMenu(Menu.MAIN_MENU, gameObject);
+        MenuManager.OpenMenu(Menu.DIFFICULTY_MENU, gameObject);
     }
 
     private void ActivateLoadingScreenToLoadGame(int totalPlayers)

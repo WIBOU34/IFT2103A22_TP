@@ -11,6 +11,7 @@ public class GameLoader : MonoBehaviour
     public TextMeshProUGUI progessText;
     public int sceneIndex = 1;
     public int totalPlayers = 1;
+    public Difficulty difficulty = Difficulty.EASY;
 
     public void Start()
     {

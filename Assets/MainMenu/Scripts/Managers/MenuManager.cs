@@ -4,7 +4,7 @@ public static class MenuManager
 {
     public static bool IsInitialised { get; set; }
     public static bool OptionsMenuOpenedFromPauseMenu { get; set; }
-    public static GameObject homeScreen, loadingScreen, mainMenu, optionsMenu, gameModeMenu, persistence, bindingInProcess;
+    public static GameObject homeScreen, loadingScreen, mainMenu, optionsMenu, gameModeMenu, persistence, bindingInProcess, difficultyMenu;
 
     public static void Init()
     {
@@ -12,6 +12,7 @@ public static class MenuManager
         homeScreen = canvas.transform.Find("HomeScreen").gameObject;
         mainMenu = canvas.transform.Find("Main Menu").gameObject;
         optionsMenu = canvas.transform.Find("Options Menu").gameObject;
+        difficultyMenu = canvas.transform.Find("Difficulty Menu").gameObject;
         gameModeMenu = canvas.transform.Find("Game Mode Menu").gameObject;
         bindingInProcess = canvas.transform.Find("BindingInProcess").gameObject;
 
@@ -38,6 +39,9 @@ public static class MenuManager
                 break;
             case Menu.BINDING_IN_PROCRESS:
                 bindingInProcess.SetActive(true);
+                break;
+            case Menu.DIFFICULTY_MENU:
+                difficultyMenu.SetActive(true);
                 break;
         }
 
