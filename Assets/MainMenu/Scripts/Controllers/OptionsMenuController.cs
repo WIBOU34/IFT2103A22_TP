@@ -102,15 +102,17 @@ public class OptionsMenuController : MonoBehaviour
         foreach (Button button in player2Buttons)
         {
             button.onClick.AddListener(() => StartRebinding(button));
-        }        
+        }
 
         UpdatePlayersButtonsText();
+        UpdatePlayerKeysLists();
     }
 
     private void Update()
     {
         if (InputManager.currentlyRebindingKey)
         {
+
             if (currentRebindPlayer == 1)
             {
                 UpdatePlayerControlsViewModel(optionsViewModel.player1Controls, currentRebindAction, InputManager.rebindKey.ToString());
@@ -127,7 +129,7 @@ public class OptionsMenuController : MonoBehaviour
     }
 
     public void StartRebinding(Button button)
-    {   
+    {
         string resultPlayer1;
         buttonActionsPairsPlayer1.TryGetValue(button, out resultPlayer1);
 
@@ -235,7 +237,7 @@ public class OptionsMenuController : MonoBehaviour
             Sprint = KeyCode.RightControl.ToString(),
             Jump = KeyCode.Keypad0.ToString(),
             Fire = KeyCode.Keypad4.ToString(),
-            Reload= KeyCode.Keypad8.ToString(),
+            Reload = KeyCode.Keypad8.ToString(),
             NextWeapon = KeyCode.Keypad5.ToString(),
             PreviousWeapon = KeyCode.Keypad6.ToString(),
             Pause = KeyCode.Keypad7.ToString(),
@@ -368,5 +370,33 @@ public class OptionsMenuController : MonoBehaviour
             toggleJoystickMovementPlayer2.isOn = playerControlsViewModel.JoystickMovement;
             toggleReverseMovementPlayer2.isOn = playerControlsViewModel.ReverseMovement;
         }
+    }
+
+    private void UpdatePlayerKeysLists()
+    {
+        PlayerKeyCodes player1KeyCodes = new PlayerKeyCodes();
+        PlayerKeyCodes player2KeyCodes = new PlayerKeyCodes();
+        InputManager.PlayerPrefs(player1KeyCodes, optionsViewModel.player1Controls);
+        InputManager.PlayerPrefs(player2KeyCodes, optionsViewModel.player2Controls);
+        InputManager.player1Keys.Clear();
+        InputManager.player2Keys.Clear();
+        AddKeysToList(player1KeyCodes, InputManager.player1Keys);
+        AddKeysToList(player2KeyCodes, InputManager.player2Keys);
+    }
+
+    private void AddKeysToList(PlayerKeyCodes playerKeyCodes, List<KeyCode> list)
+    {
+        list.Add(playerKeyCodes.Foward);
+        list.Add(playerKeyCodes.Backward);
+        list.Add(playerKeyCodes.Left);
+        list.Add(playerKeyCodes.Right);
+        list.Add(playerKeyCodes.Sprint);
+        list.Add(playerKeyCodes.Jump);
+        list.Add(playerKeyCodes.Fire);
+        list.Add(playerKeyCodes.Reload);
+        list.Add(playerKeyCodes.NextWeapon);
+        list.Add(playerKeyCodes.PreviousWeapon);
+        list.Add(playerKeyCodes.Zoom);
+        list.Add(playerKeyCodes.UnZoom);
     }
 }

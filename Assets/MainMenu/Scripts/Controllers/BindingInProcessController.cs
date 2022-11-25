@@ -5,10 +5,15 @@ using UnityEngine;
 public class BindingInProcessController : MonoBehaviour
 {
     InputManager inputManager;
+    GameObject pressAnyKeyText;
+    GameObject alreadyBoundText;
 
     void Start()
     {
         inputManager = InputManager.Instance;
+        pressAnyKeyText = gameObject.transform.Find("PressAnyKeyText").gameObject;
+        alreadyBoundText = gameObject.transform.Find("AlreadyBoundText").gameObject;
+        SetText();
     }
 
     void Update()
@@ -20,12 +25,46 @@ public class BindingInProcessController : MonoBehaviour
             {
                 if (Input.GetKeyDown(key))
                 {
-                    InputManager.currentlyRebindingKey = true;
-                    InputManager.rebindKey = key;
+                    if (AnotherKeyAlreadyBound(key))
+                    {
+                        InputManager.anotherKeyAlreadyBound = true;
+                        SetText();
+                    }
+                    else
+                    {
+                        InputManager.anotherKeyAlreadyBound = false;
+                        InputManager.currentlyRebindingKey = true;
+                        InputManager.rebindKey = key;
+                        MenuManager.OpenMenu(Menu.OPTIONS_MENU, gameObject);
+                    }
                 }
             }
-
-            MenuManager.OpenMenu(Menu.OPTIONS_MENU, gameObject);
         }       
+    }
+
+    private void SetText()
+    {
+        if (InputManager.anotherKeyAlreadyBound)
+        {
+            pressAnyKeyText.SetActive(false);
+            alreadyBoundText.SetActive(true);
+        }
+        else
+        {
+            pressAnyKeyText.SetActive(true);
+            alreadyBoundText.SetActive(false);
+        }
+    }
+
+    private bool AnotherKeyAlreadyBound(KeyCode key)
+    {
+        bool alreadyBound = false;
+
+        if (InputManager.player1Keys.Contains(key) || InputManager.player2Keys.Contains(key))
+        {
+            alreadyBound = true;
+        }
+
+        return alreadyBound;
     }
 }
