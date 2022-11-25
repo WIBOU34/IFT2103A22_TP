@@ -11,6 +11,7 @@ public class PlayableCharacter : MonoBehaviour
     public int totalNumberOfPlayers;
     public List<GameObject> weapons;
     public Transform cinemachineUpOverrideObjectTransform;
+    public GameObject camera;
 
     // Start is called before the first frame update
     void Start()
@@ -45,7 +46,7 @@ public class PlayableCharacter : MonoBehaviour
     {
         GameObject virtualPlayerCam = this.transform.parent.Find("PlayerFollowCamera").gameObject;
         GameObject playerCameraRoot = this.transform.Find("PlayerCameraRoot").gameObject;
-        GameObject camera = this.transform.parent.Find("MainCamera").gameObject;
+        camera = this.transform.parent.Find("MainCamera").gameObject;
         camera.GetComponent<CinemachineBrain>().m_WorldUpOverride = cinemachineUpOverrideObjectTransform;
         CinemachineVirtualCamera cmvc = virtualPlayerCam.GetComponent<CinemachineVirtualCamera>();
         cmvc.Follow = playerCameraRoot.transform;
@@ -62,7 +63,7 @@ public class PlayableCharacter : MonoBehaviour
     {
         GameObject virtualPlayerCam = this.transform.parent.Find("PlayerFollowCamera").gameObject;
         GameObject playerCameraRoot = this.transform.Find("PlayerCameraRoot").gameObject;
-        GameObject camera = this.transform.parent.Find("MainCamera").gameObject;
+        camera = this.transform.parent.Find("MainCamera").gameObject;
         camera.GetComponent<CinemachineBrain>().m_WorldUpOverride = null;
         CinemachineVirtualCamera cmvc = virtualPlayerCam.GetComponent<CinemachineVirtualCamera>();
         cmvc.Follow = playerCameraRoot.transform;
@@ -92,5 +93,24 @@ public class PlayableCharacter : MonoBehaviour
         //this.gameObject.GetComponent<StarterAssetsInputs>().cursorLocked = false;
         this.gameObject.GetComponent<StarterAssetsInputs>().topDownViewCamera = false;
         this.gameObject.GetComponent<StarterAssetsInputs>().LookInput(Vector2.zero);
+    }
+
+    public void ZoomMainCamera()
+    {
+        CinemachineTransposer cinemachineTransposer = camera.transform.parent.Find("PlayerFollowCamera").GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineTransposer>();
+
+        if (cinemachineTransposer.m_FollowOffset.y > 10)
+        {
+            cinemachineTransposer.m_FollowOffset = new Vector3(camera.transform.position.x, camera.transform.position.y - 5, camera.transform.position.z);
+        }
+    }
+
+    public void UnZoomMainCamera()
+    {
+        CinemachineTransposer cinemachineTransposer = camera.transform.parent.Find("PlayerFollowCamera").GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineTransposer>();
+        if (cinemachineTransposer.m_FollowOffset.y < 50)
+        {
+            cinemachineTransposer.m_FollowOffset = new Vector3(camera.transform.position.x, camera.transform.position.y + 5, camera.transform.position.z);
+        }
     }
 }

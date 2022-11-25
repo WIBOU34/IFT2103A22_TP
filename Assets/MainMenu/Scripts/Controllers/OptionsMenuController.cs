@@ -220,7 +220,7 @@ public class OptionsMenuController : MonoBehaviour
             NextWeapon = KeyCode.Alpha1.ToString(),
             PreviousWeapon = KeyCode.Alpha2.ToString(),
             Pause = KeyCode.P.ToString(),
-            Zoom = KeyCode.Plus.ToString(),
+            Zoom = KeyCode.Equals.ToString(),
             UnZoom = KeyCode.Minus.ToString()
         };
 

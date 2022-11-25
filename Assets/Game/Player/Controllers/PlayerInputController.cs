@@ -78,6 +78,16 @@ public class PlayerInputController : MonoBehaviour
             {
                 weaponManager.EquipWeapon(1);
             }
+
+            if (Input.GetKeyDown(playerKeyCodes.Zoom))
+            {
+                playableCharacter.ZoomMainCamera();
+            }
+
+            if (Input.GetKeyDown(playerKeyCodes.UnZoom))
+            {
+                playableCharacter.UnZoomMainCamera();
+            }
         }        
     }
 
