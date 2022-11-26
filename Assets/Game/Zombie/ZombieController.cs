@@ -13,13 +13,18 @@ public class ZombieController
     public static List<GameObject> zombiePlayerTargets = new List<GameObject>();
     public static List<GameObject> zombieDestructibleTargets = new List<GameObject>();
     private static bool carvingEnabled = false;
+    private static bool isLeavingGame = false;
 
     public void Start()
     {
+        zombieSpawners.Clear();
+        zombiePlayerTargets.Clear();
+        zombieDestructibleTargets.Clear();
+        isLeavingGame = false;
+        PathingAI.Init();
         NavMesh.pathfindingIterationsPerFrame = 10;
         zombieSpawners = GameObject.FindGameObjectsWithTag("ZombieSpawner").ToList();
         zombiePlayerTargets = GameObject.FindGameObjectsWithTag(TAG_PLAYER).ToList();
-        zombieDestructibleTargets.Clear();
         var tmpDestructibleList = GameObject.FindGameObjectsWithTag(TAG_DESTRUCTIBLE).ToList();
         foreach (GameObject destructible in tmpDestructibleList)
         {
@@ -162,8 +167,16 @@ public class ZombieController
         GameOver(false);
     }
 
+    public static void LeavingGame()
+    {
+        isLeavingGame = true;
+    }
+
     private static void GameOver(bool win)
     {
+        if (isLeavingGame)
+            return;
+        LeavingGame();
         MenuManager.gameOverScreen.GetComponent<GameOverController>().Init(win);
     }
 }

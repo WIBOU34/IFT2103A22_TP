@@ -7,7 +7,6 @@ public class GameOverController : MonoBehaviour
     private const string SURVIVED = "Congratulations\nYou Survived";
     private const string PERISHED = "Game Over\nYou Died";
     private const string NBR_SECONDS_UNTIL_MENU = "\n\nReturning to menu in 5 seconds";
-    private bool isAlreadyLEavingGame = false;
 
     public void Start()
     {
@@ -15,9 +14,7 @@ public class GameOverController : MonoBehaviour
 
     public void Init(bool win)
     {
-        if (isAlreadyLEavingGame)
-            return;
-        isAlreadyLEavingGame = true;
+        ZombieController.LeavingGame();
         GameObject textField = gameObject.transform.Find("Title").gameObject;
         if (win)
         {

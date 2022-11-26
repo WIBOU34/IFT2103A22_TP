@@ -6,9 +6,10 @@ using UnityEngine.AI;
 public class PathingAI : MonoBehaviour
 {
     public static bool isInUse = false;
+    private static GameObject oneUsing = new GameObject();
+
     public GameObject currentTarget = null;
     public Vector3 currentTargetPos = Vector3.zero;
-    private static int oneUsing = 0;
     private uint nbrTimes = 120;
     private const uint nbrTimesMax = 120;
     private bool isDead = false;
@@ -22,6 +23,12 @@ public class PathingAI : MonoBehaviour
         | (1 << 5);
 
     private NavMeshAgent agent;
+
+    public static void Init()
+    {
+        oneUsing = new GameObject();
+        isInUse = false;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -65,11 +72,11 @@ public class PathingAI : MonoBehaviour
 
     private bool GetTarget()
     {
-        if (isInUse && !oneUsing.Equals(this.gameObject.GetHashCode()))
+        if (isInUse && !oneUsing.Equals(this.gameObject))
             return false;
 
         isInUse = true;
-        oneUsing = this.gameObject.GetHashCode();
+        oneUsing = this.gameObject;
         GetTargetResult result = GetTargetResult.NOT_FOUND;
         if (difficulty == Difficulty.EASY)
         {
@@ -79,6 +86,7 @@ public class PathingAI : MonoBehaviour
         {
             result = GetTargetDifficultyMedium();
         }
+
         //else if (difficulty == Difficulty.Hard)
         //{
         //    // principle of hordes maybe?
@@ -331,10 +339,17 @@ public class PathingAI : MonoBehaviour
     {
         TargetLost();
         isDead = true;
-        if (isInUse && oneUsing == this.GetHashCode())
+        if (isInUse && oneUsing == this.gameObject)
         {
             isInUse = false;
-            oneUsing = 0;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (isInUse && oneUsing == this.gameObject)
+        {
+            isInUse = false;
         }
     }
 

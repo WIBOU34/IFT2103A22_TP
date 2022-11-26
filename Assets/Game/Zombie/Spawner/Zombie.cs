@@ -22,7 +22,7 @@ public class Zombie : MonoBehaviour
         agent.height = 1.8f;
         agent.angularSpeed = 360;
         agent.agentTypeID = 0;
-        if (Random.Range(0, 10) % 4 == 0)
+        if (Random.Range(0, 10) % 6 == 0)
         {
             CanRun(true);
         }
@@ -112,6 +112,7 @@ public class Zombie : MonoBehaviour
 
     private void OnDestroy()
     {
-        this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieDestroyed(this.gameObject);
+        if (isDead)
+            this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieDestroyed(this.gameObject);
     }
 }

@@ -64,6 +64,7 @@ public class PauseMenuController : MonoBehaviour
     public void LeaveGame()
     {
         Time.timeScale = 1f;
+        ZombieController.LeavingGame();
         GameLoader gameLoader = MenuManager.persistence.GetComponent<GameLoader>();
         MenuManager.IsInitialised = false;
         MenuManager.loadingScreen.SetActive(true);
