@@ -20,8 +20,8 @@ public class GameModeMenuController : MonoBehaviour
     }
 
     private void ActivateLoadingScreenToLoadGame(int totalPlayers)
-    {        
-        GameLoader gameLoader = MenuManager.persistence.GetComponent<GameLoader>(); 
+    {
+        GameLoader gameLoader = MenuManager.persistence.GetComponent<GameLoader>();
         gameLoader.totalPlayers = totalPlayers;
         MenuManager.loadingScreen.SetActive(true);
         gameObject.SetActive(false);

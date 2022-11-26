@@ -3,7 +3,7 @@ using UnityEngine;
 public class MainMenuController : MonoBehaviour
 {
     public void Play()
-    {        
+    {
         MenuManager.OpenMenu(Menu.DIFFICULTY_MENU, gameObject);
     }
 

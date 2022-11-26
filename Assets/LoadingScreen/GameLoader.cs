@@ -32,11 +32,11 @@ public class GameLoader : MonoBehaviour
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
 
         loadingScreen.SetActive(true);
-        
+
         while (!operation.isDone)
         {
             float progess = Mathf.Clamp01(operation.progress / 0.9f);
-            
+
             loadingBar.value = progess;
             progessText.text = progess * 100f + "%";
 

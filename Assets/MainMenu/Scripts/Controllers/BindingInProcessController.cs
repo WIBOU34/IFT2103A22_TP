@@ -39,7 +39,7 @@ public class BindingInProcessController : MonoBehaviour
                     }
                 }
             }
-        }       
+        }
     }
 
     private void SetText()
