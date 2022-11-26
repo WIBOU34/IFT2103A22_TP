@@ -9,10 +9,10 @@ public class PathingAI : MonoBehaviour
     public GameObject currentTarget = null;
     public Vector3 currentTargetPos = Vector3.zero;
     private static int oneUsing = 0;
-    private uint nbrTimes = 0;
+    private uint nbrTimes = 120;
     private const uint nbrTimesMax = 120;
     private bool isDead = false;
-    public int difficulty = 1;
+    public Difficulty difficulty = Difficulty.INTERMEDIATE;
     private bool secondPass = false;
 
     private const int layerMaskForCarvingDisabled = (1 << 0)
@@ -71,18 +71,19 @@ public class PathingAI : MonoBehaviour
         isInUse = true;
         oneUsing = this.gameObject.GetHashCode();
         GetTargetResult result = GetTargetResult.NOT_FOUND;
-        if (difficulty == 0)
+        if (difficulty == Difficulty.EASY)
         {
             result = GetTargetDifficultyEasy();
         }
-        else if (difficulty == 1)
+        else if (difficulty == Difficulty.INTERMEDIATE)
         {
             result = GetTargetDifficultyMedium();
         }
-        else if (difficulty == 2)
-        {
-            // principle of hordes maybe?
-        }
+        //else if (difficulty == Difficulty.Hard)
+        //{
+        //    // principle of hordes maybe?
+        //    // keeping track of what horde is taking what path to not take the same one
+        //}
 
         bool returnValue;
         switch (result)
@@ -330,6 +331,11 @@ public class PathingAI : MonoBehaviour
     {
         TargetLost();
         isDead = true;
+        if (isInUse && oneUsing == this.GetHashCode())
+        {
+            isInUse = false;
+            oneUsing = 0;
+        }
     }
 
     private enum GetTargetResult

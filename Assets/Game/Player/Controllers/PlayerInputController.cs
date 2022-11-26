@@ -10,6 +10,7 @@ public class PlayerInputController : MonoBehaviour
 
     private InputManager inputManager;
     private WeaponManager weaponManager;
+    private bool isDead = false;
     Vector2 orientation = Vector2.zero;
 
     // Start is called before the first frame update
@@ -37,46 +38,52 @@ public class PlayerInputController : MonoBehaviour
                 pauseMenuController.Pause();
             }
 
-            ControlMovement();
-
-            if (Input.GetKeyDown(playerKeyCodes.Sprint))
+            if (!isDead)
             {
-                starterAssetsInputs.SprintInput(true);
-            }
+                ControlMovement();
 
-            if (Input.GetKeyUp(playerKeyCodes.Sprint))
-            {
-                starterAssetsInputs.SprintInput(false);
-            }
+                if (Input.GetKeyDown(playerKeyCodes.Sprint))
+                {
+                    if (!starterAssetsInputs.jump)
+                    {
+                        starterAssetsInputs.SprintInput(true);
+                    }
+                }
 
-            if (Input.GetKeyDown(playerKeyCodes.Jump))
-            {
-                starterAssetsInputs.JumpInput(true);
-            }
+                if (Input.GetKeyUp(playerKeyCodes.Sprint))
+                {
+                    starterAssetsInputs.SprintInput(false);
+                }
 
-            if (Input.GetKeyUp(playerKeyCodes.Jump))
-            {
-                starterAssetsInputs.SprintInput(false);
-            }
+                if (Input.GetKeyDown(playerKeyCodes.Jump))
+                {
+                    starterAssetsInputs.JumpInput(true);
+                }
 
-            if (Input.GetKeyDown(playerKeyCodes.Fire))
-            {
-                weaponManager.OnFireWeapon();
-            }
+                if (Input.GetKeyUp(playerKeyCodes.Jump))
+                {
+                    starterAssetsInputs.JumpInput(false);
+                }
 
-            if (Input.GetKeyDown(playerKeyCodes.Reload))
-            {
-                weaponManager.Reload();
-            }
+                if (Input.GetKeyDown(playerKeyCodes.Fire))
+                {
+                    weaponManager.OnFireWeapon();
+                }
 
-            if (Input.GetKeyDown(playerKeyCodes.PreviousWeapon))
-            {
-                weaponManager.EquipWeapon(0);
-            }
+                if (Input.GetKeyDown(playerKeyCodes.Reload))
+                {
+                    weaponManager.Reload();
+                }
 
-            if (Input.GetKeyDown(playerKeyCodes.NextWeapon))
-            {
-                weaponManager.EquipWeapon(1);
+                if (Input.GetKeyDown(playerKeyCodes.PreviousWeapon))
+                {
+                    weaponManager.EquipWeapon(0);
+                }
+
+                if (Input.GetKeyDown(playerKeyCodes.NextWeapon))
+                {
+                    weaponManager.EquipWeapon(1);
+                }
             }
 
             if (Input.GetKeyDown(playerKeyCodes.Zoom))
@@ -88,7 +95,7 @@ public class PlayerInputController : MonoBehaviour
             {
                 playableCharacter.UnZoomMainCamera();
             }
-        }        
+        }
     }
 
     private void ControlMovement()
@@ -151,7 +158,7 @@ public class PlayerInputController : MonoBehaviour
                 {
                     orientation.y = 0;
                 }
-            }           
+            }
         }
         else
         {
@@ -197,9 +204,17 @@ public class PlayerInputController : MonoBehaviour
                 {
                     orientation.y = 0;
                 }
-            }            
+            }
         }
 
         starterAssetsInputs.MoveInput(orientation);
+    }
+
+    void OnKilled()
+    {
+        isDead = true;
+        starterAssetsInputs.move = Vector2.zero;
+        starterAssetsInputs.JumpInput(false);
+        starterAssetsInputs.SprintInput(false);
     }
 }

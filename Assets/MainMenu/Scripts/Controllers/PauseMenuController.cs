@@ -13,10 +13,10 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField]
     private GameObject optionsMenu;
 
-    private GameObject bindingInProcess; 
+    private GameObject bindingInProcess;
 
     private GameObject player;
-    
+
     public PlayerInput playerInput;
 
     public void Start()
@@ -32,14 +32,14 @@ public class PauseMenuController : MonoBehaviour
         if (player != null)
         {
             playerInput = player.GetComponent<PlayerInput>();
-        }        
+        }
     }
 
     public void Pause()
     {
         pauseMenu.SetActive(true);
         Time.timeScale = 0f;
-        playerInput.SwitchCurrentActionMap("Menu");       
+        playerInput.SwitchCurrentActionMap("Menu");
     }
 
     public void Resume()
@@ -68,6 +68,6 @@ public class PauseMenuController : MonoBehaviour
         MenuManager.IsInitialised = false;
         MenuManager.loadingScreen.SetActive(true);
         gameObject.SetActive(false);
-        gameLoader.LoadGame(1); 
+        gameLoader.LoadGame(1);
     }
 }

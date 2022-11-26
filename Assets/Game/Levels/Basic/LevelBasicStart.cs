@@ -1,8 +1,6 @@
-using Cinemachine;
 using StarterAssets;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -33,7 +31,6 @@ public class LevelBasicStart : MonoBehaviour
         zombieController = new ZombieController();
         zombieController.Start();
         ZombieController.typeToSpawn = zombieTypeToSpawn;
-        this.gameObject.AddComponent<MapCreator>();
         ZombieController.CreateZombieSpawner(new Vector3(-10, 0, 5));
         inputManager = InputManager.Instance;
     }
@@ -69,13 +66,12 @@ public class LevelBasicStart : MonoBehaviour
 
             PlayableCharacter playableCharacter = player.AddComponent<PlayableCharacter>();
             playableCharacter.cinemachineUpOverrideObjectTransform = cinemachineUpOverrideObject.transform;
-            playableCharacter.SetupCameraTopDown();
             playableCharacter.weapons = weapons;
             playableCharacter.playerNumber = playerNumber + 1;
             playableCharacter.totalNumberOfPlayers = nbrPlayers;
             StarterAssetsInputs starterAssetsInputs = player.GetComponent<StarterAssetsInputs>();
             PauseMenuController pauseMenuController = player.AddComponent<PauseMenuController>();
-            pauseMenuController.playerInput = player.GetComponent<PlayerInput>();             
+            pauseMenuController.playerInput = player.GetComponent<PlayerInput>();
             player.AddComponent<HealthBarManager>().playerNumber = playerNumber + 1;
             PlayerInputController playerInputController = player.AddComponent<PlayerInputController>();
             playerInputController.playableCharacter = playableCharacter;

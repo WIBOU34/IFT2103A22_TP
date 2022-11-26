@@ -105,12 +105,13 @@ public class Zombie : MonoBehaviour
         this.GetComponent<Animator>().SetBool("Killed", true);
         isDead = true;
         this.GetComponent<CapsuleCollider>().enabled = false;
-        GameObject.Destroy(this.gameObject, 10);
+        GameObject.Destroy(this.gameObject, 5);
         // permet de libérer l'espace dans la liste et donc de permettre un nouveau de spawner
-        this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieDestroyed(this.gameObject);
+        this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieKilled(this.gameObject);
     }
 
     private void OnDestroy()
     {
+        this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieDestroyed(this.gameObject);
     }
 }

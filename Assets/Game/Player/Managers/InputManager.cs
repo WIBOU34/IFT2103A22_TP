@@ -6,7 +6,7 @@ using UnityEngine;
 public sealed class InputManager
 {
     private static InputManager instance = null;
-    private static readonly object padlock = new object();    
+    private static readonly object padlock = new object();
     private static readonly string fileName = @".\playersSettings.json";
 
     public static OptionsViewModel OptionsViewModel = new OptionsViewModel();

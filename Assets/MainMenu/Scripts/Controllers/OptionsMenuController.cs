@@ -1,13 +1,8 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
-using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class OptionsMenuController : MonoBehaviour

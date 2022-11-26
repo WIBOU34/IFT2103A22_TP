@@ -10,6 +10,7 @@ public class ZombieSpawner : MonoBehaviour
     public uint maxZombiesTotal = 15;
     public GameObject typeToSpawn;
     public String spawnerNumber;
+    public Difficulty difficulty;
     // Start is called before the first frame update
     void Start()
     {
@@ -37,7 +38,7 @@ public class ZombieSpawner : MonoBehaviour
         tmp.transform.position = CalculatePositionToSpawn();
         tmp.GetComponent<Animator>();
         tmp.AddComponent<Damageable>();
-        tmp.AddComponent<PathingAI>();
+        tmp.AddComponent<PathingAI>().difficulty = difficulty;
         tmp.AddComponent<Zombie>();
         tmp.AddComponent<LocomotionSimpleAgent>();
         tmp.transform.SetParent(this.transform);
@@ -53,9 +54,16 @@ public class ZombieSpawner : MonoBehaviour
         }
     }
 
-    public void ZombieDestroyed(GameObject zombie)
+    public void ZombieKilled(GameObject zombie)
     {
         zombies.Remove(zombie);
+    }
+    public void ZombieDestroyed(GameObject zombie)
+    {
+        if (zombies.Count == 0)
+        {
+            GameObject.Destroy(this.gameObject);
+        }
     }
 
     private Vector3 CalculatePositionToSpawn()
@@ -73,5 +81,10 @@ public class ZombieSpawner : MonoBehaviour
             }
         }
         return true;
+    }
+
+    private void OnDestroy()
+    {
+        ZombieController.ZombieSpawnerDepleted(this.gameObject);
     }
 }

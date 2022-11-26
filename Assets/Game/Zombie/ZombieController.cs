@@ -36,8 +36,19 @@ public class ZombieController
         newSpawner.AddComponent<ZombieSpawner>().spawnerNumber = (zombieSpawners.Count()).ToString();
         newSpawner.GetComponent<ZombieSpawner>().name = "ZombieSpawner_" + (zombieSpawners.Count());
         newSpawner.GetComponent<ZombieSpawner>().typeToSpawn = typeToSpawn;
+        newSpawner.GetComponent<ZombieSpawner>().difficulty = MenuManager.persistence.GetComponent<GameLoader>().difficulty;
         zombieSpawners.Add(newSpawner);
         newSpawner.GetComponent<ZombieSpawner>().CreateZombie();
+    }
+
+    public static void ZombieSpawnerDepleted(GameObject spawner)
+    {
+        zombieSpawners.Remove(spawner);
+
+        if (zombieSpawners.Count == 0)
+        {
+            OnAllZombiesKilled();
+        }
     }
 
     public static bool isCarvingEnabled()
@@ -77,6 +88,21 @@ public class ZombieController
     public static void DestructibleDestroyed(GameObject destructible)
     {
         zombieDestructibleTargets.Remove(destructible);
+    }
+
+    public static void PlayerKilled(GameObject player)
+    {
+        zombiePlayerTargets.Remove(player);
+
+        if (zombiePlayerTargets.Count == 0)
+        {
+            OnAllPlayersKilled();
+        }
+    }
+
+    public static void PlayerRevived(GameObject player)
+    {
+        zombiePlayerTargets.Add(player);
     }
 
     public static bool IsDestructiblePositionAvailable(Vector3 position)
@@ -124,5 +150,20 @@ public class ZombieController
         float num = a.x - b.x;
         float num3 = a.z - b.z;
         return (float)(num * num + num3 * num3);
+    }
+
+    private static void OnAllZombiesKilled()
+    {
+        GameOver(true);
+    }
+
+    private static void OnAllPlayersKilled()
+    {
+        GameOver(false);
+    }
+
+    private static void GameOver(bool win)
+    {
+        MenuManager.gameOverScreen.GetComponent<GameOverController>().Init(win);
     }
 }

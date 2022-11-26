@@ -16,6 +16,8 @@ public class GameLoader : MonoBehaviour
     public void Start()
     {
         gameObject.SetActive(true);
+        MenuManager.gameOverScreen = GameObject.Find("GameOverScreen").gameObject;
+        MenuManager.gameOverScreen.SetActive(false);
         DontDestroyOnLoad(gameObject);
         LoadGame(sceneIndex);
     }

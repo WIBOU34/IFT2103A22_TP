@@ -4,8 +4,8 @@ public class HomeScreen : MonoBehaviour
 {
     private void Start()
     {
-        MenuManager.loadingScreen = GameObject.Find("LoadingScreen");
-        MenuManager.persistence = GameObject.Find("Persistence");
+        MenuManager.loadingScreen = GameObject.Find("LoadingScreen").gameObject;
+        MenuManager.persistence = GameObject.Find("Persistence").gameObject;
     }
 
     void Update()
