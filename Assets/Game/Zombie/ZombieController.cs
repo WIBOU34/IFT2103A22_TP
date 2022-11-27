@@ -87,6 +87,7 @@ public class ZombieController
 
     public static void DestructibleAdded(GameObject destructible)
     {
+        destructible.GetComponent<NavMeshObstacle>().carving = isCarvingEnabled();
         zombieDestructibleTargets.Add(destructible);
     }
 

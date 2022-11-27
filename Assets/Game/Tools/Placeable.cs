@@ -28,6 +28,11 @@ public class Placeable : MonoBehaviour
         createdDestructible.layer = 0;
         createdDestructible.transform.position = position;
         createdDestructible.AddComponent<BoxCollider>();
+        //augmente le collider pour fitter avec l'espace pris sur le NavMesh
+        Vector3 size = createdDestructible.GetComponent<BoxCollider>().size;
+        size.x = size.x + 0.5f;
+        size.z = size.z + 0.5f;
+        createdDestructible.GetComponent<BoxCollider>().size = size;
         createdDestructible.AddComponent<Destructible>();
         createdDestructible.transform.SetParent(containerForDestructibles.transform);
     }
