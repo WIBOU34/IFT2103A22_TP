@@ -6,9 +6,10 @@ public class Destructible : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.gameObject.AddComponent<NavMeshObstacle>().carving = true;
-        this.gameObject.GetComponent<NavMeshObstacle>().shape = NavMeshObstacleShape.Box;
-        this.gameObject.GetComponent<NavMeshObstacle>().carvingTimeToStationary = 0;
+        //this.gameObject.AddComponent<NavMeshObstacle>().carving = true;
+        //this.gameObject.GetComponent<NavMeshObstacle>().shape = NavMeshObstacleShape.Box;
+        //this.gameObject.GetComponent<NavMeshObstacle>().carvingTimeToStationary = 0;
+        //this.gameObject.GetComponent<NavMeshModifier>().ignoreFromBuild = false;
         this.tag = "Destructible";
         this.gameObject.AddComponent<Damageable>();
         ZombieController.DestructibleAdded(this.gameObject);

@@ -5,13 +5,18 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class PathingAI : MonoBehaviour
 {
+    private static readonly object padlock = new object();
     public static bool isInUse = false;
     private static GameObject oneUsing = new GameObject();
+    private static int agentTypeIdAvoidDestructibles = 0;
+    private static int agentTypeIdIgnoreDestructibles = 0;
+    private static uint nbrThreadsInMethod = 0;
+    private const uint MAX_THREADS_IN_METHOD = 5;
 
     public GameObject currentTarget = null;
     public Vector3 currentTargetPos = Vector3.zero;
     private uint nbrTimes = 120;
-    private const uint nbrTimesMax = 120;
+    private const uint NBR_TIMES_MAX = 120;
     private bool isDead = false;
     public Difficulty difficulty = Difficulty.INTERMEDIATE;
     private bool secondPass = false;
@@ -28,6 +33,8 @@ public class PathingAI : MonoBehaviour
     {
         oneUsing = new GameObject();
         isInUse = false;
+        agentTypeIdAvoidDestructibles = ZombieController.GetAgenTypeIDByName(ZombieController.AGENT_TYPE_NAME_AVOID_DESTRUCTIBLE);
+        agentTypeIdIgnoreDestructibles = ZombieController.GetAgenTypeIDByName(ZombieController.AGENT_TYPE_NAME_IGNORE_DESTRUCTIBLE);
     }
 
     // Start is called before the first frame update
@@ -42,12 +49,12 @@ public class PathingAI : MonoBehaviour
         if (isDead)
             return;
 
-        if (nbrTimes++ > nbrTimesMax)
+        if (nbrTimes++ > NBR_TIMES_MAX)
         {
             if (GetTarget())
                 nbrTimes = 0;
             else
-                nbrTimes = nbrTimesMax - 1;
+                nbrTimes = NBR_TIMES_MAX - 1;
         }
 
         if (currentTarget != null) // update pathing destination if target exists
@@ -72,12 +79,17 @@ public class PathingAI : MonoBehaviour
 
     private bool GetTarget()
     {
-        if (isInUse && !oneUsing.Equals(this.gameObject))
+        // max nbr path search per frame in worst case
+        // Easy = MAX_THREADS_IN_METHOD^nbrPlayerAlive
+        // Intermediate = MAX_THREADS_IN_METHOD^(nbrPlayerAlive * 2)
+        if (nbrThreadsInMethod > MAX_THREADS_IN_METHOD)
             return false;
+        lock (padlock)
+        {
+            nbrThreadsInMethod++;
+        }
 
-        isInUse = true;
-        oneUsing = this.gameObject;
-        GetTargetResult result = GetTargetResult.NOT_FOUND;
+        bool result = false;
         if (difficulty == Difficulty.EASY)
         {
             result = GetTargetDifficultyEasy();
@@ -86,77 +98,49 @@ public class PathingAI : MonoBehaviour
         {
             result = GetTargetDifficultyMedium();
         }
-
         //else if (difficulty == Difficulty.Hard)
         //{
         //    // principle of hordes maybe?
         //    // keeping track of what horde is taking what path to not take the same one
         //}
 
-        bool returnValue;
-        switch (result)
+        lock (padlock)
         {
-            case GetTargetResult.WAIT:
-                isInUse = true;
-                returnValue = false;
-                break;
-            case GetTargetResult.FOUND:
-                isInUse = false;
-                returnValue = true;
-                break;
-            case GetTargetResult.NOT_FOUND:
-                isInUse = false;
-                returnValue = false;
-                break;
-            default:
-                returnValue = false;
-                break;
+            nbrThreadsInMethod--;
         }
-
-        return returnValue;
+        return result;
     }
 
     // Zombies know to take the path without destructibles first, but destroy them if there is no alternative
-    private GetTargetResult GetTargetDifficultyMedium()
+    private bool GetTargetDifficultyMedium()
     {
-        if (!secondPass)
+        if (agent.agentTypeID == agentTypeIdIgnoreDestructibles)
         {
-            if (!ZombieController.isCarvingEnabled())
-            {
-                ZombieController.EnableCarving();
-                return GetTargetResult.WAIT;
-            }
-
-            if (TargetClosestReachablePlayerTarget())
-            {
-                return GetTargetResult.FOUND;
-            }
-            ZombieController.DisableCarving();
-            secondPass = true;
-            return GetTargetResult.WAIT;
+            agent.agentTypeID = agentTypeIdAvoidDestructibles;
         }
-        secondPass = false;
+
+        if (TargetClosestReachablePlayerTarget())
+        {
+            return true;
+        }
+        agent.agentTypeID = agentTypeIdIgnoreDestructibles;
 
         if (TargetClosestDestructibleRequiredToReachClosestPlayer())
         {
-            return GetTargetResult.FOUND;
+            return true;
         }
-        return GetTargetResult.NOT_FOUND;
+        return false;
     }
 
     // Zombies are dumb and just start hitting whatever destructible they cross tor each the closest player
-    private GetTargetResult GetTargetDifficultyEasy()
+    private bool GetTargetDifficultyEasy()
     {
-        if (ZombieController.isCarvingEnabled())
+        if (agent.agentTypeID == agentTypeIdAvoidDestructibles)
         {
-            ZombieController.DisableCarving();
-            return GetTargetResult.WAIT;
+            agent.agentTypeID = agentTypeIdIgnoreDestructibles;
         }
 
-        if (TargetClosestPlayerOrDestructibleInItsPath())
-            return GetTargetResult.FOUND;
-        else
-            return GetTargetResult.NOT_FOUND;
+        return TargetClosestPlayerOrDestructibleInItsPath();
     }
 
     // =========================================
@@ -339,24 +323,24 @@ public class PathingAI : MonoBehaviour
     {
         TargetLost();
         isDead = true;
-        if (isInUse && oneUsing == this.gameObject)
-        {
-            isInUse = false;
-        }
+        //if (isInUse && oneUsing == this.gameObject)
+        //{
+        //    isInUse = false;
+        //}
     }
 
     void OnDestroy()
     {
-        if (isInUse && oneUsing == this.gameObject)
-        {
-            isInUse = false;
-        }
+        //if (isInUse && oneUsing == this.gameObject)
+        //{
+        //    isInUse = false;
+        //}
     }
 
-    private enum GetTargetResult
-    {
-        WAIT,
-        FOUND,
-        NOT_FOUND
-    }
+    //private enum GetTargetResult
+    //{
+    //    WAIT,
+    //    FOUND,
+    //    NOT_FOUND
+    //}
 }

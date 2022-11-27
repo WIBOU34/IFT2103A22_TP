@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.AI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,6 +8,8 @@ public class ZombieController
 {
     public const string TAG_PLAYER = "Player";
     public const string TAG_DESTRUCTIBLE = "Destructible";
+    public const string AGENT_TYPE_NAME_AVOID_DESTRUCTIBLE = "Humanoid-AvoidDestructibles";
+    public const string AGENT_TYPE_NAME_IGNORE_DESTRUCTIBLE = "Humanoid-IgnoreDestructibles";
 
     public static GameObject typeToSpawn;
     public static List<GameObject> zombieSpawners = new List<GameObject>();
@@ -14,6 +17,8 @@ public class ZombieController
     public static List<GameObject> zombieDestructibleTargets = new List<GameObject>();
     private static bool carvingEnabled = false;
     private static bool isLeavingGame = false;
+    private static int agentTypeIdAvoidDestructibles = 0;
+    private static int agentTypeIdIgnoreDestructibles = 0;
 
     public void Start()
     {
@@ -21,8 +26,10 @@ public class ZombieController
         zombiePlayerTargets.Clear();
         zombieDestructibleTargets.Clear();
         isLeavingGame = false;
+        agentTypeIdAvoidDestructibles = GetAgenTypeIDByName(AGENT_TYPE_NAME_AVOID_DESTRUCTIBLE);
+        agentTypeIdIgnoreDestructibles = GetAgenTypeIDByName(AGENT_TYPE_NAME_IGNORE_DESTRUCTIBLE);
         PathingAI.Init();
-        NavMesh.pathfindingIterationsPerFrame = 10;
+        NavMesh.pathfindingIterationsPerFrame = 100;
         zombieSpawners = GameObject.FindGameObjectsWithTag("ZombieSpawner").ToList();
         zombiePlayerTargets = GameObject.FindGameObjectsWithTag(TAG_PLAYER).ToList();
         var tmpDestructibleList = GameObject.FindGameObjectsWithTag(TAG_DESTRUCTIBLE).ToList();
@@ -63,37 +70,53 @@ public class ZombieController
 
     public static void DisableCarving()
     {
-        if (!isCarvingEnabled())
-            return;
+        //if (!isCarvingEnabled())
+        //    return;
 
-        carvingEnabled = false;
-        foreach (GameObject destructibleTarget in zombieDestructibleTargets)
-        {
-            destructibleTarget.GetComponent<NavMeshObstacle>().carving = false;
-        }
+        //carvingEnabled = false;
+        //foreach (GameObject destructibleTarget in zombieDestructibleTargets)
+        //{
+        //    destructibleTarget.GetComponent<NavMeshObstacle>().carving = false;
+        //}
     }
 
     public static void EnableCarving()
     {
-        if (isCarvingEnabled())
-            return;
+        //if (isCarvingEnabled())
+        //    return;
 
-        carvingEnabled = true;
-        foreach (GameObject destructibleTarget in zombieDestructibleTargets)
-        {
-            destructibleTarget.GetComponent<NavMeshObstacle>().carving = true;
-        }
+        //carvingEnabled = true;
+        //foreach (GameObject destructibleTarget in zombieDestructibleTargets)
+        //{
+        //    destructibleTarget.GetComponent<NavMeshObstacle>().carving = true;
+        //}
     }
 
     public static void DestructibleAdded(GameObject destructible)
     {
-        destructible.GetComponent<NavMeshObstacle>().carving = isCarvingEnabled();
+        //destructible.GetComponent<NavMeshObstacle>().carving = isCarvingEnabled();
         zombieDestructibleTargets.Add(destructible);
+        foreach (var item in NavMeshSurface.activeSurfaces)
+        {
+            if (item.agentTypeID == agentTypeIdAvoidDestructibles)
+            {
+                //NavMeshData data = item.navMeshData;
+                item.UpdateNavMesh(item.navMeshData);
+            }
+        }
     }
 
     public static void DestructibleDestroyed(GameObject destructible)
     {
         zombieDestructibleTargets.Remove(destructible);
+        foreach (var item in NavMeshSurface.activeSurfaces)
+        {
+            if (item.agentTypeID == agentTypeIdAvoidDestructibles)
+            {
+                //NavMeshData data = item.navMeshData;
+                item.UpdateNavMesh(item.navMeshData);
+            }
+        }
     }
 
     public static void PlayerKilled(GameObject player)
@@ -179,5 +202,21 @@ public class ZombieController
             return;
         LeavingGame();
         MenuManager.gameOverScreen.GetComponent<GameOverController>().Init(win);
+    }
+
+    public static int GetAgenTypeIDByName(string agentTypeName)
+    {
+        int count = NavMesh.GetSettingsCount();
+        string[] agentTypeNames = new string[count + 2];
+        for (var i = 0; i < count; i++)
+        {
+            int id = NavMesh.GetSettingsByIndex(i).agentTypeID;
+            string name = NavMesh.GetSettingsNameFromID(id);
+            if (name == agentTypeName)
+            {
+                return id;
+            }
+        }
+        return -1;
     }
 }

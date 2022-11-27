@@ -45,6 +45,13 @@ public static class MenuManager
                 break;
         }
 
+        SetCursorState(false);
+
         callingMenu.SetActive(false);
+    }
+
+    private static void SetCursorState(bool newState)
+    {
+        Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
     }
 }
