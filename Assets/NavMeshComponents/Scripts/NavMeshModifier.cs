@@ -50,5 +50,15 @@ namespace UnityEngine.AI
                 return true;
             return m_AffectedAgents.IndexOf(agentTypeID) != -1;
         }
+
+        public void SetSingleAffectedAgentType(int agentTypeId)
+        {
+            m_AffectedAgents[0] = agentTypeId;
+        }
+
+        public void SetAffectedAgentTypeAll()
+        {
+            SetSingleAffectedAgentType(-1);
+        }
     }
 }
