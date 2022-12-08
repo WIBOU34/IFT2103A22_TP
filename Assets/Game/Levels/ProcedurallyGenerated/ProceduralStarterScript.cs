@@ -13,6 +13,7 @@ public class ProceduralStarterScript : MonoBehaviour
     public List<GameObject> weapons;
     public Material bulletTrailMaterial;
     public GameObject cinemachineUpOverrideObject;
+    public Material terrainMaterial;
     private InputManager inputManager;
     // Start is called before the first frame update
     void Start()
@@ -20,7 +21,7 @@ public class ProceduralStarterScript : MonoBehaviour
         cinemachineUpOverrideObject = new GameObject("CinemachineUpOverrideObject");
         cinemachineUpOverrideObject.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
 
-        int totalPlayers = 2;
+        int totalPlayers = 1;
         if (MenuManager.persistence != null)
         {
             totalPlayers = MenuManager.persistence.GetComponent<GameLoader>().totalPlayers;
@@ -60,6 +61,11 @@ public class ProceduralStarterScript : MonoBehaviour
             if (playerNumber > 0)
             {
                 camera.GetComponent<AudioListener>().enabled = false;
+            }
+            else
+            {
+                player.AddComponent<MapCreator>().terrainMaterial = terrainMaterial;
+                player.GetComponent<MapCreator>().Init();
             }
 
             SetupPlayerCameraLayerAndMask(player, playerNumber);

@@ -498,7 +498,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 68377206}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.8182225, y: 4.582238, z: -12.254417}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9971,6 +9971,7 @@ MonoBehaviour:
   - {fileID: 1093567060051439307, guid: 0a68a0b5db0614648b6c2344833c7e10, type: 3}
   bulletTrailMaterial: {fileID: 2100000, guid: 815eca29caf737445a61d1d5f8739b25, type: 2}
   cinemachineUpOverrideObject: {fileID: 0}
+  terrainMaterial: {fileID: 2100000, guid: d7660f9033824d24aabe2f1e40f03154, type: 2}
 --- !u!1 &1191439355
 GameObject:
   m_ObjectHideFlags: 0

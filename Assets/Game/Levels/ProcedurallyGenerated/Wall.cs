@@ -1,9 +1,8 @@
-using System;
 using UnityEngine;
 
 public class Wall : MonoBehaviour
 {
-    private const ushort MAX_NBR_NEIGHBORS = 4;
+    private const uint MAX_NBR_NEIGHBORS = 4;
     public Vector2 dirConnectFromParent;
     public WallType type;
     public Wall[] neighbors = new Wall[MAX_NBR_NEIGHBORS];
@@ -40,31 +39,94 @@ public class Wall : MonoBehaviour
         }
     }
 
-    public void SetPositionFromNeighbor(Wall neighbor)
+    public Vector3 GetPositionFromNeighbor(Wall neighbor)
     {
-        Vector3 neighborConnectPosition = neighbor.GetWallPositionForNeighborConnection(this.dirConnectFromParent);
-        Vector3 center = GetWallCenterFromNeighborConnection(this.dirConnectFromParent, neighborConnectPosition);
+        Vector2 posNeighbor = new Vector2(neighbor.gameObject.transform.position.x, neighbor.gameObject.transform.position.z);
+        Vector2 posCurrentWall = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z);
+        Vector2 dirFromHereToTarget = GetVectorDirection(posNeighbor, posCurrentWall);
+        Vector2 dirFromTargetToHere = GetVectorDirection(posCurrentWall, posNeighbor);
+
+        Vector3 neighborConnectPosition = neighbor.GetWallConnectPositionForNeighbor(dirFromTargetToHere);
+        Vector3 center = GetWallCenterFromNeighborConnection(dirFromHereToTarget, neighborConnectPosition);
 
         if (type == WallType.STRAIGHT)
         {
-            this.gameObject.transform.position = new Vector3(center.x, 1.5f, center.z);
+            return new Vector3(center.x, 1.5f, center.z);
         }
-        else if (type == WallType.TOWER)
+        else
         {
-            this.gameObject.transform.position = new Vector3(center.x, 2, center.z);
+            return new Vector3(center.x, 2, center.z);
         }
+    }
+
+    public Vector3 GetPositionFromNeighborForSet(Wall neighbor, Vector2 dirFromHereToTarget, Vector2 dirFromTargetToHere)
+    {
+        Vector3 neighborConnectPosition = neighbor.GetWallConnectPositionForNeighbor(dirFromTargetToHere);
+        Vector3 center = GetWallCenterFromNeighborConnection(dirFromHereToTarget, neighborConnectPosition);
+
+        if (type == WallType.STRAIGHT)
+        {
+            return new Vector3(center.x, 1.5f, center.z);
+        }
+        else
+        {
+            return new Vector3(center.x, 2, center.z);
+        }
+    }
+
+    public void SetPositionFromNeighbor(Wall neighbor, Vector2 direction)
+    {
+        Vector2 reverseDirection = direction * -1;
+        this.gameObject.transform.position = GetPositionFromNeighborForSet(neighbor, direction, reverseDirection);
+    }
+
+    public bool AddBothAsNeighbor(Vector2 currentWallDirection, Wall possibleNeighbor)
+    {
+        Vector2 reverseDirection = currentWallDirection * -1;
+        bool result = AddNeighbor(currentWallDirection, possibleNeighbor);
+        if (result)
+            result = possibleNeighbor.AddNeighbor(reverseDirection, this);
+        return result;
     }
 
     public bool AddNeighbor(Vector2 direction, Wall possibleNeighbor)
     {
-        if (IsNeighborAvailable(direction))
+        if (!IsNeighborAvailable(direction))
             return false;
 
         SetNeighbor(direction, possibleNeighbor);
         return true;
     }
 
-    Vector3 GetWallPositionForNeighborConnection(Vector2 direction)
+    public void AddNeighborIfNeighbor(Wall otherWall)
+    {
+        Vector2 posOtherWall = new Vector2(otherWall.gameObject.transform.position.x, otherWall.gameObject.transform.position.z);
+        Vector2 posCurrentWall = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z);
+        Vector2 dirFromHereToTarget = GetVectorDirection(posOtherWall, posCurrentWall);
+        Vector2 dirFromTargetToHere = GetVectorDirection(posCurrentWall, posOtherWall);
+
+        // validates if the direction is a valid direction (90 degrees and is available) for both wall
+        if (IsNeighborAvailable(dirFromHereToTarget) && otherWall.IsNeighborAvailable(dirFromTargetToHere))
+        {
+            // validates if the walls require to be moved to be neighbors
+            if (GetPositionFromNeighbor(otherWall) == this.gameObject.transform.position)
+            {
+                // Adds a neighbor
+                //otherWall.SetNeighbor(dirFromTargetToHere, this);
+                //SetNeighbor(dirFromHereToTarget, otherWall);
+                if (!otherWall.AddNeighbor(dirFromTargetToHere, this) || AddNeighbor(dirFromHereToTarget, otherWall))
+                {
+                    Debug.LogWarning("Neighbor should've been valid, but wasn't");
+                }
+            }
+        }
+    }
+    private static Vector2 GetVectorDirection(Vector2 target, Vector2 origin)
+    {
+        return (target - origin).normalized;
+    }
+
+    Vector3 GetWallConnectPositionForNeighbor(Vector2 direction)
     {
         Bounds currentBounds = this.gameObject.GetComponent<Collider>().bounds;
         Vector3 center = currentBounds.center;
@@ -90,7 +152,7 @@ public class Wall : MonoBehaviour
             Vector3 centerRight = new Vector3(center.x + extents.x, center.y, center.z);
             return centerRight;
         }
-        throw new IndexOutOfRangeException("The direction is not supported");
+        throw new System.IndexOutOfRangeException("The direction is not supported");
     }
 
     Vector3 GetWallCenterFromNeighborConnection(Vector2 direction, Vector3 neighborConnectPosition)
@@ -98,51 +160,79 @@ public class Wall : MonoBehaviour
         Bounds currentBounds = this.gameObject.GetComponent<Collider>().bounds;
         Vector3 extents = currentBounds.extents;
 
-
-
         if (direction.Equals(Vector2.up))
         {
-            Vector3 centerUp = new Vector3(neighborConnectPosition.x, neighborConnectPosition.y, neighborConnectPosition.z + extents.z);
+            Vector3 centerUp = new Vector3(neighborConnectPosition.x, neighborConnectPosition.y, neighborConnectPosition.z - extents.z);
             return centerUp;
         }
         else if (direction.Equals(Vector2.left))
         {
-            Vector3 centerLeft = new Vector3(neighborConnectPosition.x - extents.x, neighborConnectPosition.y, neighborConnectPosition.z);
+            Vector3 centerLeft = new Vector3(neighborConnectPosition.x + extents.x, neighborConnectPosition.y, neighborConnectPosition.z);
             return centerLeft;
         }
         else if (direction.Equals(Vector2.down))
         {
-            Vector3 centerDown = new Vector3(neighborConnectPosition.x, neighborConnectPosition.y, neighborConnectPosition.z - extents.z);
+            Vector3 centerDown = new Vector3(neighborConnectPosition.x, neighborConnectPosition.y, neighborConnectPosition.z + extents.z);
             return centerDown;
         }
         else if (direction.Equals(Vector2.right))
         {
-            Vector3 centerRight = new Vector3(neighborConnectPosition.x + extents.x, neighborConnectPosition.y, neighborConnectPosition.z);
+            Vector3 centerRight = new Vector3(neighborConnectPosition.x - extents.x, neighborConnectPosition.y, neighborConnectPosition.z);
             return centerRight;
         }
-        throw new IndexOutOfRangeException("The direction is not supported");
+        throw new System.IndexOutOfRangeException("The direction is not supported");
+    }
+
+    public Vector2 GetRandomAvailableDirection()
+    {
+        int nbrAdded = 0;
+        Vector2[] availableDirections = new Vector2[MAX_NBR_NEIGHBORS];
+        if (IsNeighborAvailable(Vector2.up))
+            availableDirections[nbrAdded++] = Vector2.up;
+        if (IsNeighborAvailable(Vector2.left))
+            availableDirections[nbrAdded++] = Vector2.left;
+        if (IsNeighborAvailable(Vector2.down))
+            availableDirections[nbrAdded++] = Vector2.down;
+        if (IsNeighborAvailable(Vector2.right))
+            availableDirections[nbrAdded++] = Vector2.right;
+
+        if (nbrAdded == 0)
+            return Vector2.zero;
+
+        return availableDirections[Random.Range(0, nbrAdded - 1)];
     }
 
     public bool IsNeighborAvailable(Vector2 direction)
     {
         if (type == WallType.STRAIGHT) // Only 2 corners in the same direction
         {
+            //// if dirConnectFromParent is up or down and direction is not up or down, return false
+            //if (!((dirConnectFromParent.Equals(Vector2.up) || dirConnectFromParent.Equals(Vector2.down))
+            //    && (direction.Equals(Vector2.up) || direction.Equals(Vector2.down))))
+            //{
+            //    return false;
+            //}
+            //else if (!((dirConnectFromParent.Equals(Vector2.left) || dirConnectFromParent.Equals(Vector2.right))
+            //    && (direction.Equals(Vector2.left) || direction.Equals(Vector2.right))))
+            //{
+            //    return false;
+            //}
             // Verify if we are looking for a corner in the same direction as the wall direction
             if (!RemoveNegation(this.dirConnectFromParent).Equals(RemoveNegation(direction)))
             {
                 return false;
             }
+
         }
         // Verify if neighbor is free (e.g. null)
         try
         {
             Wall neighbor = GetNeighbor(direction);
-            if (neighbor == null)
-                return true;
+            return neighbor == null;
         }
-        catch (IndexOutOfRangeException)
+        catch (System.IndexOutOfRangeException e)
         {
-            return false;
+            Debug.LogWarning(e.Message);
         }
 
         return false;
@@ -150,7 +240,13 @@ public class Wall : MonoBehaviour
 
     private Vector2 RemoveNegation(Vector2 other)
     {
-        return new Vector2(Mathf.Abs(other.x), Mathf.Abs(other.y));
+        float x = other.x;
+        if (x < 0)
+            x *= -1;
+        float y = other.y;
+        if (y < 0)
+            y *= -1;
+        return new Vector2(x, y);
     }
 
     Wall GetNeighbor(Vector2 direction)
@@ -185,7 +281,7 @@ public class Wall : MonoBehaviour
         {
             return 3;
         }
-        throw new IndexOutOfRangeException("The direction is not supported");
+        throw new System.IndexOutOfRangeException("The direction " + direction.ToString() + " is not supported");
     }
 
     // Destroyed actions

@@ -7,7 +7,6 @@ public class PathingAI : MonoBehaviour
 {
     private static readonly object padlock = new object();
     public static bool isInUse = false;
-    private static GameObject oneUsing = new GameObject();
     private static int agentTypeIdAvoidDestructibles = 0;
     private static int agentTypeIdIgnoreDestructibles = 0;
     private static uint nbrThreadsInMethod = 0;
@@ -19,7 +18,6 @@ public class PathingAI : MonoBehaviour
     private const uint NBR_TIMES_MAX = 120;
     private bool isDead = false;
     public Difficulty difficulty = Difficulty.INTERMEDIATE;
-    private bool secondPass = false;
 
     private const int layerMaskForCarvingDisabled = (1 << 0)
         | (1 << 1)
@@ -31,7 +29,6 @@ public class PathingAI : MonoBehaviour
 
     public static void Init()
     {
-        oneUsing = new GameObject();
         isInUse = false;
         agentTypeIdAvoidDestructibles = ZombieController.GetAgenTypeIDByName(ZombieController.AGENT_TYPE_NAME_AVOID_DESTRUCTIBLE);
         agentTypeIdIgnoreDestructibles = ZombieController.GetAgenTypeIDByName(ZombieController.AGENT_TYPE_NAME_IGNORE_DESTRUCTIBLE);
