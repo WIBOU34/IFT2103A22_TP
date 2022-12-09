@@ -22,14 +22,28 @@ public class Wall : MonoBehaviour
         this.type = type;
         this.dirConnectFromParent = direction;
 
+        this.gameObject.layer = 0;
+        this.gameObject.GetComponent<MeshRenderer>().enabled = true;
+        this.gameObject.GetComponent<BoxCollider>().isTrigger = false;
+
         if (this.type == WallType.TOWER)
         {
             this.gameObject.name = "Tower";
             this.gameObject.transform.localScale = new Vector3(2, 4, 2);
         }
-        else if (this.type == WallType.STRAIGHT)
+        else if (this.type == WallType.STRAIGHT || this.type == WallType.INVISIBLE)
         {
-            this.gameObject.name = "Center";
+            if (this.type == WallType.INVISIBLE)
+            {
+                this.gameObject.name = "Invisible";
+                this.gameObject.GetComponent<MeshRenderer>().enabled = false;
+                this.gameObject.GetComponent<BoxCollider>().isTrigger = true;
+                this.gameObject.layer = 6;
+            }
+            else
+            {
+                this.gameObject.name = "Center";
+            }
             Vector3 scale;
             if (direction == Vector2.up || direction == Vector2.down)
                 scale = new Vector3(1, 3, 6);
@@ -44,27 +58,17 @@ public class Wall : MonoBehaviour
         Vector2 posNeighbor = new Vector2(neighbor.gameObject.transform.position.x, neighbor.gameObject.transform.position.z);
         Vector2 posCurrentWall = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z);
         Vector2 dirFromHereToTarget = GetVectorDirection(posNeighbor, posCurrentWall);
-        Vector2 dirFromTargetToHere = GetVectorDirection(posCurrentWall, posNeighbor);
+        Vector2 dirFromTargetToHere = dirFromHereToTarget * -1;
 
-        Vector3 neighborConnectPosition = neighbor.GetWallConnectPositionForNeighbor(dirFromTargetToHere);
-        Vector3 center = GetWallCenterFromNeighborConnection(dirFromHereToTarget, neighborConnectPosition);
-
-        if (type == WallType.STRAIGHT)
-        {
-            return new Vector3(center.x, 1.5f, center.z);
-        }
-        else
-        {
-            return new Vector3(center.x, 2, center.z);
-        }
+        return GetPositionFromNeighbor(neighbor, dirFromHereToTarget, dirFromTargetToHere);
     }
 
-    public Vector3 GetPositionFromNeighborForSet(Wall neighbor, Vector2 dirFromHereToTarget, Vector2 dirFromTargetToHere)
+    public Vector3 GetPositionFromNeighbor(Wall neighbor, Vector2 dirFromHereToTarget, Vector2 dirFromTargetToHere)
     {
         Vector3 neighborConnectPosition = neighbor.GetWallConnectPositionForNeighbor(dirFromTargetToHere);
         Vector3 center = GetWallCenterFromNeighborConnection(dirFromHereToTarget, neighborConnectPosition);
 
-        if (type == WallType.STRAIGHT)
+        if (type == WallType.STRAIGHT || type == WallType.INVISIBLE)
         {
             return new Vector3(center.x, 1.5f, center.z);
         }
@@ -77,7 +81,7 @@ public class Wall : MonoBehaviour
     public void SetPositionFromNeighbor(Wall neighbor, Vector2 direction)
     {
         Vector2 reverseDirection = direction * -1;
-        this.gameObject.transform.position = GetPositionFromNeighborForSet(neighbor, direction, reverseDirection);
+        this.gameObject.transform.position = GetPositionFromNeighbor(neighbor, direction, reverseDirection);
     }
 
     public bool AddBothAsNeighbor(Vector2 currentWallDirection, Wall possibleNeighbor)
@@ -103,7 +107,9 @@ public class Wall : MonoBehaviour
         Vector2 posOtherWall = new Vector2(otherWall.gameObject.transform.position.x, otherWall.gameObject.transform.position.z);
         Vector2 posCurrentWall = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z);
         Vector2 dirFromHereToTarget = GetVectorDirection(posOtherWall, posCurrentWall);
-        Vector2 dirFromTargetToHere = GetVectorDirection(posCurrentWall, posOtherWall);
+        if (!ValidateDirectionIsValid(dirFromHereToTarget))
+            return;
+        Vector2 dirFromTargetToHere = dirFromHereToTarget * -1;
 
         // validates if the direction is a valid direction (90 degrees and is available) for both wall
         if (IsNeighborAvailable(dirFromHereToTarget) && otherWall.IsNeighborAvailable(dirFromTargetToHere))
@@ -112,15 +118,17 @@ public class Wall : MonoBehaviour
             if (GetPositionFromNeighbor(otherWall) == this.gameObject.transform.position)
             {
                 // Adds a neighbor
-                //otherWall.SetNeighbor(dirFromTargetToHere, this);
-                //SetNeighbor(dirFromHereToTarget, otherWall);
-                if (!otherWall.AddNeighbor(dirFromTargetToHere, this) || AddNeighbor(dirFromHereToTarget, otherWall))
-                {
-                    Debug.LogWarning("Neighbor should've been valid, but wasn't");
-                }
+                otherWall.SetNeighbor(dirFromTargetToHere, this);
+                SetNeighbor(dirFromHereToTarget, otherWall);
             }
         }
     }
+
+    private static bool ValidateDirectionIsValid(Vector2 direction)
+    {
+        return direction.Equals(Vector2.up) || direction.Equals(Vector2.down) || direction.Equals(Vector2.left) || direction.Equals(Vector2.right);
+    }
+
     private static Vector2 GetVectorDirection(Vector2 target, Vector2 origin)
     {
         return (target - origin).normalized;
@@ -183,6 +191,14 @@ public class Wall : MonoBehaviour
         throw new System.IndexOutOfRangeException("The direction is not supported");
     }
 
+    public bool IsADirectionAvailable()
+    {
+        return IsNeighborAvailable(Vector2.up)
+            || IsNeighborAvailable(Vector2.right)
+            || IsNeighborAvailable(Vector2.left)
+            || IsNeighborAvailable(Vector2.down);
+    }
+
     public Vector2 GetRandomAvailableDirection()
     {
         int nbrAdded = 0;
@@ -204,19 +220,8 @@ public class Wall : MonoBehaviour
 
     public bool IsNeighborAvailable(Vector2 direction)
     {
-        if (type == WallType.STRAIGHT) // Only 2 corners in the same direction
+        if (type == WallType.STRAIGHT || type == WallType.INVISIBLE) // Only 2 corners in the same direction
         {
-            //// if dirConnectFromParent is up or down and direction is not up or down, return false
-            //if (!((dirConnectFromParent.Equals(Vector2.up) || dirConnectFromParent.Equals(Vector2.down))
-            //    && (direction.Equals(Vector2.up) || direction.Equals(Vector2.down))))
-            //{
-            //    return false;
-            //}
-            //else if (!((dirConnectFromParent.Equals(Vector2.left) || dirConnectFromParent.Equals(Vector2.right))
-            //    && (direction.Equals(Vector2.left) || direction.Equals(Vector2.right))))
-            //{
-            //    return false;
-            //}
             // Verify if we are looking for a corner in the same direction as the wall direction
             if (!RemoveNegation(this.dirConnectFromParent).Equals(RemoveNegation(direction)))
             {
@@ -238,15 +243,16 @@ public class Wall : MonoBehaviour
         return false;
     }
 
-    private Vector2 RemoveNegation(Vector2 other)
+    private static Vector2 RemoveNegation(Vector2 other)
     {
-        float x = other.x;
-        if (x < 0)
-            x *= -1;
-        float y = other.y;
-        if (y < 0)
-            y *= -1;
-        return new Vector2(x, y);
+        return new Vector2(AbsoluteValue(other.x), AbsoluteValue(other.y));
+    }
+
+    private static float AbsoluteValue(float value)
+    {
+        if (value < 0)
+            return value * -1;
+        return value;
     }
 
     Wall GetNeighbor(Vector2 direction)
@@ -263,7 +269,7 @@ public class Wall : MonoBehaviour
     // Vector2.left = 1
     // Vector2.down = 2
     // Vector2.right = 3
-    private ushort GetNeighborIndex(Vector2 direction)
+    private static ushort GetNeighborIndex(Vector2 direction)
     {
         if (direction.Equals(Vector2.up))
         {

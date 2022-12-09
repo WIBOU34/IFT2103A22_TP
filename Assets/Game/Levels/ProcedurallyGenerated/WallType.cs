@@ -2,5 +2,6 @@
 public enum WallType
 {
     STRAIGHT,
-    TOWER
+    TOWER,
+    INVISIBLE
 }
