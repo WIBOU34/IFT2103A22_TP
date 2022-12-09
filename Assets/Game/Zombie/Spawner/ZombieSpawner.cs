@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ZombieSpawner : MonoBehaviour
 {
@@ -22,11 +23,22 @@ public class ZombieSpawner : MonoBehaviour
     {
         if (zombies.Count < maxZombiesAtOnce && counter < maxZombiesTotal)
         {
-            if (IsSpawnFree())
+            if (IsSpawnFree() && IsSpawnOnNavMesh())
             {
                 CreateZombie();
             }
         }
+    }
+
+    private bool IsSpawnOnNavMesh()
+    {
+        foreach (var item in NavMeshSurface.activeSurfaces)
+        {
+            Bounds bounds = new Bounds(new Vector3(item.center.x, 0, item.center.z), new Vector3(item.size.x, 1, item.size.z));
+            if (bounds.Contains(this.gameObject.transform.position))
+                return true;
+        }
+        return false;
     }
 
     public void CreateZombie()
