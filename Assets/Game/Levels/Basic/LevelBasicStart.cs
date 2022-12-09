@@ -14,9 +14,12 @@ public class LevelBasicStart : MonoBehaviour
     public Material bulletTrailMaterial;
     public GameObject cinemachineUpOverrideObject;
     private InputManager inputManager;
+    private SoundManager soundManager;
+
     // Start is called before the first frame update
     void Start()
     {
+        soundManager = SoundManager.Instance;
         cinemachineUpOverrideObject = new GameObject("CinemachineUpOverrideObject");
         cinemachineUpOverrideObject.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
 
@@ -65,7 +68,6 @@ public class LevelBasicStart : MonoBehaviour
             SetupPlayerCameraLayerAndMask(player, playerNumber);
 
             AudioSource audioSource = player.AddComponent<AudioSource>();
-            SoundManager soundManager = player.AddComponent<SoundManager>();
             soundManager.audioSource = audioSource;
             PlayableCharacter playableCharacter = player.AddComponent<PlayableCharacter>();
             playableCharacter.cinemachineUpOverrideObjectTransform = cinemachineUpOverrideObject.transform;
@@ -81,7 +83,6 @@ public class LevelBasicStart : MonoBehaviour
             playerInputController.pauseMenuController = pauseMenuController;
             playerInputController.starterAssetsInputs = starterAssetsInputs;
             playerInputController.playerKeyCodes = InputManager.GetPlayerKeyCodes(playerNumber + 1);
-            playerInputController.soundManager = soundManager;
 
             playerNumber++;
         }

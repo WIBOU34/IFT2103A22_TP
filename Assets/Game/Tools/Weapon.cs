@@ -12,10 +12,12 @@ public class Weapon : MonoBehaviour
     public Material bulletTrailMaterial;
     private Vector3 position = new Vector3(0.5f, 0.5f, 0);
     private bool isGameIn3rdPerson = false;
+    private SoundManager soundManager;
 
     // Start is called before the first frame update
     void Start()
     {
+        soundManager = SoundManager.Instance;
         Reload();
     }
 
@@ -34,6 +36,7 @@ public class Weapon : MonoBehaviour
         // Add effect on fire...
         if (currentClipAmmo > 0)
         {
+            soundManager.PlayPistolSound();
             currentClipAmmo--;
             Vector3 bulletStartPosition = this.transform.position; // maybe change to tip of the barrel
             Ray ray = GetRay(bulletStartPosition);

@@ -26,8 +26,8 @@ public class PlayableCharacter : MonoBehaviour
         inputManager = InputManager.Instance;
 
         this.gameObject.AddComponent<Damageable>();
-        this.gameObject.AddComponent<WeaponManager>().parent = this.gameObject.transform
-            .Find("Skeleton/Hips/Spine/Chest/UpperChest/Right_Shoulder/Right_UpperArm/Right_LowerArm/Right_Hand").gameObject;
+        this.gameObject.AddComponent<WeaponManager>().parent = 
+            this.gameObject.transform.Find("Skeleton/Hips/Spine/Chest/UpperChest/Right_Shoulder/Right_UpperArm/Right_LowerArm/Right_Hand").gameObject;
         for (int i = 0; i < weapons.Count; i++)
         {
             this.gameObject.GetComponent<WeaponManager>().weapons.Add(i, weapons[i]);

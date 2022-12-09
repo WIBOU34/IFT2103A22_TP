@@ -1,27 +1,42 @@
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundManager : MonoBehaviour
+public sealed class SoundManager
 {
+    private static SoundManager instance = null;
+    private static readonly object padlock = new object();
+
     public AudioSource audioSource;
-    private AudioClip dyingSound;
+    private static AudioClip dyingSound;
+    private static AudioClip pistolSound;
     private bool dyingSoundHasPlayed = false;
 
 
-    // Start is called before the first frame update
-    void Start()
+    SoundManager()
     {
         dyingSound = Resources.Load<AudioClip>("Audios/Character/MaleEfforts/Man_Damage_Extreme_1");
+        pistolSound = Resources.Load<AudioClip>("Audios/weapons/guns/hi action");
     }
 
-    // Update is called once per frame
-    void Update()
+    public static SoundManager Instance
     {
-        
+        get
+        {
+            lock (padlock)
+            {
+                if (instance == null)
+                {
+                    instance = new SoundManager();
+                }
+                return instance;
+            }
+        }
     }
 
     public void PlayPistolSound()
     {
-
+        audioSource.PlayOneShot(pistolSound);
     }
 
     public void PlayDyingSound()

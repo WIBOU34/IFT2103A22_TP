@@ -7,18 +7,20 @@ public class PlayerInputController : MonoBehaviour
     public PauseMenuController pauseMenuController;
     public PlayerKeyCodes playerKeyCodes;
     public PlayableCharacter playableCharacter;
-    public SoundManager soundManager;
-
+    private SoundManager soundManager;
     private InputManager inputManager;
     private WeaponManager weaponManager;
+    private Weapon weapon;
     private bool isDead = false;
     Vector2 orientation = Vector2.zero;
 
     // Start is called before the first frame update
     void Start()
     {
+        soundManager = SoundManager.Instance;
         inputManager = InputManager.Instance;
         weaponManager = gameObject.GetComponent<WeaponManager>();
+        weapon = weaponManager.equippedWeapon.GetComponent<Weapon>();
     }
 
     // Update is called once per frame
@@ -67,7 +69,7 @@ public class PlayerInputController : MonoBehaviour
                 }
 
                 if (Input.GetKeyDown(playerKeyCodes.Fire))
-                {
+                {                   
                     weaponManager.OnFireWeapon();
                 }
 

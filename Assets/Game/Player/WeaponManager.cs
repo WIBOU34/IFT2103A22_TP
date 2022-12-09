@@ -4,7 +4,7 @@ using UnityEngine;
 public class WeaponManager : MonoBehaviour
 {
     public Dictionary<int, GameObject> weapons = new Dictionary<int, GameObject>();
-    private GameObject equippedWeapon;
+    public GameObject equippedWeapon;
     public GameObject parent;
     public int selectedWeapon = -1;
     // Start is called before the first frame update
