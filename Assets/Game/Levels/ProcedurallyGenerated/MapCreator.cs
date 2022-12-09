@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,9 +10,12 @@ public class MapCreator : MonoBehaviour
     public static GameObject environmentContainer;
     public static GameObject groundContainer;
     public static GameObject levelContainer;
+    //public static Vector3 terrainSize = new Vector3(300, 1, 300);
     public static Vector3 terrainSize = new Vector3(100, 1, 100);
-    public static Vector3 loadedSize = new Vector3(75, 20, 75);
-    public static Vector3 sizeToTriggerLoad = new Vector3(15, 20, 15);
+    //public static Vector3 loadedSize = new Vector3(300, 5, 300);
+    public static Vector3 loadedSize = new Vector3(75, 5, 75);
+    //public static Vector3 sizeToTriggerLoad = new Vector3(50, 5, 50);
+    public static Vector3 sizeToTriggerLoad = new Vector3(15, 5, 15);
     public List<GameObject> zombieSpawners;
 
     private static int notWalkableAreaType = 0;
@@ -22,20 +26,16 @@ public class MapCreator : MonoBehaviour
     private static Bounds oldLoadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds loadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds boundsToTriggerLoad = new Bounds(Vector3.zero, sizeToTriggerLoad);
-    private const int MAX_NBR_WALLS = 350;
+    //private const int MAX_NBR_WALLS = 5000;
+    private const int MAX_NBR_WALLS = 300;
 
     private static List<GameObject> groundList = new List<GameObject>();
-    //private static List<GameObject> wallsList = new List<GameObject>(MAX_NBR_WALLS);
-    private static GameObject[] wallsList = new GameObject[MAX_NBR_WALLS];
+    private static Wall[] wallsList = new Wall[MAX_NBR_WALLS];
     private static int wallsListCount = 0;
     private static int wallsListIndex = 0;
     private static List<GameObject> destructiblesList = new List<GameObject>(); // destructibles are never obtained
 
     private static bool alreadyLoading = false;
-    //private Vector3 minXminZ;
-    //private Vector3 minXmaxZ;
-    //private Vector3 maxXminZ;
-    //private Vector3 maxXmaxZ;
 
     public void Init()
     {
@@ -63,12 +63,14 @@ public class MapCreator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (RequireLoading())
+        if (!alreadyLoading && RequireLoading())
         {
+            alreadyLoading = true;
             boundsToTriggerLoad.center = trackedCenter.transform.position;
             oldLoadedBounds.center = loadedBounds.center;
             loadedBounds.center = boundsToTriggerLoad.center;
             UnloadAndLoad(loadedBounds);
+            alreadyLoading = false;
         }
     }
 
@@ -95,12 +97,8 @@ public class MapCreator : MonoBehaviour
 
     private void UnloadAndLoad(Bounds bounds)
     {
-        if (alreadyLoading)
-            return;
-        alreadyLoading = true;
         UnLoad(bounds);
         Load(bounds);
-        alreadyLoading = false;
     }
 
     private void Load(Bounds bounds)
@@ -108,18 +106,6 @@ public class MapCreator : MonoBehaviour
         // Check for ground
         LoadGround(bounds);
         LoadWalls(bounds);
-    }
-
-    private void OnDrawGizmos()
-    {
-        //Gizmos.color = Color.red;
-        //Gizmos.DrawSphere(minXminZ, 0.5f);
-        //Gizmos.color = Color.green;
-        //Gizmos.DrawSphere(minXmaxZ, 0.5f);
-        //Gizmos.color = Color.yellow;
-        //Gizmos.DrawSphere(maxXminZ, 0.5f);
-        //Gizmos.color = Color.magenta;
-        //Gizmos.DrawSphere(maxXmaxZ, 0.5f);
     }
 
     private void LoadGround(Bounds bounds)
@@ -183,7 +169,7 @@ public class MapCreator : MonoBehaviour
         int hardBreak = 0; // only a safety measure and because even in debug you can't stop an infinite loop
         int index = 0;
 
-        Shuffle(wallsList);
+        //Shuffle(wallsList);
         while (wallsListCount < MAX_NBR_WALLS && index < wallsListCount && hardBreak++ < MAX_NBR_WALLS * 50)
         {
             if (justFoundWall)
@@ -197,10 +183,9 @@ public class MapCreator : MonoBehaviour
                 justFoundWall = false;
                 for (int i = index; i < wallsListCount; i++)
                 {
-                    Wall aWall = wallsList[i].GetComponent<Wall>();
-                    if (aWall.IsADirectionAvailable())
+                    if (wallsList[i].IsADirectionAvailable())
                     {
-                        wallToUse = aWall;
+                        wallToUse = wallsList[i];
                         currentWallValid = true;
                         justFoundWall = true;
                         break;
@@ -295,22 +280,18 @@ public class MapCreator : MonoBehaviour
         UnLoad(bounds, ref destructiblesList);
     }
 
-    private static void UnLoad(Bounds bounds, ref GameObject[] list)
+    private static void UnLoad(Bounds bounds, ref Wall[] list)
     {
         int indexToMoveto = 0;
-        //GameObject[] objectsToDestroy = new GameObject[list.Length];
         for (int i = 0; i < list.Length; i++, indexToMoveto++)
         {
             if (list[i] == null)
-            {
-                indexToMoveto--;
                 break;
-            }
-            if (!IsObjectInBounds(list[i], bounds))
+
+            if (!IsObjectInBounds(list[i].gameObject, bounds))
             {
-                if (list[i].TryGetComponent<Wall>(out Wall wall))
-                    wall.PrepareForDelete();
-                Destroy(list[i]);
+                list[i].PrepareForDelete();
+                Destroy(list[i].gameObject);
                 list[i] = null;
                 RemovedItemFromWallsList();
                 indexToMoveto--;
@@ -346,37 +327,32 @@ public class MapCreator : MonoBehaviour
 
     private static bool IsObjectInBounds(GameObject gameObject, Bounds bounds)
     {
-        if (gameObject.TryGetComponent<Collider>(out Collider collider))
-        {
-            return bounds.Intersects(collider.bounds)
-                || (bounds.Contains(collider.bounds.min) && bounds.Contains(collider.bounds.max));
-        }
         return bounds.Contains(gameObject.transform.position);
+        //if (gameObject.TryGetComponent(out Collider collider))
+        //{
+        //    return bounds.Intersects(collider.bounds)
+        //        || (bounds.Contains(collider.bounds.min) && bounds.Contains(collider.bounds.max));
+        //}
     }
 
     private static bool IsObjectPositionValid(GameObject gameObject)
     {
-        Bounds gameObjectBounds = gameObject.GetComponent<Collider>().bounds;
         for (int i = 0; i < wallsListCount; i++)
         {
-            GameObject existingWallGameObject = wallsList[i];
-            if (gameObjectBounds.Contains(existingWallGameObject.transform.position))
+            if (gameObject.transform.position == wallsList[i].transform.position)
                 return false;
         }
-        foreach (var destructible in destructiblesList)
-        {
-            if (destructible.GetComponent<Collider>().bounds.Intersects(gameObjectBounds))
-                return false;
-        }
+        // No need to check for destructibles, as they will be destroyed if unloaded
         return true;
     }
 
     private static void FindAndAddNeighborsToNewCreatedWall(Wall wallToCheck)
     {
+        Bounds bounds = new Bounds(wallToCheck.transform.position, new Vector3(10, 5, 10));
         for (int i = 0; i < wallsListCount; i++)
         {
-            GameObject existingWallGameObject = wallsList[i];
-            wallToCheck.AddNeighborIfNeighbor(existingWallGameObject.GetComponent<Wall>());
+            if (bounds.Contains(wallsList[i].transform.position))
+                wallToCheck.AddNeighborIfNeighbor(wallsList[i]);
         }
     }
 
@@ -456,7 +432,7 @@ public class MapCreator : MonoBehaviour
     private static void AddItemToWallsList(GameObject item)
     {
         wallsListCount++;
-        wallsList[wallsListIndex++] = item;
+        wallsList[wallsListIndex++] = item.GetComponent<Wall>();
     }
 
     private static void RemovedItemFromWallsList()

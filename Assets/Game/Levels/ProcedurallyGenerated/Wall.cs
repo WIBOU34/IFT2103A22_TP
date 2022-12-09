@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Wall : MonoBehaviour
 {
-    private const uint MAX_NBR_NEIGHBORS = 4;
+    private const ushort MAX_NBR_NEIGHBORS = 4;
     public Vector2 dirConnectFromParent;
     public WallType type;
     public Wall[] neighbors = new Wall[MAX_NBR_NEIGHBORS];
@@ -197,7 +197,7 @@ public class Wall : MonoBehaviour
 
     public Vector2 GetRandomAvailableDirection()
     {
-        int nbrAdded = 0;
+        ushort nbrAdded = 0;
         Vector2[] availableDirections = new Vector2[MAX_NBR_NEIGHBORS];
         if (IsNeighborAvailable(Vector2.up))
             availableDirections[nbrAdded++] = Vector2.up;
@@ -292,7 +292,7 @@ public class Wall : MonoBehaviour
         if (type == WallType.INVISIBLE || type == WallType.STRAIGHT)
             return;
 
-        for (int i = 0; i < MAX_NBR_NEIGHBORS; i++)
+        for (var i = 0; i < MAX_NBR_NEIGHBORS; i++)
         {
             if (neighbors[i] != null && !neighbors[i].GetComponent<Wall>().isInvisible)
             {
@@ -322,7 +322,7 @@ public class Wall : MonoBehaviour
     // Destroyed actions
     public void PrepareForDelete()
     {
-        for (ushort i = 0; i < MAX_NBR_NEIGHBORS; i++)
+        for (var i = 0; i < MAX_NBR_NEIGHBORS; i++)
         {
             if (neighbors[i] != null)
                 neighbors[i].NeighborDestroyed(this);
@@ -331,7 +331,7 @@ public class Wall : MonoBehaviour
 
     void NeighborDestroyed(Wall other)
     {
-        for (ushort i = 0; i < MAX_NBR_NEIGHBORS; i++)
+        for (var i = 0; i < MAX_NBR_NEIGHBORS; i++)
         {
             if (neighbors[i] != null && neighbors[i] == other)
                 neighbors[i] = null;
