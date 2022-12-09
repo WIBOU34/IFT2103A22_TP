@@ -12,6 +12,7 @@ public class MapCreator : MonoBehaviour
     public static Vector3 terrainSize = new Vector3(100, 1, 100);
     public static Vector3 loadedSize = new Vector3(75, 20, 75);
     public static Vector3 sizeToTriggerLoad = new Vector3(15, 20, 15);
+    public List<GameObject> zombieSpawners;
 
     private static int notWalkableAreaType = 0;
     private static int walkableAreaType = 0;
@@ -30,8 +31,11 @@ public class MapCreator : MonoBehaviour
     private static int wallsListIndex = 0;
     private static List<GameObject> destructiblesList = new List<GameObject>(); // destructibles are never obtained
 
-    private static readonly object padlock = new object();
     private static bool alreadyLoading = false;
+    //private Vector3 minXminZ;
+    //private Vector3 minXmaxZ;
+    //private Vector3 maxXminZ;
+    //private Vector3 maxXmaxZ;
 
     public void Init()
     {
@@ -59,30 +63,25 @@ public class MapCreator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (RequireLoading())
+        {
+            boundsToTriggerLoad.center = trackedCenter.transform.position;
+            oldLoadedBounds.center = loadedBounds.center;
+            loadedBounds.center = boundsToTriggerLoad.center;
+            UnloadAndLoad(loadedBounds);
+        }
     }
 
     void FixedUpdate()
     {
-        if (RequireLoading())
-        {
-            oldLoadedBounds.center = loadedBounds.center;
-            loadedBounds.center = boundsToTriggerLoad.center;
-            UnLoad(loadedBounds);
-            Load(loadedBounds);
-        }
     }
 
     private bool RequireLoading()
     {
-        if (!boundsToTriggerLoad.Contains(trackedCenter.transform.position))
-        {
-            boundsToTriggerLoad.center = trackedCenter.transform.position;
-            return true;
-        }
-        return false;
+        return !boundsToTriggerLoad.Contains(trackedCenter.transform.position);
     }
 
-    private void UpdateNavMesh()
+    private static void UpdateNavMesh()
     {
         foreach (var item in NavMeshSurface.activeSurfaces)
         {
@@ -94,43 +93,74 @@ public class MapCreator : MonoBehaviour
         }
     }
 
+    private void UnloadAndLoad(Bounds bounds)
+    {
+        if (alreadyLoading)
+            return;
+        alreadyLoading = true;
+        UnLoad(bounds);
+        Load(bounds);
+        alreadyLoading = false;
+    }
+
     private void Load(Bounds bounds)
     {
         // Check for ground
         LoadGround(bounds);
-        StartCoroutine("LoadWalls", bounds); // maybe make it a thread to not possibly freeze the game?
+        LoadWalls(bounds);
+    }
+
+    private void OnDrawGizmos()
+    {
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawSphere(minXminZ, 0.5f);
+        //Gizmos.color = Color.green;
+        //Gizmos.DrawSphere(minXmaxZ, 0.5f);
+        //Gizmos.color = Color.yellow;
+        //Gizmos.DrawSphere(maxXminZ, 0.5f);
+        //Gizmos.color = Color.magenta;
+        //Gizmos.DrawSphere(maxXmaxZ, 0.5f);
     }
 
     private void LoadGround(Bounds bounds)
     {
         Vector3 min = bounds.min;
         Vector3 max = bounds.max;
-        Vector3 minX = new Vector3(min.x, 0, bounds.center.z);
-        Vector3 maxX = new Vector3(max.x, 0, bounds.center.z);
-        Vector3 minZ = new Vector3(bounds.center.x, 0, min.z);
-        Vector3 maxZ = new Vector3(bounds.center.x, 0, max.z);
+        Vector3 minXminZ = new Vector3(min.x, 0, min.z);
+        Vector3 minXmaxZ = new Vector3(min.x, 0, max.z);
+        Vector3 maxXminZ = new Vector3(max.x, 0, min.z);
+        Vector3 maxXmaxZ = new Vector3(max.x, 0, max.z);
         int count = groundList.Count;
+        bool minXminZOnGround = false;
+        bool minXmaxZOnGround = false;
+        bool maxXminZOnGround = false;
+        bool maxXmaxZOnGround = false;
         for (int i = 0; i < count; i++)
         {
             GameObject ground = groundList[i];
-            if (!ground.GetComponent<TerrainCollider>().bounds.Contains(minX))
-                CreateGround(minX);
-            if (!ground.GetComponent<TerrainCollider>().bounds.Contains(maxX))
-                CreateGround(maxX);
-            if (!ground.GetComponent<TerrainCollider>().bounds.Contains(minZ))
-                CreateGround(minZ);
-            if (!ground.GetComponent<TerrainCollider>().bounds.Contains(maxZ))
-                CreateGround(maxZ);
+            if (minXminZOnGround || ground.GetComponent<TerrainCollider>().bounds.Contains(minXminZ))
+                minXminZOnGround = true;
+            if (minXmaxZOnGround || ground.GetComponent<TerrainCollider>().bounds.Contains(minXmaxZ))
+                minXmaxZOnGround = true;
+            if (maxXminZOnGround || ground.GetComponent<TerrainCollider>().bounds.Contains(maxXminZ))
+                maxXminZOnGround = true;
+            if (maxXmaxZOnGround || ground.GetComponent<TerrainCollider>().bounds.Contains(maxXmaxZ))
+                maxXmaxZOnGround = true;
         }
+        if (!minXminZOnGround)
+            CreateGround(minXminZ);
+        if (!minXmaxZOnGround)
+            CreateGround(minXmaxZ);
+        if (!maxXminZOnGround)
+            CreateGround(maxXminZ);
+        if (!maxXmaxZOnGround)
+            CreateGround(maxXmaxZ);
     }
 
     // TODO:
     // and make sure the players aren't getting stuck
     private void LoadWalls(Bounds bounds)
     {
-        if (alreadyLoading)
-            return;
-        alreadyLoading = true;
         bool currentWallValid = false;
         bool justFoundWall = false;
         WallType type = WallType.TOWER;
@@ -209,9 +239,6 @@ public class MapCreator : MonoBehaviour
             // Verify if the calculated object position is valid and in bounds
             if (IsObjectInBounds(wallGameObject, bounds) && IsObjectPositionValid(wallGameObject))
             {
-                //createdWall.AddBothAsNeighbor(direction, wallToUse);
-                //FindAndAddNeighborsToNewCreatedWall(wallGameObject);
-                //wallToUse = createdWall;
                 GameObject newWallGameObject = Instantiate(wallGameObject, levelContainer.transform);
                 Wall newWall = newWallGameObject.GetComponent<Wall>();
 
@@ -228,25 +255,22 @@ public class MapCreator : MonoBehaviour
 
                 createdWall.Init(type, direction);
                 currentWallValid = false;
-                //Destroy(wallGameObject);
             }
         }
 
         Destroy(wallGameObject);
 
         UpdateNavMesh();
-
-        alreadyLoading = false;
     }
 
     private static void Shuffle(GameObject[] list)
     {
         int n = wallsListCount;
+        int i;
         while (n > 1)
         {
-            n--;
-            int k = Random.Range(0, n + 1);
-            (list[n], list[k]) = (list[k], list[n]);
+            i = Random.Range(0, n--);
+            (list[n], list[i]) = (list[i], list[n]);
         }
     }
 
@@ -278,7 +302,10 @@ public class MapCreator : MonoBehaviour
         for (int i = 0; i < list.Length; i++, indexToMoveto++)
         {
             if (list[i] == null)
-                continue;
+            {
+                indexToMoveto--;
+                break;
+            }
             if (!IsObjectInBounds(list[i], bounds))
             {
                 if (list[i].TryGetComponent<Wall>(out Wall wall))
@@ -290,7 +317,7 @@ public class MapCreator : MonoBehaviour
             }
             else if (indexToMoveto != i)
             {
-                list[indexToMoveto] = list[i];
+                (list[indexToMoveto], list[i]) = (list[i], list[indexToMoveto]);
             }
         }
     }
@@ -353,23 +380,17 @@ public class MapCreator : MonoBehaviour
         }
     }
 
-    private void CreateGround(Vector3 position)
+    private void CreateGround(Vector3 positionOnGround)
     {
-        // Get position of corner of terrain to prevent clipping
-        float stepX = terrainSize.x;
-        float stepZ = terrainSize.z;
-        if (position.x % stepX != 0)
+        Vector3 position = FindGroundPosition(terrainSize, positionOnGround);
+        for (int i = 0; i < groundList.Count; i++)
         {
-            position.x = GetNextStep(position.x, stepX);
+            if (groundList[i].transform.position == position)
+                return; // ground is already there
         }
-        if (position.z % stepZ != 0)
-        {
-            position.z = GetNextStep(position.z, stepZ);
-        }
-        //GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
         GameObject gameObject = new GameObject("ground");
         gameObject.transform.position = position;
-        //gameObject.name = "aRandomNameForTesting";
         TerrainData terrainData = new TerrainData();
         terrainData.size = terrainSize;
         Terrain ground = gameObject.AddComponent<Terrain>();
@@ -383,106 +404,35 @@ public class MapCreator : MonoBehaviour
         groundList.Add(gameObject);
     }
 
-    private static float GetNextStep(float number, float step)
+    private static Vector3 FindGroundPosition(Vector3 terrainSize, Vector3 positionOnGround)
     {
-        uint i = 0;
-        bool isNegative = false;
-        if (number < 0)
+        Vector3 position = new Vector3(0, 0, 0);
+        // Get position of corner of terrain to prevent clipping
+        float stepX = terrainSize.x;
+        float stepZ = terrainSize.z;
+        // Trouver point minXminZ du step dans position
+        if (positionOnGround.x % stepX != 0)
         {
-            isNegative = true;
-            number = Mathf.Abs(number);
+            position.x = GetNextStep(positionOnGround.x, stepX);
         }
-        while (number < step)
-            number = step * i++;
-        if (isNegative)
-            return number * -1;
-        else
-            return number;
+        if (positionOnGround.z % stepZ != 0)
+        {
+            position.z = GetNextStep(positionOnGround.z, stepZ);
+        }
+        return position;
     }
 
-    //private void CreateTower(Vector3 position)
-    //{
-    //    GameObject tower = new GameObject();
-    //    tower.name = "Tower";
-    //    tower.transform.position = Vector3.zero;
-    //    GameObject cube = CreateCube(new Vector3(0, 2f, 0));
-    //    cube.transform.SetParent(tower.transform);
-    //    cube.transform.localScale = new Vector3(2, 4, 2);
+    private static float GetNextStep(float originalNumber, float step)
+    {
+        float number = originalNumber;
 
-    //    tower.transform.position = position;
-    //}
+        int nbrTimesDivisible = (int)(number / step);
+        number = step * nbrTimesDivisible;
+        while (number > originalNumber)
+            number -= step;
 
-    //private GameObject CreateWall(Vector3 position, float wallLength)
-    //{
-    //    GameObject wall = new GameObject();
-    //    wall.name = "Wall";
-    //    wall.transform.position = Vector3.zero;
-
-    //    GameObject cube = CreateCube(new Vector3(0, 1.5f, 0));
-    //    cube.name = "Center";
-    //    cube.transform.SetParent(wall.transform);
-    //    cube.transform.localScale = new Vector3(wallLength, 3, 1);
-
-    //    cube = CreateCube(new Vector3(-4, 2, 0));
-    //    cube.name = "Tower";
-    //    cube.transform.SetParent(wall.transform);
-    //    cube.transform.localScale = new Vector3(2, 4, 2);
-
-    //    cube = CreateCube(new Vector3(4, 2, 0));
-    //    cube.name = "Tower";
-    //    cube.transform.SetParent(wall.transform);
-    //    cube.transform.localScale = new Vector3(2, 4, 2);
-
-    //    wall.transform.position = position;
-
-    //    return wall;
-    //}
-
-    //private GameObject CreateWallContinuation(Vector3 position, float wallLength)
-    //{
-    //    GameObject wall = new GameObject();
-    //    wall.name = "Wall";
-    //    wall.transform.position = Vector3.zero;
-
-    //    GameObject cube = CreateCube(new Vector3(0, 1.5f, 0));
-    //    cube.name = "Center";
-    //    cube.transform.SetParent(wall.transform);
-    //    cube.transform.localScale = new Vector3(wallLength, 3, 1);
-
-    //    cube = CreateCube(new Vector3(4, 2, 0));
-    //    cube.name = "Tower";
-    //    cube.transform.SetParent(wall.transform);
-    //    cube.transform.localScale = new Vector3(2, 4, 2);
-
-    //    wall.transform.position = position;
-    //    return wall;
-    //}
-
-    //private GameObject CreateCorner(Vector3 position, float wallLength1, float wallLength2)
-    //{
-    //    GameObject corner = new GameObject();
-    //    corner.name = "Corner";
-    //    corner.transform.position = Vector3.zero;
-
-    //    GameObject wall = CreateWall(new Vector3(1, 0, 1), 6);
-    //    wall.transform.SetParent(corner.transform);
-    //    wall = CreateWallContinuation(new Vector3(5, 0, 5), 6);
-    //    wall.transform.Rotate(new Vector3(0, 1, 0), 270);
-    //    wall.transform.SetParent(corner.transform);
-
-    //    corner.transform.position = position;
-
-    //    return corner;
-    //}
-
-    //private GameObject CreateCube(Vector3 position)
-    //{
-    //    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-    //    cube.transform.position = position;
-    //    cube.AddComponent<NavMeshObstacle>();
-    //    cube.GetComponent<NavMeshObstacle>().shape = NavMeshObstacleShape.Box;
-    //    return cube;
-    //}
+        return number;
+    }
 
     private static void AddNavMeshModifierComponentDefault(GameObject gameObject)
     {

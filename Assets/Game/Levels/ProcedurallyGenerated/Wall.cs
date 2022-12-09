@@ -6,6 +6,7 @@ public class Wall : MonoBehaviour
     public Vector2 dirConnectFromParent;
     public WallType type;
     public Wall[] neighbors = new Wall[MAX_NBR_NEIGHBORS];
+    public bool isInvisible = false;
 
     // Start is called before the first frame update
     void Start()
@@ -21,10 +22,7 @@ public class Wall : MonoBehaviour
     {
         this.type = type;
         this.dirConnectFromParent = direction;
-
-        this.gameObject.layer = 0;
-        this.gameObject.GetComponent<MeshRenderer>().enabled = true;
-        this.gameObject.GetComponent<BoxCollider>().isTrigger = false;
+        MakeVisible();
 
         if (this.type == WallType.TOWER)
         {
@@ -36,9 +34,7 @@ public class Wall : MonoBehaviour
             if (this.type == WallType.INVISIBLE)
             {
                 this.gameObject.name = "Invisible";
-                this.gameObject.GetComponent<MeshRenderer>().enabled = false;
-                this.gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                this.gameObject.layer = 6;
+                MakeInvisible();
             }
             else
             {
@@ -263,6 +259,7 @@ public class Wall : MonoBehaviour
     void SetNeighbor(Vector2 direction, Wall neighbor)
     {
         neighbors[GetNeighborIndex(direction)] = neighbor;
+        MakeInvisibleIfNoVisibleNeighbor();
     }
 
     // Vector2.up = 0
@@ -288,6 +285,38 @@ public class Wall : MonoBehaviour
             return 3;
         }
         throw new System.IndexOutOfRangeException("The direction " + direction.ToString() + " is not supported");
+    }
+
+    void MakeInvisibleIfNoVisibleNeighbor()
+    {
+        if (type == WallType.INVISIBLE || type == WallType.STRAIGHT)
+            return;
+
+        for (int i = 0; i < MAX_NBR_NEIGHBORS; i++)
+        {
+            if (neighbors[i] != null && !neighbors[i].GetComponent<Wall>().isInvisible)
+            {
+                MakeVisible();
+                return;
+            }
+        }
+        MakeInvisible();
+    }
+
+    private void MakeInvisible()
+    {
+        isInvisible = true;
+        this.gameObject.GetComponent<MeshRenderer>().enabled = false;
+        this.gameObject.GetComponent<BoxCollider>().isTrigger = true;
+        this.gameObject.layer = 6;
+    }
+
+    private void MakeVisible()
+    {
+        isInvisible = false;
+        this.gameObject.layer = 0;
+        this.gameObject.GetComponent<MeshRenderer>().enabled = true;
+        this.gameObject.GetComponent<BoxCollider>().isTrigger = false;
     }
 
     // Destroyed actions
