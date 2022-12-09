@@ -7,6 +7,7 @@ public class PlayerInputController : MonoBehaviour
     public PauseMenuController pauseMenuController;
     public PlayerKeyCodes playerKeyCodes;
     public PlayableCharacter playableCharacter;
+    public SoundManager soundManager;
 
     private InputManager inputManager;
     private WeaponManager weaponManager;
@@ -212,6 +213,7 @@ public class PlayerInputController : MonoBehaviour
 
     void OnKilled()
     {
+        soundManager.PlayDyingSound();
         isDead = true;
         starterAssetsInputs.move = Vector2.zero;
         starterAssetsInputs.JumpInput(false);

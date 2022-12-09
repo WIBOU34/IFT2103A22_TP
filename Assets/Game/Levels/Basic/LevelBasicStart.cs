@@ -64,6 +64,9 @@ public class LevelBasicStart : MonoBehaviour
 
             SetupPlayerCameraLayerAndMask(player, playerNumber);
 
+            AudioSource audioSource = player.AddComponent<AudioSource>();
+            SoundManager soundManager = player.AddComponent<SoundManager>();
+            soundManager.audioSource = audioSource;
             PlayableCharacter playableCharacter = player.AddComponent<PlayableCharacter>();
             playableCharacter.cinemachineUpOverrideObjectTransform = cinemachineUpOverrideObject.transform;
             playableCharacter.weapons = weapons;
@@ -78,6 +81,7 @@ public class LevelBasicStart : MonoBehaviour
             playerInputController.pauseMenuController = pauseMenuController;
             playerInputController.starterAssetsInputs = starterAssetsInputs;
             playerInputController.playerKeyCodes = InputManager.GetPlayerKeyCodes(playerNumber + 1);
+            playerInputController.soundManager = soundManager;
 
             playerNumber++;
         }
