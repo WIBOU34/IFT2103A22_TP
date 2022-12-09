@@ -21,7 +21,7 @@ public class MapCreator : MonoBehaviour
     private static Bounds oldLoadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds loadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds boundsToTriggerLoad = new Bounds(Vector3.zero, sizeToTriggerLoad);
-    private const int MAX_NBR_WALLS = 500;
+    private const int MAX_NBR_WALLS = 350;
 
     private static List<GameObject> groundList = new List<GameObject>();
     //private static List<GameObject> wallsList = new List<GameObject>(MAX_NBR_WALLS);
@@ -29,6 +29,9 @@ public class MapCreator : MonoBehaviour
     private static int wallsListCount = 0;
     private static int wallsListIndex = 0;
     private static List<GameObject> destructiblesList = new List<GameObject>(); // destructibles are never obtained
+
+    private static readonly object padlock = new object();
+    private static bool alreadyLoading = false;
 
     public void Init()
     {
@@ -95,7 +98,7 @@ public class MapCreator : MonoBehaviour
     {
         // Check for ground
         LoadGround(bounds);
-        LoadWalls(bounds); // maybe make it a thread to not possibly freeze the game?
+        StartCoroutine("LoadWalls", bounds); // maybe make it a thread to not possibly freeze the game?
     }
 
     private void LoadGround(Bounds bounds)
@@ -125,6 +128,9 @@ public class MapCreator : MonoBehaviour
     // and make sure the players aren't getting stuck
     private void LoadWalls(Bounds bounds)
     {
+        if (alreadyLoading)
+            return;
+        alreadyLoading = true;
         bool currentWallValid = false;
         bool justFoundWall = false;
         WallType type = WallType.TOWER;
@@ -229,6 +235,8 @@ public class MapCreator : MonoBehaviour
         Destroy(wallGameObject);
 
         UpdateNavMesh();
+
+        alreadyLoading = false;
     }
 
     private static void Shuffle(GameObject[] list)
