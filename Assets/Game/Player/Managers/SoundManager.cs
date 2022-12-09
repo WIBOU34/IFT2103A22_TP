@@ -11,6 +11,7 @@ public sealed class SoundManager
     private AudioClip dyingSound;
     private AudioClip pistolSound;
     private AudioClip reloadSound;
+    private AudioClip damageTakenSound;
     private bool dyingSoundHasPlayed = false;
 
 
@@ -19,6 +20,7 @@ public sealed class SoundManager
         dyingSound = Resources.Load<AudioClip>("Audios/Character/MaleEfforts/Man_Damage_Extreme_1");
         pistolSound = Resources.Load<AudioClip>("Audios/weapons/guns/hi action");
         reloadSound = Resources.Load<AudioClip>("Audios/PostApocalypseGunsDemo/Pistols/Pistol_ClipIn_05");
+        damageTakenSound = Resources.Load<AudioClip>("Audios/Character/MaleEfforts/Man_Damage_1");
     }
 
     public static SoundManager Instance
@@ -34,6 +36,11 @@ public sealed class SoundManager
                 return instance;
             }
         }
+    }
+
+    public void PlayerDamageTakenSound()
+    {
+        audioSource.PlayOneShot(damageTakenSound);
     }
 
     public void PlayReloadSound()

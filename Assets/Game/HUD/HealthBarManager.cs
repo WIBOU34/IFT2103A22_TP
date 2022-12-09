@@ -9,10 +9,12 @@ public class HealthBarManager : MonoBehaviour
     private Slider playerHealthBar;
     private TextMeshProUGUI playerText;
     private Damageable playerHealth;
+    private SoundManager soundManager;
 
     // Start is called before the first frame update
     public void Start()
     {
+        soundManager = SoundManager.Instance;
         playerHealth = gameObject.GetComponent<Damageable>();
 
         GameObject hud = GameObject.Find("HUD");
@@ -35,8 +37,12 @@ public class HealthBarManager : MonoBehaviour
     }
 
     void OnDamageTaken(float health)
-    {
+    {     
         playerHealthBar.value = health;
+        if (playerHealthBar.value > 0)
+        {
+            soundManager.PlayerDamageTakenSound();
+        }
     }
 
     private void HidePlayersHealthBarIfZero()
