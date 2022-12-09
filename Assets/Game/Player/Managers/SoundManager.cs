@@ -8,8 +8,9 @@ public sealed class SoundManager
     private static readonly object padlock = new object();
 
     public AudioSource audioSource;
-    private static AudioClip dyingSound;
-    private static AudioClip pistolSound;
+    private AudioClip dyingSound;
+    private AudioClip pistolSound;
+    private AudioClip reloadSound;
     private bool dyingSoundHasPlayed = false;
 
 
@@ -17,6 +18,7 @@ public sealed class SoundManager
     {
         dyingSound = Resources.Load<AudioClip>("Audios/Character/MaleEfforts/Man_Damage_Extreme_1");
         pistolSound = Resources.Load<AudioClip>("Audios/weapons/guns/hi action");
+        reloadSound = Resources.Load<AudioClip>("Audios/PostApocalypseGunsDemo/Pistols/Pistol_ClipIn_05");
     }
 
     public static SoundManager Instance
@@ -32,6 +34,11 @@ public sealed class SoundManager
                 return instance;
             }
         }
+    }
+
+    public void PlayReloadSound()
+    {
+        audioSource.PlayOneShot(reloadSound);
     }
 
     public void PlayPistolSound()

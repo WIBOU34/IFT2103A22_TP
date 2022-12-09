@@ -13,6 +13,7 @@ public class Weapon : MonoBehaviour
     private Vector3 position = new Vector3(0.5f, 0.5f, 0);
     private bool isGameIn3rdPerson = false;
     private SoundManager soundManager;
+    private bool makeReloadSound = false; 
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +29,12 @@ public class Weapon : MonoBehaviour
 
     public void Reload()
     {
+        if (makeReloadSound) //Pour ne pas faire de son lorsqu'on lance le jeu puisqu'on reload
+        {
+            soundManager.PlayReloadSound();
+        }        
         currentClipAmmo = CalculateAmmoToReload(totalAmmo);
+        makeReloadSound = true;
     }
 
     public void OnFireWeapon()
