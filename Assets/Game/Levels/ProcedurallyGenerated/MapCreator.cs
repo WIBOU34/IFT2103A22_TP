@@ -47,7 +47,6 @@ public class MapCreator : MonoBehaviour
         loadedBounds.center = trackedCenter.transform.position;
         boundsToTriggerLoad.center = trackedCenter.transform.position;
         Load(loadedBounds);
-        UpdateNavMesh();
     }
     // Start is called before the first frame update
     void Start()
@@ -67,7 +66,6 @@ public class MapCreator : MonoBehaviour
             loadedBounds.center = boundsToTriggerLoad.center;
             UnLoad(loadedBounds);
             Load(loadedBounds);
-            UpdateNavMesh();
         }
     }
 
@@ -97,7 +95,7 @@ public class MapCreator : MonoBehaviour
     {
         // Check for ground
         LoadGround(bounds);
-        LoadWalls(bounds);
+        LoadWalls(bounds); // maybe make it a thread to not possibly freeze the game?
     }
 
     private void LoadGround(Bounds bounds)
@@ -229,6 +227,8 @@ public class MapCreator : MonoBehaviour
         }
 
         Destroy(wallGameObject);
+
+        UpdateNavMesh();
     }
 
     private static void Shuffle(GameObject[] list)
