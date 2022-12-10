@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Wall : MonoBehaviour
@@ -285,6 +286,52 @@ public class Wall : MonoBehaviour
             return 3;
         }
         throw new System.IndexOutOfRangeException("The direction " + direction.ToString() + " is not supported");
+    }
+
+    // does not work for some odd reason...
+    bool CheckForBlockages(Wall startingWall, Wall lastWall, uint depth)
+    {
+        if (this == startingWall)
+            return true;
+        if (this.isInvisible || this.gameObject == lastWall.gameObject || depth == 12)
+            return false;
+        for (ushort i = 0; i < MAX_NBR_NEIGHBORS; i++)
+        {
+            if (this.neighbors[i] == null)
+                continue;
+            if (this.neighbors[i].CheckForBlockages(startingWall, this, depth + 1))
+                return true;
+        }
+        return false;
+    }
+
+    public void MakeInvisibleIfBlocage()
+    {
+        if (isInvisible)
+            return;
+        for (ushort i = 0; i < MAX_NBR_NEIGHBORS; i++)
+        {
+            if (this.neighbors[i] == null)
+                continue;
+            if (this.neighbors[i].CheckForBlockages(this, this, 1))
+            {
+                if (type == WallType.STRAIGHT)
+                    type = WallType.INVISIBLE;
+                this.MakeInvisible();
+                UpdateInvisibilityForNeighbors();
+                break;
+            }
+        }
+    }
+
+    private void UpdateInvisibilityForNeighbors()
+    {
+        for (ushort i = 0; i < MAX_NBR_NEIGHBORS; i++)
+        {
+            if (this.neighbors[i] == null)
+                continue;
+            this.neighbors[i].MakeInvisibleIfNoVisibleNeighbor();
+        }
     }
 
     void MakeInvisibleIfNoVisibleNeighbor()
