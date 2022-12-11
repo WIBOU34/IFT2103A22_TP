@@ -84,6 +84,7 @@ public class Zombie : MonoBehaviour
         if (ValidateCurrentTargetForAttack())
         {
             pathingAI.currentTarget.GetComponent<Damageable>().TakeDamage(damagePerAttack);
+            soundManager.PlayZombieAttackSound(zombieVoiceSoundSource);
         }
     }
 
@@ -129,6 +130,11 @@ public class Zombie : MonoBehaviour
         GameObject.Destroy(this.gameObject, 5);
         // permet de libérer l'espace dans la liste et donc de permettre un nouveau de spawner
         this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieKilled(this.gameObject);
+        foreach(AudioSource audioSource in zombieAudioSources)
+        {
+            audioSource.Stop();
+        }
+        soundManager.PlayZombieDyingSound(zombieVoiceSoundSource);
     }
 
     private void OnDestroy()

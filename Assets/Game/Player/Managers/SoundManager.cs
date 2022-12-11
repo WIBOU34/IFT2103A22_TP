@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public sealed class SoundManager
@@ -14,6 +15,9 @@ public sealed class SoundManager
     private AudioClip damageTakenSound;
     private AudioClip zombieVoiceSound;
     private AudioClip zombieStepsSound;
+    private AudioClip zombieAttackSound;
+    private AudioClip zombieDyingSound;
+    private AudioClip gameMusic;
     private bool dyingSoundHasPlayed = false;
 
 
@@ -25,6 +29,9 @@ public sealed class SoundManager
         damageTakenSound = Resources.Load<AudioClip>("Audios/Character/MaleEfforts/Man_Damage_1");
         zombieVoiceSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Voice/Zombie_Normal_Ver1_1");
         zombieStepsSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Steps/Zombie_Steps_01");
+        zombieAttackSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Voice/Zombie_Attack_2");
+        zombieDyingSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Voice/Zombie_Dead_Ver1_1");
+        gameMusic = Resources.Load<AudioClip>("Audios/free horror ambience 2/ha-abomination");
     }
 
     public static SoundManager Instance
@@ -42,6 +49,13 @@ public sealed class SoundManager
         }
     }
 
+    public void PlayGameMusic()
+    {
+        audioSource.clip = gameMusic;
+        audioSource.loop = true;
+        audioSource.Play();
+    }
+
     public void PlayZombieVoiceSound(AudioSource audioSource)
     {
         audioSource.clip = zombieVoiceSound;
@@ -49,7 +63,7 @@ public sealed class SoundManager
         audioSource.spatialBlend = 1;
         audioSource.minDistance = 1;
         audioSource.maxDistance = 10;
-        audioSource.Play();
+        audioSource.Play();        
     }
 
     public void PlayZombieStepsSound(AudioSource audioSource)
@@ -60,6 +74,16 @@ public sealed class SoundManager
         audioSource.minDistance = 1;
         audioSource.maxDistance = 10;
         audioSource.Play();
+    }
+
+    public void PlayZombieAttackSound(AudioSource audioSource)
+    {
+        audioSource.PlayOneShot(zombieAttackSound);
+    }
+
+    public void PlayZombieDyingSound(AudioSource audioSource)
+    {
+        audioSource.PlayOneShot(zombieDyingSound);
     }
 
     public void PlayerDamageTakenSound()

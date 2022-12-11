@@ -36,6 +36,7 @@ public class LevelBasicStart : MonoBehaviour
         ZombieController.typeToSpawn = zombieTypeToSpawn;
         ZombieController.CreateZombieSpawner(new Vector3(-10, 0, 5));
         inputManager = InputManager.Instance;
+        soundManager.PlayGameMusic();
     }
 
     // Update is called once per frame
