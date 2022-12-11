@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -202,7 +203,17 @@ public class OptionsMenuController : MonoBehaviour
 
     public void OpenSoundsMenu()
     {
-        MenuManager.OpenMenu(Menu.SOUNDS_MENU, gameObject);
+        if (MenuManager.OptionsMenuOpenedFromPauseMenu)
+        {
+            GameObject menu = GameObject.Find("Menu");            
+            GameObject soundsMenu = menu.transform.Find("Sounds Menu").gameObject;
+            soundsMenu.SetActive(true);
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            MenuManager.OpenMenu(Menu.SOUNDS_MENU, gameObject);
+        }        
     }
 
     private void InitOptionsViewModel()

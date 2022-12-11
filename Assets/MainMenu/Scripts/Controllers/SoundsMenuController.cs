@@ -25,7 +25,17 @@ public class SoundsMenuController : MonoBehaviour
 
     public void OpenBindsMenu()
     {
-        MenuManager.OpenMenu(Menu.OPTIONS_MENU, gameObject);
+        if (MenuManager.OptionsMenuOpenedFromPauseMenu)
+        {
+            GameObject menu = GameObject.Find("Menu");
+            GameObject optionsMenu = menu.transform.Find("Options Menu").gameObject;
+            optionsMenu.SetActive(true);
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            MenuManager.OpenMenu(Menu.OPTIONS_MENU, gameObject);
+        }        
     }
 
     public void Save()
