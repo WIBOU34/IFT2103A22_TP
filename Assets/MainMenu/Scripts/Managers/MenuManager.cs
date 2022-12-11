@@ -4,7 +4,7 @@ public static class MenuManager
 {
     public static bool IsInitialised { get; set; }
     public static bool OptionsMenuOpenedFromPauseMenu { get; set; }
-    public static GameObject homeScreen, loadingScreen, mainMenu, optionsMenu, gameModeMenu, persistence, bindingInProcess, difficultyMenu, gameOverScreen;
+    public static GameObject homeScreen, loadingScreen, mainMenu, optionsMenu, gameModeMenu, persistence, bindingInProcess, difficultyMenu, gameOverScreen, soundsMenu;
 
     public static void Init()
     {
@@ -15,6 +15,7 @@ public static class MenuManager
         difficultyMenu = canvas.transform.Find("Difficulty Menu").gameObject;
         gameModeMenu = canvas.transform.Find("Game Mode Menu").gameObject;
         bindingInProcess = canvas.transform.Find("BindingInProcess").gameObject;
+        soundsMenu = canvas.transform.Find("Sounds Menu").gameObject;
 
         IsInitialised = true;
     }
@@ -42,6 +43,9 @@ public static class MenuManager
                 break;
             case Menu.DIFFICULTY_MENU:
                 difficultyMenu.SetActive(true);
+                break;
+            case Menu.SOUNDS_MENU:
+                soundsMenu.SetActive(true);
                 break;
         }
 

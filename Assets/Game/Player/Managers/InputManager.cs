@@ -17,6 +17,7 @@ public sealed class InputManager
     public static List<KeyCode> player1Keys = new List<KeyCode>();
     public static List<KeyCode> player2Keys = new List<KeyCode>();
     public static bool UpdateBindNeeded = false;
+    public static bool UpdateSoundsNeeded = false;
     public static KeyCode rebindKey;
     public static bool currentlyRebindingKey = false;
     public static bool anotherKeyAlreadyBound = false;

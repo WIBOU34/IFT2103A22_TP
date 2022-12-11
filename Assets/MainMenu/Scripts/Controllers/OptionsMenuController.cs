@@ -200,6 +200,11 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
+    public void OpenSoundsMenu()
+    {
+        MenuManager.OpenMenu(Menu.SOUNDS_MENU, gameObject);
+    }
+
     private void InitOptionsViewModel()
     {
         PlayerControlsViewModel player1ControlsViewModel = new PlayerControlsViewModel
