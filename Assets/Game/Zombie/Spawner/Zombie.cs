@@ -11,6 +11,9 @@ public class Zombie : MonoBehaviour
     private NavMeshAgent agent;
     private PathingAI pathingAI;
     private SoundManager soundManager;
+    private List<AudioSource> zombieAudioSources = new List<AudioSource>();
+    private AudioSource zombieVoiceSoundSource;
+    private AudioSource zombieStepsSoundSource;
 
     private void Awake()
     {
@@ -41,8 +44,12 @@ public class Zombie : MonoBehaviour
         this.GetComponent<CapsuleCollider>().center = new Vector3(0, 0.8f, 0);
         this.GetComponent<CapsuleCollider>().isTrigger = true;
 
-        AudioSource audioSource = this.AddComponent<AudioSource>();
-        soundManager.PlayZombieNormalSound(audioSource);
+        zombieVoiceSoundSource = this.AddComponent<AudioSource>();
+        soundManager.PlayZombieVoiceSound(zombieVoiceSoundSource);
+        zombieAudioSources.Add(zombieVoiceSoundSource);
+        zombieStepsSoundSource = this.AddComponent<AudioSource>();
+        soundManager.PlayZombieStepsSound(zombieStepsSoundSource);
+        zombieAudioSources.Add(zombieStepsSoundSource);
         AjustZombieSoundsBasedOnPlayerDistance();
     }
 
@@ -144,16 +151,16 @@ public class Zombie : MonoBehaviour
             }           
         }
 
-        AudioSource audioSource = this.GetComponent<AudioSource>();
-
-        if (distance > 10)
+        foreach(AudioSource zombieAudioSource in zombieAudioSources)
         {
-            audioSource.volume = 0;
+            if (distance > 10)
+            {
+                zombieAudioSource.volume = 0;
+            }
+            else
+            {
+                zombieAudioSource.volume = 1 - (distance / 10);
+            }
         }
-        else
-        {
-            audioSource.volume = 1 - (distance / 10);
-        }
-
     }
 }

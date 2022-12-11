@@ -8,23 +8,23 @@ public sealed class SoundManager
     private static readonly object padlock = new object();
 
     public AudioSource audioSource;
-    //public List<AudioSource> zombiesAudioSources;
     private AudioClip dyingSound;
     private AudioClip pistolSound;
     private AudioClip reloadSound;
     private AudioClip damageTakenSound;
-    private AudioClip zombieNormalSound;
+    private AudioClip zombieVoiceSound;
+    private AudioClip zombieStepsSound;
     private bool dyingSoundHasPlayed = false;
 
 
     SoundManager()
     {
-        //zombiesAudioSources = new List<AudioSource>();
         dyingSound = Resources.Load<AudioClip>("Audios/Character/MaleEfforts/Man_Damage_Extreme_1");
         pistolSound = Resources.Load<AudioClip>("Audios/weapons/guns/hi action");
         reloadSound = Resources.Load<AudioClip>("Audios/PostApocalypseGunsDemo/Pistols/Pistol_ClipIn_05");
         damageTakenSound = Resources.Load<AudioClip>("Audios/Character/MaleEfforts/Man_Damage_1");
-        zombieNormalSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Voice/Zombie_Normal_Ver1_1");
+        zombieVoiceSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Voice/Zombie_Normal_Ver1_1");
+        zombieStepsSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Steps/Zombie_Steps_01");
     }
 
     public static SoundManager Instance
@@ -42,13 +42,23 @@ public sealed class SoundManager
         }
     }
 
-    public void PlayZombieNormalSound(AudioSource audioSource)
+    public void PlayZombieVoiceSound(AudioSource audioSource)
     {
-        audioSource.clip = zombieNormalSound;
+        audioSource.clip = zombieVoiceSound;
         audioSource.loop = true;
         audioSource.spatialBlend = 1;
         audioSource.minDistance = 1;
-        audioSource.maxDistance = 5;
+        audioSource.maxDistance = 10;
+        audioSource.Play();
+    }
+
+    public void PlayZombieStepsSound(AudioSource audioSource)
+    {
+        audioSource.clip = zombieStepsSound;
+        audioSource.loop = true;
+        audioSource.spatialBlend = 1;
+        audioSource.minDistance = 1;
+        audioSource.maxDistance = 10;
         audioSource.Play();
     }
 
