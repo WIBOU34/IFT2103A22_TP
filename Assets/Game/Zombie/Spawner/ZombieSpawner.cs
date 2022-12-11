@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class ZombieSpawner : MonoBehaviour
 {
+    public List<GameObject> zombiePlayerTargets = new List<GameObject>();
     private List<GameObject> zombies = new List<GameObject>();
     private uint counter = 0;
     public uint maxZombiesAtOnce = 10;
@@ -12,6 +13,7 @@ public class ZombieSpawner : MonoBehaviour
     public GameObject typeToSpawn;
     public String spawnerNumber;
     public Difficulty difficulty;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -51,7 +53,8 @@ public class ZombieSpawner : MonoBehaviour
         tmp.GetComponent<Animator>();
         tmp.AddComponent<Damageable>();
         tmp.AddComponent<PathingAI>().difficulty = difficulty;
-        tmp.AddComponent<Zombie>();
+        Zombie zombie = tmp.AddComponent<Zombie>();
+        zombie.zombiePlayerTargets = zombiePlayerTargets;
         tmp.AddComponent<LocomotionSimpleAgent>();
         tmp.transform.SetParent(this.transform);
 

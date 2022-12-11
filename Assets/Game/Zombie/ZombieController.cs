@@ -10,7 +10,7 @@ public class ZombieController
     public const string TAG_DESTRUCTIBLE = "Destructible";
     public const string AGENT_TYPE_NAME_AVOID_DESTRUCTIBLE = "Humanoid-AvoidDestructibles";
     public const string AGENT_TYPE_NAME_IGNORE_DESTRUCTIBLE = "Humanoid-IgnoreDestructibles";
-
+  
     public static GameObject typeToSpawn;
     public static List<GameObject> zombieSpawners = new List<GameObject>();
     public static List<GameObject> zombiePlayerTargets = new List<GameObject>();
@@ -49,6 +49,7 @@ public class ZombieController
         newSpawner.GetComponent<ZombieSpawner>().name = "ZombieSpawner_" + (zombieSpawners.Count());
         newSpawner.GetComponent<ZombieSpawner>().typeToSpawn = typeToSpawn;
         newSpawner.GetComponent<ZombieSpawner>().difficulty = MenuManager.persistence.GetComponent<GameLoader>().difficulty;
+        newSpawner.GetComponent<ZombieSpawner>().zombiePlayerTargets = zombiePlayerTargets;
         zombieSpawners.Add(newSpawner);
         newSpawner.GetComponent<ZombieSpawner>().CreateZombie();
     }

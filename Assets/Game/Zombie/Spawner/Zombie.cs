@@ -1,13 +1,21 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Zombie : MonoBehaviour
 {
+    public List<GameObject> zombiePlayerTargets = new List<GameObject>();
     private bool isDead = false;
     public float damagePerAttack = 20;
     private NavMeshAgent agent;
     private PathingAI pathingAI;
+    private SoundManager soundManager;
+
+    private void Awake()
+    {
+        soundManager = SoundManager.Instance;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +40,10 @@ public class Zombie : MonoBehaviour
         this.GetComponent<CapsuleCollider>().radius = agent.radius;
         this.GetComponent<CapsuleCollider>().center = new Vector3(0, 0.8f, 0);
         this.GetComponent<CapsuleCollider>().isTrigger = true;
+
+        AudioSource audioSource = this.AddComponent<AudioSource>();
+        soundManager.PlayZombieNormalSound(audioSource);
+        AjustZombieSoundsBasedOnPlayerDistance();
     }
 
     // Update is called once per frame
@@ -55,6 +67,8 @@ public class Zombie : MonoBehaviour
                 TargetNotHittable();
             }
         }
+
+        AjustZombieSoundsBasedOnPlayerDistance();
     }
 
     // Called by the animation controller
@@ -114,5 +128,32 @@ public class Zombie : MonoBehaviour
     {
         if (isDead)
             this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieDestroyed(this.gameObject);
+    }
+
+    private void AjustZombieSoundsBasedOnPlayerDistance()
+    {
+        float distance = float.PositiveInfinity;
+
+        foreach (GameObject player in zombiePlayerTargets)
+        {
+            float distanceBetweenZombieAndPlayer = Vector3.Distance(player.transform.position, gameObject.transform.position);
+
+            if (distanceBetweenZombieAndPlayer < distance)
+            {
+                distance = distanceBetweenZombieAndPlayer;
+            }           
+        }
+
+        AudioSource audioSource = this.GetComponent<AudioSource>();
+
+        if (distance > 10)
+        {
+            audioSource.volume = 0;
+        }
+        else
+        {
+            audioSource.volume = 1 - (distance / 10);
+        }
+
     }
 }
