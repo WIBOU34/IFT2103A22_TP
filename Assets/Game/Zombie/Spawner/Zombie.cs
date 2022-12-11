@@ -165,7 +165,7 @@ public class Zombie : MonoBehaviour
             }
             else
             {
-                zombieAudioSource.volume = 1 - (distance / 10);
+                zombieAudioSource.volume = soundManager.foleyVolume - (distance / 10);
             }
         }
     }

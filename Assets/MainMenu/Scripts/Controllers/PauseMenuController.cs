@@ -19,9 +19,14 @@ public class PauseMenuController : MonoBehaviour
 
     public PlayerInput playerInput;
 
+    private SoundManager soundManager;
+
     public void Start()
     {
+        soundManager = SoundManager.Instance;
         menu = GameObject.Find("Menu");
+        AudioSource pauseMenuMusicAudioSource = menu.AddComponent<AudioSource>();
+        soundManager.mainMenuMusicAudioSource = pauseMenuMusicAudioSource;        
         pauseMenu = menu.transform.Find("Pause Menu").gameObject;
         optionsMenu = menu.transform.Find("Options Menu").gameObject;
         bindingInProcess = menu.transform.Find("BindingInProcess").gameObject;
@@ -32,11 +37,13 @@ public class PauseMenuController : MonoBehaviour
         if (player != null)
         {
             playerInput = player.GetComponent<PlayerInput>();
-        }
+        }        
     }
 
     public void Pause()
     {
+        soundManager.PauseAudioSources();
+        soundManager.PlayMainMenuMusic();
         pauseMenu.SetActive(true);
         Time.timeScale = 0f;
         playerInput.SwitchCurrentActionMap("Menu");
@@ -51,7 +58,8 @@ public class PauseMenuController : MonoBehaviour
         {
             player.GetComponent<StarterAssetsInputs>().pause = false;
         }
-        Time.timeScale = 1f;
+        Time.timeScale = 1f;        
+        soundManager.ResumeAudioSources();
     }
 
     public void Options()
@@ -69,6 +77,7 @@ public class PauseMenuController : MonoBehaviour
         MenuManager.IsInitialised = false;
         MenuManager.loadingScreen.SetActive(true);
         gameObject.SetActive(false);
+        soundManager.ClearAudioSources();
         gameLoader.LoadGame(1);
     }
 }

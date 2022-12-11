@@ -68,8 +68,10 @@ public class LevelBasicStart : MonoBehaviour
 
             SetupPlayerCameraLayerAndMask(player, playerNumber);
 
-            AudioSource audioSource = player.AddComponent<AudioSource>();
-            soundManager.audioSource = audioSource;
+            AudioSource playerSoundEffectsAudioSource = player.AddComponent<AudioSource>();
+            soundManager.playerSoundEffectsAudioSource = playerSoundEffectsAudioSource;
+            AudioSource gameMusicAudioSource = player.AddComponent<AudioSource>();
+            soundManager.gameMusicAudioSource = gameMusicAudioSource;
             PlayableCharacter playableCharacter = player.AddComponent<PlayableCharacter>();
             playableCharacter.cinemachineUpOverrideObjectTransform = cinemachineUpOverrideObject.transform;
             playableCharacter.weapons = weapons;

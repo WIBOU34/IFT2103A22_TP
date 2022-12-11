@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SoundsMenuController : MonoBehaviour
 {
     private InputManager inputManager;
+    private SoundManager soundManager;
     private string fileName = @".\soundsSettings.json";
     private SoundsViewModel soundsViewModel = new SoundsViewModel();
     private Slider musicSlider;
@@ -15,6 +16,7 @@ public class SoundsMenuController : MonoBehaviour
     void Start()
     {
         inputManager = InputManager.Instance;
+        soundManager = SoundManager.Instance;
 
         musicSlider = gameObject.transform.Find("Music Container").transform.Find("Slider").GetComponent<Slider>();
         FoleysSlider = gameObject.transform.Find("Foleys Container").transform.Find("Slider").GetComponent<Slider>();
@@ -56,7 +58,9 @@ public class SoundsMenuController : MonoBehaviour
             File.WriteAllText(fileName, json);
         }
 
-        InputManager.UpdateSoundsNeeded = true;
+        soundManager.UpdateMusicVolume(soundsViewModel.MusicVolume / 100);
+        soundManager.UpdateFoleyVolume(soundsViewModel.FoleysVolume / 100);
+        soundManager.UpdateSFXVolume(soundsViewModel.SFXVolume / 100);
     }
 
     public void Back()
