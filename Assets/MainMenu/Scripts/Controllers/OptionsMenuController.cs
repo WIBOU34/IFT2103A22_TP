@@ -23,6 +23,7 @@ public class OptionsMenuController : MonoBehaviour
     private Button rebindButton;
     private string currentRebindAction;
     private int currentRebindPlayer;
+    private Vector3 initialButtonScale = new Vector3(3, 3, 0);
 
     private void Start()
     {
@@ -152,7 +153,7 @@ public class OptionsMenuController : MonoBehaviour
         MenuManager.OpenMenu(Menu.BINDING_IN_PROCRESS, gameObject);
     }
 
-    public void Save()
+    public void Save(GameObject button)
     {
         soundManager.PlayMenuButtonOnClickSound();
 
@@ -173,6 +174,7 @@ public class OptionsMenuController : MonoBehaviour
         }
 
         InputManager.UpdateBindNeeded = true;
+        button.transform.localScale = initialButtonScale;
     }
 
     private void Load()
@@ -188,7 +190,7 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
-    public void Back()
+    public void Back(GameObject button)
     {
         Load();
         UpdatePlayersButtonsText();
@@ -207,9 +209,11 @@ public class OptionsMenuController : MonoBehaviour
         {
             MenuManager.OpenMenu(Menu.MAIN_MENU, gameObject);
         }
+
+        button.transform.localScale = initialButtonScale;
     }
 
-    public void OpenSoundsMenu()
+    public void OpenSoundsMenu(GameObject button)
     {
         soundManager.PlayMenuButtonOnClickSound();
 
@@ -223,7 +227,9 @@ public class OptionsMenuController : MonoBehaviour
         else
         {
             MenuManager.OpenMenu(Menu.SOUNDS_MENU, gameObject);
-        }        
+        }
+
+        button.transform.localScale = new Vector3(2, 2, 0);
     }
 
     private void InitOptionsViewModel()

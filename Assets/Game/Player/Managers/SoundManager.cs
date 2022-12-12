@@ -33,6 +33,7 @@ public sealed class SoundManager
     public AudioClip mainMenuMusic2;
     public AudioClip lastMainMenuMusicPlaying;
     private AudioClip menuButtonOnClickSound;
+    private AudioClip menuButtonHoverSound;
     private bool dyingSoundHasPlayed = false;
     public float musicVolume = 1;
     public float foleyVolume = 1;
@@ -62,6 +63,7 @@ public sealed class SoundManager
         mainMenuMusic2 = Resources.Load<AudioClip>("Audios/MX/Ambience/CoF15");
         lastMainMenuMusicPlaying = mainMenuMusic2;
         menuButtonOnClickSound = Resources.Load<AudioClip>("Audios/Menu/Menu_Buttons_3");
+        menuButtonHoverSound = Resources.Load<AudioClip>("Audios/Menu/Menu_Buttons_7");
         LoadVolumes();
     }
 
@@ -80,8 +82,15 @@ public sealed class SoundManager
         }
     }
 
+    public void PlayMenuButtonHoverSound()
+    {
+        AddToSFXAudioSources(menuButtonEffectsAudioSource);
+        menuButtonEffectsAudioSource.PlayOneShot(menuButtonHoverSound);
+    }
+
     public void PlayMenuButtonOnClickSound()
     {
+        AddToSFXAudioSources(menuButtonEffectsAudioSource);
         menuButtonEffectsAudioSource.PlayOneShot(menuButtonOnClickSound);
     }
 
