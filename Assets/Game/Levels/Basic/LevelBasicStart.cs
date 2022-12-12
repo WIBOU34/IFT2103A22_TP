@@ -13,6 +13,8 @@ public class LevelBasicStart : MonoBehaviour
     public List<GameObject> weapons;
     public Material bulletTrailMaterial;
     public GameObject cinemachineUpOverrideObject;
+    public Material zombieSpawnerParticleEffectMaterial;
+    public Material ambianceParticleEffectMaterial;
     private InputManager inputManager;
     private SoundManager soundManager;
 
@@ -28,6 +30,8 @@ public class LevelBasicStart : MonoBehaviour
         {
             totalPlayers = MenuManager.persistence.GetComponent<GameLoader>().totalPlayers;
         }
+
+        SetUpPoolable();
 
         CreatePlayers(totalPlayers);
 
@@ -115,5 +119,56 @@ public class LevelBasicStart : MonoBehaviour
         camera.layer = layer;
         virtualPlayerCam.layer = layer;
         playerCameraRoot.layer = layer;
+    }
+
+    private void SetUpPoolable()
+    {
+        SetUpParticleSystemPoolable();
+        SetUpLineRendererPoolable();
+    }
+
+    private void SetUpParticleSystemPoolable()
+    {
+        GameObject obj = new GameObject("ParticleSystem");
+
+        ParticleSystem particleSys = obj.AddComponent<ParticleSystem>();
+        ParticleSystem.MainModule main = particleSys.main;
+        main.maxParticles = 10000;
+        ParticleSystem.ShapeModule shapeModule = particleSys.shape;
+        shapeModule.texture = CreateTexture(new Color(0.5f, 0.5f, 0.5f, 0.2f), 1, 1);
+        shapeModule.shapeType = ParticleSystemShapeType.Sphere;
+        ParticleSystem.CollisionModule collisionModule = particleSys.collision;
+        collisionModule.enabled = true;
+        collisionModule.type = ParticleSystemCollisionType.World;
+        ParticleSystemRenderer renderer = particleSys.GetComponent<ParticleSystemRenderer>();
+        renderer.sharedMaterial = zombieSpawnerParticleEffectMaterial;
+        renderer.maxParticleSize = 0.002f;
+
+        PoolableManager.CreatePoolable(obj, 1);
+
+        Destroy(obj);
+    }
+
+    private void SetUpLineRendererPoolable()
+    {
+        //GameObject obj = new GameObject();
+
+
+        //PoolableManager.CreatePoolable(obj, 1);
+    }
+
+    private Texture2D CreateTexture(Color color, int sizeX, int sizeY)
+    {
+        TextureFormat format = TextureFormat.RGBAFloat;
+        Texture2D texture = new Texture2D(sizeX, sizeY, format, true);
+        texture.name = "aRuntimeParticleTexture";
+        Color[] colors = new Color[sizeX * sizeY];
+        for (int i = 0; i < colors.Length; i++)
+        {
+            colors[i] = color;
+        }
+        texture.SetPixels(colors);
+        texture.Apply();
+        return texture;
     }
 }

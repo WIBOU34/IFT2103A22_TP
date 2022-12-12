@@ -13,11 +13,13 @@ public class Weapon : MonoBehaviour
     private Vector3 position = new Vector3(0.5f, 0.5f, 0);
     private bool isGameIn3rdPerson = false;
     private SoundManager soundManager;
-    private bool makeReloadSound = false; 
+    private bool makeReloadSound = false;
+    private Poolable weaponTrailPoolable;
 
     // Start is called before the first frame update
     void Start()
     {
+        weaponTrailPoolable = PoolableManager.GetPoolable<LineRenderer>();
         soundManager = SoundManager.Instance;
         Reload();
     }
@@ -46,7 +48,7 @@ public class Weapon : MonoBehaviour
             currentClipAmmo--;
             Vector3 bulletStartPosition = this.transform.position; // maybe change to tip of the barrel
             Ray ray = GetRay(bulletStartPosition);
-            GameObject bullet = new GameObject();
+            GameObject bullet = new GameObject(); // TODO: use a poolable but figure out how to delete after x time;
             bullet.name = "BulletTrail";
             bullet.AddComponent<LineRenderer>();
             bullet.GetComponent<LineRenderer>().startWidth = 0.01f;

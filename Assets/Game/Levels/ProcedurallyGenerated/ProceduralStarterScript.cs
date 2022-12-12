@@ -15,6 +15,8 @@ public class ProceduralStarterScript : MonoBehaviour
     public GameObject cinemachineUpOverrideObject;
     public Material terrainMaterial;
     private InputManager inputManager;
+    public Material zombieSpawnerParticleEffectMaterial;
+    public Material ambianceParticleEffectMaterial;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,11 +29,15 @@ public class ProceduralStarterScript : MonoBehaviour
             totalPlayers = MenuManager.persistence.GetComponent<GameLoader>().totalPlayers;
         }
 
+        SetUpPoolable();
+
         CreatePlayers(totalPlayers);
 
         zombieController = new ZombieController();
         zombieController.Start();
         ZombieController.typeToSpawn = zombieTypeToSpawn;
+        Poolable zombieSpawnerPoolable = new Poolable();
+        zombieSpawnerPoolable.SetCapacity(1);
         ZombieController.CreateZombieSpawner(new Vector3(-10, 0, 5));
         inputManager = InputManager.Instance;
     }
@@ -113,5 +119,47 @@ public class ProceduralStarterScript : MonoBehaviour
         camera.layer = layer;
         virtualPlayerCam.layer = layer;
         playerCameraRoot.layer = layer;
+    }
+
+    private void SetUpPoolable()
+    {
+        SetUpParticleSystemPoolable();
+        SetUpLineRendererPoolable();
+    }
+
+    private void SetUpParticleSystemPoolable()
+    {
+        GameObject obj = new GameObject();
+
+        ParticleSystem particleSys = obj.AddComponent<ParticleSystem>();
+        ParticleSystem.ShapeModule shapeModule = particleSys.shape;
+        shapeModule.texture = CreateTexture(new Color(0.5f, 0.5f, 0.5f, 0.2f), 1, 1);
+        shapeModule.shapeType = ParticleSystemShapeType.Sphere;
+        ParticleSystemRenderer renderer = particleSys.GetComponent<ParticleSystemRenderer>();
+        renderer.sharedMaterial = zombieSpawnerParticleEffectMaterial;
+
+        PoolableManager.CreatePoolable(obj, 1);
+    }
+
+    private void SetUpLineRendererPoolable()
+    {
+        //GameObject obj = new GameObject();
+
+
+        //PoolableManager.CreatePoolable(obj, 1);
+    }
+
+    private Texture2D CreateTexture(Color color, int sizeX, int sizeY)
+    {
+        TextureFormat format = TextureFormat.RGBAFloat;
+        Texture2D texture = new Texture2D(sizeX, sizeY, format, true);
+        Color[] colors = new Color[sizeX * sizeY];
+        for (int i = 0; i < colors.Length; i++)
+        {
+            colors[i] = color;
+        }
+        texture.SetPixels(colors);
+        texture.Apply();
+        return texture;
     }
 }

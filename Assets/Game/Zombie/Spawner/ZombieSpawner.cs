@@ -13,11 +13,15 @@ public class ZombieSpawner : MonoBehaviour
     public GameObject typeToSpawn;
     public String spawnerNumber;
     public Difficulty difficulty;
+    public Poolable poolable;
+    private GameObject particleSystemInUse;
 
     // Start is called before the first frame update
     void Start()
     {
-        // Add effects maybe?
+        poolable = PoolableManager.GetPoolable<ParticleSystem>();
+        particleSystemInUse = poolable.Get(this.transform);
+        particleSystemInUse.transform.position = new Vector3(particleSystemInUse.transform.position.x, particleSystemInUse.transform.position.y + 0.3f, particleSystemInUse.transform.position.z);
     }
 
     // Update is called once per frame
@@ -25,7 +29,7 @@ public class ZombieSpawner : MonoBehaviour
     {
         if (zombies.Count < maxZombiesAtOnce && counter < maxZombiesTotal)
         {
-            if (IsSpawnFree() && IsSpawnOnNavMesh())
+            if (IsSpawnFree())
             {
                 CreateZombie();
             }
@@ -100,6 +104,7 @@ public class ZombieSpawner : MonoBehaviour
 
     private void OnDestroy()
     {
+        poolable.Release(particleSystemInUse);
         ZombieController.ZombieSpawnerDepleted(this.gameObject);
     }
 }
