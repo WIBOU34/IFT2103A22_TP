@@ -12,6 +12,7 @@ public class SoundsMenuController : MonoBehaviour
     private Slider musicSlider;
     private Slider FoleysSlider;
     private Slider SFXSlider;
+    private Vector3 initialButtonScale = new Vector3(3, 3, 0);
 
     void Start()
     {
@@ -25,7 +26,7 @@ public class SoundsMenuController : MonoBehaviour
         Load();
     }
 
-    public void OpenBindsMenu()
+    public void OpenBindsMenu(GameObject button)
     {
         soundManager.PlayMenuButtonOnClickSound();
 
@@ -39,10 +40,12 @@ public class SoundsMenuController : MonoBehaviour
         else
         {
             MenuManager.OpenMenu(Menu.OPTIONS_MENU, gameObject);
-        }        
+        }
+
+        button.transform.localScale = new Vector3(2.5f, 2.5f, 0);
     }
 
-    public void Save()
+    public void Save(GameObject button = null)
     {
         soundManager.PlayMenuButtonOnClickSound();
 
@@ -65,9 +68,14 @@ public class SoundsMenuController : MonoBehaviour
         soundManager.UpdateMusicVolume(soundsViewModel.MusicVolume / 100);
         soundManager.UpdateFoleyVolume(soundsViewModel.FoleysVolume / 100);
         soundManager.UpdateSFXVolume(soundsViewModel.SFXVolume / 100);
+
+        if (button != null)
+        {
+            button.transform.localScale = initialButtonScale;
+        }        
     }
 
-    public void Back()
+    public void Back(GameObject button)
     {
         Load();
         UpdateSoundsSliders();
@@ -85,6 +93,8 @@ public class SoundsMenuController : MonoBehaviour
         {
             MenuManager.OpenMenu(Menu.MAIN_MENU, gameObject);
         }
+
+        button.transform.localScale = initialButtonScale;
     }
 
     private void Load()
