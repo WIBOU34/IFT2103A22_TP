@@ -17,6 +17,7 @@ public class OptionsMenuController : MonoBehaviour
     private OptionsViewModel optionsViewModel = new OptionsViewModel();
     private string fileName = @".\playersSettings.json";
     private InputManager inputManager;
+    private SoundManager soundManager;
     private Dictionary<Button, string> buttonActionsPairsPlayer1 = new Dictionary<Button, string>();
     private Dictionary<Button, string> buttonActionsPairsPlayer2 = new Dictionary<Button, string>();
     private Button rebindButton;
@@ -26,6 +27,7 @@ public class OptionsMenuController : MonoBehaviour
     private void Start()
     {
         inputManager = InputManager.Instance;
+        soundManager = SoundManager.Instance;
 
         Load();
 
@@ -145,11 +147,15 @@ public class OptionsMenuController : MonoBehaviour
 
         rebindButton = button;
 
+        soundManager.PlayMenuButtonOnClickSound();
+
         MenuManager.OpenMenu(Menu.BINDING_IN_PROCRESS, gameObject);
     }
 
     public void Save()
     {
+        soundManager.PlayMenuButtonOnClickSound();
+
         optionsViewModel.player1Controls.ReverseMovement = toggleReverseMovementPlayer1.isOn;
         optionsViewModel.player1Controls.JoystickMovement = toggleJoystickMovementPlayer1.isOn;
         optionsViewModel.player2Controls.ReverseMovement = toggleReverseMovementPlayer2.isOn;
@@ -188,6 +194,8 @@ public class OptionsMenuController : MonoBehaviour
         UpdatePlayersButtonsText();
         UpdatePlayersToggles();
 
+        soundManager.PlayMenuButtonOnClickSound();
+
         if (MenuManager.OptionsMenuOpenedFromPauseMenu)
         {
             GameObject menu = GameObject.Find("Menu");
@@ -203,6 +211,8 @@ public class OptionsMenuController : MonoBehaviour
 
     public void OpenSoundsMenu()
     {
+        soundManager.PlayMenuButtonOnClickSound();
+
         if (MenuManager.OptionsMenuOpenedFromPauseMenu)
         {
             GameObject menu = GameObject.Find("Menu");            

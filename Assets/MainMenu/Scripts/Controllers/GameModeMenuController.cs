@@ -11,18 +11,21 @@ public class GameModeMenuController : MonoBehaviour
 
     public void Solo()
     {
+        soundManager.PlayMenuButtonOnClickSound();
         MenuManager.IsInitialised = false;
         ActivateLoadingScreenToLoadGame(1);
     }
 
     public void Multiplayer()
     {
+        soundManager.PlayMenuButtonOnClickSound();
         MenuManager.IsInitialised = false;
         ActivateLoadingScreenToLoadGame(2);
     }
 
     public void Back()
     {
+        soundManager.PlayMenuButtonOnClickSound();
         MenuManager.OpenMenu(Menu.DIFFICULTY_MENU, gameObject);
     }
 

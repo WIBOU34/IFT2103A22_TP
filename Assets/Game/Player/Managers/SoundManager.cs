@@ -13,6 +13,7 @@ public sealed class SoundManager
     public AudioSource playerSoundEffectsAudioSource;
     public AudioSource gameMusicAudioSource;
     public AudioSource mainMenuMusicAudioSource;
+    public AudioSource menuButtonEffectsAudioSource;
     private List<AudioSource> musicAudioSources = new List<AudioSource>();
     private List<AudioSource> foleyAudioSources = new List<AudioSource>();
     private List<AudioSource> sfxAudioSources = new List<AudioSource>();
@@ -24,12 +25,22 @@ public sealed class SoundManager
     private AudioClip zombieStepsSound;
     private AudioClip zombieAttackSound;
     private AudioClip zombieDyingSound;
-    private AudioClip gameMusic;
-    private AudioClip mainMenuMusic;
+    public AudioClip gameMusic;
+    public AudioClip gameMusic2;
+    public AudioClip gameMusic3;
+    public AudioClip lastGameMusicPlaying;
+    public AudioClip mainMenuMusic;
+    public AudioClip mainMenuMusic2;
+    public AudioClip lastMainMenuMusicPlaying;
+    private AudioClip menuButtonOnClickSound;
     private bool dyingSoundHasPlayed = false;
-    private float musicVolume = 1;
+    public float musicVolume = 1;
     public float foleyVolume = 1;
     private float sfxVolume = 1;
+    public int fonduCroiseTime = 10;
+    public int fonduCroiseTimeGame = 20;
+    public float timeMenuMusicStart;
+    public float timeGameMusicStart;
 
     SoundManager()
     {
@@ -41,8 +52,16 @@ public sealed class SoundManager
         zombieStepsSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Steps/Zombie_Steps_01");
         zombieAttackSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Voice/Zombie_Attack_2");
         zombieDyingSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Voice/Zombie_Dead_Ver1_1");
-        gameMusic = Resources.Load<AudioClip>("Audios/free horror ambience 2/ha-abomination");
-        mainMenuMusic = Resources.Load<AudioClip>("Audios/MX/Ambience/CoFLoop2");
+        //gameMusic = Resources.Load<AudioClip>("Audios/free horror ambience 2/ha-abomination");
+        //gameMusic2 = Resources.Load<AudioClip>("Audios/free horror ambience 2/ha-amorph");
+        gameMusic = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Tension Cue 1 @100 BMP Duration 01_00/Tension Cue 1 @100 BMP Duration 01_00");
+        gameMusic2 = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Tension Cue 2 @100 BMP Duration 01_00/Tension Cue 2 @100 BMP Duration 01_00");
+        gameMusic3 = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Tension Cue 3 @100 BMP Duration 01_00/Tension Cue 3 @100 BMP Duration 01_00");
+        lastGameMusicPlaying = gameMusic3;
+        mainMenuMusic = Resources.Load<AudioClip>("Audios/MX/Ambience/CoF");
+        mainMenuMusic2 = Resources.Load<AudioClip>("Audios/MX/Ambience/CoF15");
+        lastMainMenuMusicPlaying = mainMenuMusic2;
+        menuButtonOnClickSound = Resources.Load<AudioClip>("Audios/Menu/Menu_Buttons_3");
         LoadVolumes();
     }
 
@@ -61,20 +80,42 @@ public sealed class SoundManager
         }
     }
 
+    public void PlayMenuButtonOnClickSound()
+    {
+        menuButtonEffectsAudioSource.PlayOneShot(menuButtonOnClickSound);
+    }
+
     public void PlayMainMenuMusic() 
     {
         AddToMusicAudioSources(mainMenuMusicAudioSource);
-        mainMenuMusicAudioSource.clip = mainMenuMusic;
-        mainMenuMusicAudioSource.loop = true;
+
+        mainMenuMusicAudioSource.clip = lastMainMenuMusicPlaying.name == mainMenuMusic2.name ? mainMenuMusic : mainMenuMusic2;
+        lastMainMenuMusicPlaying = mainMenuMusicAudioSource.clip;
+        mainMenuMusicAudioSource.volume = 0; //Pour fondu croisé, volume ajusté dans MenuMusicController
         mainMenuMusicAudioSource.Play();
+        timeMenuMusicStart = Time.time;
     }
 
     public void PlayGameMusic()
     {
         AddToMusicAudioSources(gameMusicAudioSource);
-        gameMusicAudioSource.clip = gameMusic;
-        gameMusicAudioSource.loop = true;
+
+        if (lastMainMenuMusicPlaying.name == gameMusic3.name)
+        {
+            gameMusicAudioSource.clip = gameMusic;
+        }
+        else if (lastMainMenuMusicPlaying.name == gameMusic.name)
+        {
+            gameMusicAudioSource.clip = gameMusic2;
+        }
+        else
+        {
+            gameMusicAudioSource.clip = gameMusic3;
+        }
+
+        gameMusicAudioSource.volume = 0; //Pour fondu croisé, volume ajusté dans GameMusicController
         gameMusicAudioSource.Play();
+        timeGameMusicStart = Time.time;
     }
 
     public void PlayZombieVoiceSound(AudioSource audioSource)

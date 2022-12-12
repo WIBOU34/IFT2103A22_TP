@@ -27,6 +27,8 @@ public class SoundsMenuController : MonoBehaviour
 
     public void OpenBindsMenu()
     {
+        soundManager.PlayMenuButtonOnClickSound();
+
         if (MenuManager.OptionsMenuOpenedFromPauseMenu)
         {
             GameObject menu = GameObject.Find("Menu");
@@ -42,6 +44,8 @@ public class SoundsMenuController : MonoBehaviour
 
     public void Save()
     {
+        soundManager.PlayMenuButtonOnClickSound();
+
         soundsViewModel.MusicVolume = musicSlider.value;
         soundsViewModel.FoleysVolume = FoleysSlider.value;
         soundsViewModel.SFXVolume = SFXSlider.value;
@@ -67,6 +71,8 @@ public class SoundsMenuController : MonoBehaviour
     {
         Load();
         UpdateSoundsSliders();
+
+        soundManager.PlayMenuButtonOnClickSound();
 
         if (MenuManager.OptionsMenuOpenedFromPauseMenu)
         {
