@@ -3,40 +3,36 @@ using UnityEngine;
 
 public static class PoolableManager
 {
-    private static List<Poolable> poolables = new List<Poolable>();
+    private static Dictionary<string, Poolable> poolables = new Dictionary<string, Poolable>();
 
     public static void Init()
     {
         poolables.Clear();
     }
 
-    public static Poolable GetPoolable<T>()
+    public static Poolable GetPoolable<T>(string key)
     {
-        for (int i = 0; i < poolables.Count; i++)
-        {
-            if (poolables[i].IsType<T>())
-            {
-                return poolables[i];
-            }
-        }
+        if (poolables.TryGetValue(key, out Poolable pool))
+            return pool;
         return null;
     }
 
-    public static Poolable CreatePoolable(GameObject obj, int qty)
+    public static Poolable CreatePoolable(string key, GameObject obj, int qty)
     {
         Poolable poolable = new Poolable();
         poolable.SetCapacity(qty);
         poolable.Init(obj);
-        poolables.Add(poolable);
+        poolables.Add(key, poolable);
         return poolable;
     }
 
     public static void DestroyCreatedObjects()
     {
-        for (int i = 0; i < poolables.Count; i++)
+        foreach (var item in poolables.Values)
         {
-            poolables[i].DestroyCreatedObjects();
+            item.DestroyCreatedObjects();
         }
+        poolables.Clear();
     }
 }
 

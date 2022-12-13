@@ -19,7 +19,7 @@ public class Weapon : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        weaponTrailPoolable = PoolableManager.GetPoolable<LineRenderer>();
+        weaponTrailPoolable = PoolableManager.GetPoolable<LineRenderer>("WeaponLineRenderer");
         soundManager = SoundManager.Instance;
         Reload();
     }
