@@ -134,15 +134,27 @@ public class LevelBasicStart : MonoBehaviour
         ParticleSystem particleSys = obj.AddComponent<ParticleSystem>();
         ParticleSystem.MainModule main = particleSys.main;
         main.maxParticles = 10000;
+        ParticleSystem.SizeOverLifetimeModule sizeOverLifetimeModule = particleSys.sizeOverLifetime;
+        sizeOverLifetimeModule.enabled = true;
+        sizeOverLifetimeModule.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.Linear(0, 1, 1, 0));
+        ParticleSystem.EmissionModule emissionModule = particleSys.emission;
+        emissionModule.enabled = true;
+        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(100);
         ParticleSystem.ShapeModule shapeModule = particleSys.shape;
-        shapeModule.texture = CreateTexture(new Color(0.5f, 0.5f, 0.5f, 0.2f), 1, 1);
+        //shapeModule.texture = CreateTexture(new Color(0.5f, 0.5f, 0.5f, 0.2f), 1, 1);
         shapeModule.shapeType = ParticleSystemShapeType.Sphere;
         ParticleSystem.CollisionModule collisionModule = particleSys.collision;
         collisionModule.enabled = true;
         collisionModule.type = ParticleSystemCollisionType.World;
+        ParticleSystem.LimitVelocityOverLifetimeModule limitVelocityOverLifetimeModule = particleSys.limitVelocityOverLifetime;
+        limitVelocityOverLifetimeModule.enabled = true;
+        limitVelocityOverLifetimeModule.dampen = 1;
+        limitVelocityOverLifetimeModule.limit = new ParticleSystem.MinMaxCurve(0.3f);
         ParticleSystemRenderer renderer = particleSys.GetComponent<ParticleSystemRenderer>();
+        zombieSpawnerParticleEffectMaterial.color = new Color(0, 0, 0, 0.7f);
         renderer.sharedMaterial = zombieSpawnerParticleEffectMaterial;
-        renderer.maxParticleSize = 0.002f;
+        renderer.maxParticleSize = 0.01f;
+        renderer.sortMode = ParticleSystemSortMode.Distance;
 
         PoolableManager.CreatePoolable(obj, 1);
 
@@ -170,5 +182,10 @@ public class LevelBasicStart : MonoBehaviour
         texture.SetPixels(colors);
         texture.Apply();
         return texture;
+    }
+
+    private void OnDestroy()
+    {
+        PoolableManager.DestroyCreatedObjects();
     }
 }

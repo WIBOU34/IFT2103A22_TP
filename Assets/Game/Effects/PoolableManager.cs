@@ -30,5 +30,13 @@ public static class PoolableManager
         poolables.Add(poolable);
         return poolable;
     }
+
+    public static void DestroyCreatedObjects()
+    {
+        for (int i = 0; i < poolables.Count; i++)
+        {
+            poolables[i].DestroyCreatedObjects();
+        }
+    }
 }
 

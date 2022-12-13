@@ -162,4 +162,9 @@ public class ProceduralStarterScript : MonoBehaviour
         texture.Apply();
         return texture;
     }
+
+    void OnDestroy()
+    {
+        PoolableManager.DestroyCreatedObjects();
+    }
 }
