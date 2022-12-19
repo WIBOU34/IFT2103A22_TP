@@ -40,16 +40,17 @@ public class PauseMenuController : MonoBehaviour
 
     public void Pause()
     {
+        soundManager.gameIsPaused = true;
         soundManager.PauseAudioSources();
         soundManager.PlayMainMenuMusicTrack1();
         pauseMenu.SetActive(true);
-        Time.timeScale = 0f;
         playerInput.SwitchCurrentActionMap("Menu");
     }
 
     public void Resume()
     {
         soundManager.PlayMenuButtonOnClickSound();
+        soundManager.gameIsPaused = false;
         pauseMenu.SetActive(false);
         playerInput.SwitchCurrentActionMap("Player");
         List<GameObject> players = GameObject.FindGameObjectsWithTag("Player").ToList();

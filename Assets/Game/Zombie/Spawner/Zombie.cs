@@ -60,22 +60,33 @@ public class Zombie : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDead)
-            return;
-
-        if (pathingAI.currentTarget != null)
+        if (!soundManager.gameIsPaused)
         {
-            if (ValidateCurrentTargetForAttack())
-            {
-                TargetHittable();
-            }
-            else
-            {
-                TargetNotHittable();
-            }
-        }
+            if (isDead)
+                return;
 
-        AjustZombieSoundsBasedOnPlayerDistance();
+            if (pathingAI.currentTarget != null)
+            {
+                if (ValidateCurrentTargetForAttack())
+                {
+                    TargetHittable();
+                }
+                else
+                {
+                    TargetNotHittable();
+                }
+            }
+
+            AjustZombieSoundsBasedOnPlayerDistance();
+        }
+        else
+        {   //Revoir pause pour les zombies         
+            //NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+            //navMeshAgent.SetDestination(transform.position);
+            //navMeshAgent.enabled = false;
+            //navMeshAgent.updatePosition = false;
+            //transform.position = transform.position;
+        }        
     }
 
     // Called by the animation controller

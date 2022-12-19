@@ -5,6 +5,7 @@ public class MenuMusicController : MonoBehaviour
     private SoundManager soundManager;
     private AudioSource mainMenuMusicAudioSourceTrack1;
     private AudioSource mainMenuMusicAudioSourceTrack2;
+    private AudioSource menuButtonEffectsAudioSource;
     private float nextTime = 0;
     private bool track1IsPlaying = false;
     private bool track2IsPlaying = false;
@@ -25,7 +26,7 @@ public class MenuMusicController : MonoBehaviour
         {
             mainMenuMusicAudioSourceTrack1 = canvas.GetComponent<AudioSource>();
             mainMenuMusicAudioSourceTrack2 = canvas.AddComponent<AudioSource>();
-            AudioSource menuButtonEffectsAudioSource = canvas.AddComponent<AudioSource>();
+            menuButtonEffectsAudioSource = canvas.AddComponent<AudioSource>();
             soundManager.mainMenuMusicAudioSourceTrack1 = mainMenuMusicAudioSourceTrack1;
             soundManager.mainMenuMusicAudioSourceTrack2 = mainMenuMusicAudioSourceTrack2;
             soundManager.menuButtonEffectsAudioSource = menuButtonEffectsAudioSource;
@@ -33,11 +34,11 @@ public class MenuMusicController : MonoBehaviour
         else
         {
             GameObject menu = GameObject.Find("Menu");
-            AudioSource pauseMenuMusicAudioSourceTrack1 = menu.AddComponent<AudioSource>();
-            AudioSource pauseMenuMusicAudioSourceTrack2 = menu.AddComponent<AudioSource>();
-            soundManager.mainMenuMusicAudioSourceTrack1 = pauseMenuMusicAudioSourceTrack1;
-            soundManager.mainMenuMusicAudioSourceTrack2 = pauseMenuMusicAudioSourceTrack2;
-            AudioSource menuButtonEffectsAudioSource = menu.AddComponent<AudioSource>();
+            mainMenuMusicAudioSourceTrack1 = menu.AddComponent<AudioSource>();
+            mainMenuMusicAudioSourceTrack2 = menu.AddComponent<AudioSource>();
+            soundManager.mainMenuMusicAudioSourceTrack1 = mainMenuMusicAudioSourceTrack1;
+            soundManager.mainMenuMusicAudioSourceTrack2 = mainMenuMusicAudioSourceTrack2;
+            menuButtonEffectsAudioSource = menu.AddComponent<AudioSource>();
             soundManager.menuButtonEffectsAudioSource = menuButtonEffectsAudioSource;
         }
     }
@@ -49,6 +50,11 @@ public class MenuMusicController : MonoBehaviour
             if (mainMenuMusicAudioSourceTrack2 == null || mainMenuMusicAudioSourceTrack1 == null)
             {
                 init();
+            }
+
+            if (mainMenuMusicAudioSourceTrack1.isPlaying == false && mainMenuMusicAudioSourceTrack2.isPlaying == false)
+            {
+                soundManager.PlayMainMenuMusicTrack1();
             }
 
             if (mainMenuMusicAudioSourceTrack2 != null && mainMenuMusicAudioSourceTrack1 != null)

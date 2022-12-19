@@ -10,6 +10,7 @@ public sealed class SoundManager
     private string fileName = @".\soundsSettings.json";
     private SoundsViewModel soundsViewModel = new SoundsViewModel();
 
+    public AudioSource titleAnimationAudioSource;
     public AudioSource playerSoundEffectsAudioSource;
     public AudioSource gameEndingMusic;
     public AudioSource lowHealthGameMusicSource;
@@ -42,6 +43,7 @@ public sealed class SoundManager
     private AudioClip lowHealthClip;
     private AudioClip victoryMusic;
     private AudioClip gameOverMusic;
+    private AudioClip titleAnimationSound;
     private bool dyingSoundHasPlayed = false;
     public float musicVolume = 1;
     public float foleyVolume = 1;
@@ -51,6 +53,7 @@ public sealed class SoundManager
     public bool stopMenuMusic = false;
     public bool stopGameMusic = false;
     public bool pauseGameMusic = false;
+    public bool gameIsPaused = false;
 
     SoundManager()
     {
@@ -76,6 +79,7 @@ public sealed class SoundManager
         lowHealthClip = Resources.Load<AudioClip>("Audios/Character/LowHealth Loop");
         victoryMusic = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Moods/Victory music @88 BPM duration 00_20/Victory music @88 BPM duration 00_20");
         gameOverMusic = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Moods/Sad Music @88 BPM duration 00_20/Sad Music @88 BPM duration 00_20");
+        titleAnimationSound = Resources.Load<AudioClip>("Audios/lamp wave/sfx lamp wave");
         LoadVolumes();
     }
 
@@ -92,6 +96,13 @@ public sealed class SoundManager
                 return instance;
             }
         }
+    }
+
+    public void PlayTitleAnimationSound()
+    {
+        AddToSFXAudioSources(titleAnimationAudioSource);
+        titleAnimationAudioSource.clip = titleAnimationSound;
+        titleAnimationAudioSource.Play();
     }
 
     public void PlayVictoryMusic()

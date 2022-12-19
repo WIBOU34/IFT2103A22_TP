@@ -10,6 +10,12 @@ public class LocomotionSimpleAgent : MonoBehaviour
     NavMeshAgent agent;
     public Vector2 smoothDeltaPosition = Vector2.zero;
     public Vector2 velocity = Vector2.zero;
+    private SoundManager soundManager;
+
+    private void Awake()
+    {
+        soundManager = SoundManager.Instance;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -23,39 +29,42 @@ public class LocomotionSimpleAgent : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 worldDeltaPosition = agent.nextPosition - transform.position;
-
-        // Map 'worldDeltaPosition' to local space
-        float dx = Vector3.Dot(transform.right, worldDeltaPosition);
-        float dy = Vector3.Dot(transform.forward, worldDeltaPosition);
-        Vector2 deltaPosition = new Vector2(dx, dy);
-
-        // Low-pass filter the deltaMove
-        float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
-        smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
-
-        // Update velocity if time advances
-        if (Time.deltaTime > 1e-5f)
-            velocity = smoothDeltaPosition / Time.deltaTime;
-
-        //bool shouldMove = velocity.magnitude > 0.5f && agent.remainingDistance > agent.radius;
-
-        // Update animation parameters
-        //anim.SetBool("move", shouldMove);
-        anim.SetFloat("velx", velocity.x);
-        anim.SetFloat("vely", velocity.y);
-
-        if (worldDeltaPosition.magnitude > agent.radius)
+        if (!soundManager.gameIsPaused)
         {
-            // Pull agent towards character (le joueur passe a travers des murs)
-            //agent.nextPosition = transform.position + 0.9f * worldDeltaPosition;
-            // Pull character towards agent (peux causer des glissements, mais respecte les obstacles)
-            transform.position = agent.nextPosition - 0.9f * worldDeltaPosition;
-        }
+            Vector3 worldDeltaPosition = agent.nextPosition - transform.position;
 
-        LookAt lookAt = GetComponent<LookAt>();
-        if (lookAt)
-            lookAt.lookAtTargetPosition = agent.steeringTarget + transform.forward;
+            // Map 'worldDeltaPosition' to local space
+            float dx = Vector3.Dot(transform.right, worldDeltaPosition);
+            float dy = Vector3.Dot(transform.forward, worldDeltaPosition);
+            Vector2 deltaPosition = new Vector2(dx, dy);
+
+            // Low-pass filter the deltaMove
+            float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
+            smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
+
+            // Update velocity if time advances
+            if (Time.deltaTime > 1e-5f)
+                velocity = smoothDeltaPosition / Time.deltaTime;
+
+            //bool shouldMove = velocity.magnitude > 0.5f && agent.remainingDistance > agent.radius;
+
+            // Update animation parameters
+            //anim.SetBool("move", shouldMove);
+            anim.SetFloat("velx", velocity.x);
+            anim.SetFloat("vely", velocity.y);
+
+            if (worldDeltaPosition.magnitude > agent.radius)
+            {
+                // Pull agent towards character (le joueur passe a travers des murs)
+                //agent.nextPosition = transform.position + 0.9f * worldDeltaPosition;
+                // Pull character towards agent (peux causer des glissements, mais respecte les obstacles)
+                transform.position = agent.nextPosition - 0.9f * worldDeltaPosition;
+            }
+
+            LookAt lookAt = GetComponent<LookAt>();
+            if (lookAt)
+                lookAt.lookAtTargetPosition = agent.steeringTarget + transform.forward;
+        }        
     }
 
     void OnAnimatorMove()

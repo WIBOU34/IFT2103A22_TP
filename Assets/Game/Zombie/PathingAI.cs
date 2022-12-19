@@ -5,6 +5,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class PathingAI : MonoBehaviour
 {
+    private SoundManager soundManager;
     private static readonly object padlock = new object();
     public static bool isInUse = false;
     private static int agentTypeIdAvoidDestructibles = 0;
@@ -34,6 +35,11 @@ public class PathingAI : MonoBehaviour
         agentTypeIdIgnoreDestructibles = ZombieController.GetAgenTypeIDByName(ZombieController.AGENT_TYPE_NAME_IGNORE_DESTRUCTIBLE);
     }
 
+    private void Awake()
+    {
+        soundManager = SoundManager.Instance;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,25 +49,28 @@ public class PathingAI : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (isDead)
-            return;
-
-        if (nbrTimes++ > NBR_TIMES_MAX)
+        if (!soundManager.gameIsPaused)
         {
-            if (GetTarget())
-                nbrTimes = 0;
-            else
-                nbrTimes = NBR_TIMES_MAX - 1;
-        }
+            if (isDead)
+                return;
 
-        if (currentTarget != null) // update pathing destination if target exists
-        {
-            // Only the player target can move
-            if (currentTarget.CompareTag(ZombieController.TAG_PLAYER))
+            if (nbrTimes++ > NBR_TIMES_MAX)
             {
-                agent.destination = currentTarget.transform.position;
+                if (GetTarget())
+                    nbrTimes = 0;
+                else
+                    nbrTimes = NBR_TIMES_MAX - 1;
             }
-        }
+
+            if (currentTarget != null) // update pathing destination if target exists
+            {
+                // Only the player target can move
+                if (currentTarget.CompareTag(ZombieController.TAG_PLAYER))
+                {
+                    agent.destination = currentTarget.transform.position;
+                }
+            }
+        }        
     }
 
     // Validates if the destination corresponds with the current target position (only use with players to test if they moved)
