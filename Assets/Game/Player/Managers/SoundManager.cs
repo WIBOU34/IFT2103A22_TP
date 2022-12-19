@@ -11,8 +11,13 @@ public sealed class SoundManager
     private SoundsViewModel soundsViewModel = new SoundsViewModel();
 
     public AudioSource playerSoundEffectsAudioSource;
-    public AudioSource gameMusicAudioSource;
-    public AudioSource mainMenuMusicAudioSource;
+    public AudioSource gameEndingMusic;
+    public AudioSource lowHealthGameMusicSource;
+    public AudioSource gameMusicAudioSourceTrack1;
+    public AudioSource gameMusicAudioSourceTrack2;
+    public AudioSource gameMusicAudioSourceTrack3;
+    public AudioSource mainMenuMusicAudioSourceTrack1;
+    public AudioSource mainMenuMusicAudioSourceTrack2;
     public AudioSource menuButtonEffectsAudioSource;
     private List<AudioSource> musicAudioSources = new List<AudioSource>();
     private List<AudioSource> foleyAudioSources = new List<AudioSource>();
@@ -34,14 +39,18 @@ public sealed class SoundManager
     public AudioClip lastMainMenuMusicPlaying;
     private AudioClip menuButtonOnClickSound;
     private AudioClip menuButtonHoverSound;
+    private AudioClip lowHealthClip;
+    private AudioClip victoryMusic;
+    private AudioClip gameOverMusic;
     private bool dyingSoundHasPlayed = false;
     public float musicVolume = 1;
     public float foleyVolume = 1;
     private float sfxVolume = 1;
     public int fonduCroiseTime = 10;
     public int fonduCroiseTimeGame = 20;
-    public float timeMenuMusicStart;
-    public float timeGameMusicStart;
+    public bool stopMenuMusic = false;
+    public bool stopGameMusic = false;
+    public bool pauseGameMusic = false;
 
     SoundManager()
     {
@@ -64,6 +73,9 @@ public sealed class SoundManager
         lastMainMenuMusicPlaying = mainMenuMusic2;
         menuButtonOnClickSound = Resources.Load<AudioClip>("Audios/Menu/Menu_Buttons_3");
         menuButtonHoverSound = Resources.Load<AudioClip>("Audios/Menu/Menu_Buttons_7");
+        lowHealthClip = Resources.Load<AudioClip>("Audios/Character/LowHealth Loop");
+        victoryMusic = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Moods/Victory music @88 BPM duration 00_20/Victory music @88 BPM duration 00_20");
+        gameOverMusic = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Moods/Sad Music @88 BPM duration 00_20/Sad Music @88 BPM duration 00_20");
         LoadVolumes();
     }
 
@@ -82,6 +94,39 @@ public sealed class SoundManager
         }
     }
 
+    public void PlayVictoryMusic()
+    {
+        StopAllGameAudioSources();
+        AddToMusicAudioSources(gameEndingMusic);
+        gameEndingMusic.clip = victoryMusic;
+        gameEndingMusic.loop = true;
+        gameEndingMusic.Play();
+    }
+
+    public void PlayGameOverMusic()
+    {
+        StopAllGameAudioSources();
+        AddToMusicAudioSources(gameEndingMusic);
+        gameEndingMusic.clip = gameOverMusic;
+        gameEndingMusic.loop = true;
+        gameEndingMusic.Play();
+    }
+
+    public void PlayLowHealthMusic()
+    {
+        PauseGameMusic();
+        AddToMusicAudioSources(lowHealthGameMusicSource);
+        lowHealthGameMusicSource.clip = lowHealthClip;
+        lowHealthGameMusicSource.loop = true;
+        lowHealthGameMusicSource.Play();
+    }
+
+    public void StopLowHealthMusicAndResumeGameMusic()
+    {
+        lowHealthGameMusicSource.Stop();
+        ResumeGameMusic();
+    }
+
     public void PlayMenuButtonHoverSound()
     {
         AddToSFXAudioSources(menuButtonEffectsAudioSource);
@@ -94,37 +139,139 @@ public sealed class SoundManager
         menuButtonEffectsAudioSource.PlayOneShot(menuButtonOnClickSound);
     }
 
-    public void PlayMainMenuMusic() 
+    public void PlayMainMenuMusicTrack1()
     {
-        AddToMusicAudioSources(mainMenuMusicAudioSource);
+        StopGameMusic();
+        stopMenuMusic = false;
+        AddToMusicAudioSources(mainMenuMusicAudioSourceTrack1);
 
-        mainMenuMusicAudioSource.clip = lastMainMenuMusicPlaying.name == mainMenuMusic2.name ? mainMenuMusic : mainMenuMusic2;
-        lastMainMenuMusicPlaying = mainMenuMusicAudioSource.clip;
-        mainMenuMusicAudioSource.volume = 0; //Pour fondu croisé, volume ajusté dans MenuMusicController
-        mainMenuMusicAudioSource.Play();
-        timeMenuMusicStart = Time.time;
+        mainMenuMusicAudioSourceTrack1.clip = mainMenuMusic;
+        lastMainMenuMusicPlaying = mainMenuMusicAudioSourceTrack1.clip;
+        mainMenuMusicAudioSourceTrack1.volume = 0; //Pour fondu croisé, volume ajusté dans MenuMusicController
+        mainMenuMusicAudioSourceTrack1.Play();
     }
 
-    public void PlayGameMusic()
+    public void PlayMainMenuMusicTrack2()
     {
-        AddToMusicAudioSources(gameMusicAudioSource);
+        StopGameMusic();
+        stopMenuMusic = false;
+        AddToMusicAudioSources(mainMenuMusicAudioSourceTrack2);
 
-        if (lastMainMenuMusicPlaying.name == gameMusic3.name)
+        mainMenuMusicAudioSourceTrack2.clip = mainMenuMusic2;
+        lastMainMenuMusicPlaying = mainMenuMusicAudioSourceTrack2.clip;
+        mainMenuMusicAudioSourceTrack2.volume = 0; //Pour fondu croisé, volume ajusté dans MenuMusicController
+        mainMenuMusicAudioSourceTrack2.Play();
+    }
+
+    public void StopMainMenuMusic()
+    {
+        stopMenuMusic = true;
+
+        if (mainMenuMusicAudioSourceTrack1 != null)
         {
-            gameMusicAudioSource.clip = gameMusic;
-        }
-        else if (lastMainMenuMusicPlaying.name == gameMusic.name)
-        {
-            gameMusicAudioSource.clip = gameMusic2;
-        }
-        else
-        {
-            gameMusicAudioSource.clip = gameMusic3;
+            mainMenuMusicAudioSourceTrack1.Stop();
         }
 
-        gameMusicAudioSource.volume = 0; //Pour fondu croisé, volume ajusté dans GameMusicController
-        gameMusicAudioSource.Play();
-        timeGameMusicStart = Time.time;
+        if (mainMenuMusicAudioSourceTrack2 != null)
+        {
+            mainMenuMusicAudioSourceTrack2.Stop();
+        }
+    }
+
+    public void PlayGameMusicTrack1()
+    {
+        StopMainMenuMusic();
+        stopGameMusic = false;
+        AddToMusicAudioSources(gameMusicAudioSourceTrack1);
+
+        gameMusicAudioSourceTrack1.clip = gameMusic;
+        lastGameMusicPlaying = gameMusicAudioSourceTrack1.clip;
+        gameMusicAudioSourceTrack1.volume = 0; //Pour fondu croisé, volume ajusté dans GameMusicController
+        gameMusicAudioSourceTrack1.Play();
+    }
+
+    public void PlayGameMusicTrack2()
+    {
+        StopMainMenuMusic();
+        stopGameMusic = false;
+        AddToMusicAudioSources(gameMusicAudioSourceTrack2);
+
+        gameMusicAudioSourceTrack2.clip = gameMusic;
+        lastGameMusicPlaying = gameMusicAudioSourceTrack2.clip;
+        gameMusicAudioSourceTrack2.volume = 0; //Pour fondu croisé, volume ajusté dans GameMusicController
+        gameMusicAudioSourceTrack2.Play();
+    }
+
+    public void PlayGameMusicTrack3()
+    {
+        StopMainMenuMusic();
+        stopGameMusic = false;
+        AddToMusicAudioSources(gameMusicAudioSourceTrack3);
+
+        gameMusicAudioSourceTrack3.clip = gameMusic;
+        lastGameMusicPlaying = gameMusicAudioSourceTrack3.clip;
+        gameMusicAudioSourceTrack3.volume = 0; //Pour fondu croisé, volume ajusté dans GameMusicController
+        gameMusicAudioSourceTrack3.Play();
+    }
+
+    public void StopGameMusic()
+    {
+        stopGameMusic = true;
+
+        if (gameMusicAudioSourceTrack1 != null)
+        {
+            gameMusicAudioSourceTrack1.Stop();
+        }
+
+        if (gameMusicAudioSourceTrack2 != null)
+        {
+            gameMusicAudioSourceTrack2.Stop();
+        }
+
+        if (gameMusicAudioSourceTrack3 != null)
+        {
+            gameMusicAudioSourceTrack3.Stop();
+        }
+    }
+
+    public void PauseGameMusic()
+    {
+        pauseGameMusic = true;
+
+        if (gameMusicAudioSourceTrack1 != null)
+        {
+            gameMusicAudioSourceTrack1.Pause();
+        }
+
+        if (gameMusicAudioSourceTrack2 != null)
+        {
+            gameMusicAudioSourceTrack2.Pause();
+        }
+
+        if (gameMusicAudioSourceTrack3 != null)
+        {
+            gameMusicAudioSourceTrack3.Pause();
+        }
+    }
+
+    public void ResumeGameMusic()
+    {
+        pauseGameMusic = false;
+
+        if (gameMusicAudioSourceTrack1 != null)
+        {
+            gameMusicAudioSourceTrack1.Play();
+        }
+
+        if (gameMusicAudioSourceTrack2 != null)
+        {
+            gameMusicAudioSourceTrack2.Play();
+        }
+
+        if (gameMusicAudioSourceTrack3 != null)
+        {
+            gameMusicAudioSourceTrack3.Play();
+        }
     }
 
     public void PlayZombieVoiceSound(AudioSource audioSource)
@@ -135,7 +282,7 @@ public sealed class SoundManager
         audioSource.spatialBlend = 1;
         audioSource.minDistance = 1;
         audioSource.maxDistance = 10;
-        audioSource.Play();        
+        audioSource.Play();
     }
 
     public void PlayZombieStepsSound(AudioSource audioSource)
@@ -186,29 +333,49 @@ public sealed class SoundManager
             AddToSFXAudioSources(playerSoundEffectsAudioSource);
             playerSoundEffectsAudioSource.PlayOneShot(dyingSound);
             dyingSoundHasPlayed = true;
-        }        
+        }
+    }
+
+    public void StopAllGameAudioSources()
+    {
+        foreach (AudioSource audioSource in musicAudioSources)
+        {
+            audioSource.Stop();
+        }
+
+        foreach (AudioSource audioSource in foleyAudioSources)
+        {
+            audioSource.Stop();
+        }
+
+        foreach (AudioSource audioSource in sfxAudioSources)
+        {
+            audioSource.Stop();
+        }
+
+        ClearAudioSources();
     }
 
     public void ClearAudioSources()
     {
-        musicAudioSources.Clear();
-        foleyAudioSources.Clear();
-        sfxAudioSources.Clear();
+        musicAudioSources = new List<AudioSource>();
+        foleyAudioSources = new List<AudioSource>();
+        sfxAudioSources = new List<AudioSource>();
     }
 
     public void PauseAudioSources()
     {
-        foreach(AudioSource audioSource in musicAudioSources)
+        foreach (AudioSource audioSource in musicAudioSources)
         {
             audioSource.Pause();
         }
 
-        foreach(AudioSource audioSource in foleyAudioSources)
+        foreach (AudioSource audioSource in foleyAudioSources)
         {
             audioSource.Pause();
         }
 
-        foreach(AudioSource audioSource in sfxAudioSources)
+        foreach (AudioSource audioSource in sfxAudioSources)
         {
             audioSource.Pause();
         }
@@ -216,7 +383,7 @@ public sealed class SoundManager
 
     public void ResumeAudioSources()
     {
-        foreach(AudioSource audioSource in musicAudioSources)
+        foreach (AudioSource audioSource in musicAudioSources)
         {
             if (audioSource.clip.name == mainMenuMusic.name)
             {
@@ -229,7 +396,7 @@ public sealed class SoundManager
             if (audioSource.clip.name != mainMenuMusic.name)
             {
                 audioSource.Play();
-            }           
+            }
         }
 
         foreach (AudioSource audioSource in foleyAudioSources)
@@ -247,9 +414,12 @@ public sealed class SoundManager
     {
         musicVolume = volume;
 
-        foreach(AudioSource audioSource in musicAudioSources)
+        foreach (AudioSource audioSource in musicAudioSources)
         {
-            audioSource.volume = volume;
+            if (audioSource != null)
+            {
+                audioSource.volume = volume;
+            }
         }
     }
 
@@ -257,9 +427,12 @@ public sealed class SoundManager
     {
         foleyVolume = volume;
 
-        foreach(AudioSource audioSource in foleyAudioSources)
+        foreach (AudioSource audioSource in foleyAudioSources)
         {
-            audioSource.volume = volume;
+            if (audioSource != null)
+            {
+                audioSource.volume = volume;
+            }
         }
     }
 
@@ -267,9 +440,12 @@ public sealed class SoundManager
     {
         sfxVolume = volume;
 
-        foreach(AudioSource audioSource in sfxAudioSources)
+        foreach (AudioSource audioSource in sfxAudioSources)
         {
-            audioSource.volume = volume;
+            if (audioSource != null)
+            {
+                audioSource.volume = volume;
+            }
         }
     }
 

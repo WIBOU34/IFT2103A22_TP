@@ -24,11 +24,7 @@ public class PauseMenuController : MonoBehaviour
     public void Start()
     {
         soundManager = SoundManager.Instance;
-        menu = GameObject.Find("Menu");
-        AudioSource pauseMenuMusicAudioSource = menu.AddComponent<AudioSource>();
-        soundManager.mainMenuMusicAudioSource = pauseMenuMusicAudioSource;
-        AudioSource menuButtonEffectsAudioSource = menu.AddComponent<AudioSource>();
-        soundManager.menuButtonEffectsAudioSource = menuButtonEffectsAudioSource;
+        menu = GameObject.Find("Menu");        
         pauseMenu = menu.transform.Find("Pause Menu").gameObject;
         optionsMenu = menu.transform.Find("Options Menu").gameObject;
         bindingInProcess = menu.transform.Find("BindingInProcess").gameObject;
@@ -45,7 +41,7 @@ public class PauseMenuController : MonoBehaviour
     public void Pause()
     {
         soundManager.PauseAudioSources();
-        soundManager.PlayMainMenuMusic();
+        soundManager.PlayMainMenuMusicTrack1();
         pauseMenu.SetActive(true);
         Time.timeScale = 0f;
         playerInput.SwitchCurrentActionMap("Menu");

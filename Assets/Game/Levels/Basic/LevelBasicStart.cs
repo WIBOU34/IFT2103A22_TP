@@ -40,7 +40,6 @@ public class LevelBasicStart : MonoBehaviour
         ZombieController.typeToSpawn = zombieTypeToSpawn;
         ZombieController.CreateZombieSpawner(new Vector3(-10, 0, 5));
         inputManager = InputManager.Instance;
-        soundManager.PlayGameMusic();
     }
 
     // Update is called once per frame
@@ -74,8 +73,6 @@ public class LevelBasicStart : MonoBehaviour
 
             AudioSource playerSoundEffectsAudioSource = player.AddComponent<AudioSource>();
             soundManager.playerSoundEffectsAudioSource = playerSoundEffectsAudioSource;
-            AudioSource gameMusicAudioSource = player.AddComponent<AudioSource>();
-            soundManager.gameMusicAudioSource = gameMusicAudioSource;
             PlayableCharacter playableCharacter = player.AddComponent<PlayableCharacter>();
             playableCharacter.cinemachineUpOverrideObjectTransform = cinemachineUpOverrideObject.transform;
             playableCharacter.weapons = weapons;
