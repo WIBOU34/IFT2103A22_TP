@@ -19,9 +19,9 @@ public class ZombieSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        poolable = PoolableManager.GetPoolable<ParticleSystem>();
+        poolable = PoolableManager.GetPoolable<ParticleSystem>("ZombieSpawnerParticleSystem");
         particleSystemInUse = poolable.Get(this.transform);
-        particleSystemInUse.transform.position = new Vector3(particleSystemInUse.transform.position.x, particleSystemInUse.transform.position.y + 0.3f, particleSystemInUse.transform.position.z);
+        particleSystemInUse.transform.position = new Vector3(particleSystemInUse.transform.position.x, particleSystemInUse.transform.position.y + 1, particleSystemInUse.transform.position.z);
     }
 
     // Update is called once per frame
@@ -104,7 +104,7 @@ public class ZombieSpawner : MonoBehaviour
 
     private void OnDestroy()
     {
-        poolable.Release(particleSystemInUse);
+        Destroy(particleSystemInUse.gameObject);
         ZombieController.ZombieSpawnerDepleted(this.gameObject);
     }
 }

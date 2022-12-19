@@ -62,4 +62,12 @@ public class Poolable
         instance.transform.parent = cache;
         nbrActive--;
     }
+
+    public void DestroyCreatedObjects()
+    {
+        for (int i = 0; i < pool.Count; i++)
+        {
+            GameObject.Destroy(pool.Pop().gameObject);
+        }
+    }
 }
