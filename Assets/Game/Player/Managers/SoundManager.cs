@@ -141,7 +141,10 @@ public sealed class SoundManager
 
     public void PlayMainMenuMusicTrack1()
     {
-        StopGameMusic();
+        if (!pauseGameMusic)
+        {
+            StopGameMusic();
+        }        
         stopMenuMusic = false;
         AddToMusicAudioSources(mainMenuMusicAudioSourceTrack1);
 
@@ -153,7 +156,10 @@ public sealed class SoundManager
 
     public void PlayMainMenuMusicTrack2()
     {
-        StopGameMusic();
+        if (!pauseGameMusic)
+        {
+            StopGameMusic();
+        }
         stopMenuMusic = false;
         AddToMusicAudioSources(mainMenuMusicAudioSourceTrack2);
 
@@ -236,8 +242,6 @@ public sealed class SoundManager
 
     public void PauseGameMusic()
     {
-        pauseGameMusic = true;
-
         if (gameMusicAudioSourceTrack1 != null)
         {
             gameMusicAudioSourceTrack1.Pause();
@@ -252,10 +256,14 @@ public sealed class SoundManager
         {
             gameMusicAudioSourceTrack3.Pause();
         }
+
+        pauseGameMusic = true;
+        stopGameMusic = true;
     }
 
     public void ResumeGameMusic()
     {
+        stopGameMusic = false;
         pauseGameMusic = false;
 
         if (gameMusicAudioSourceTrack1 != null)
@@ -340,17 +348,26 @@ public sealed class SoundManager
     {
         foreach (AudioSource audioSource in musicAudioSources)
         {
-            audioSource.Stop();
+            if (audioSource != null)
+            {
+                audioSource.Stop();
+            }            
         }
 
         foreach (AudioSource audioSource in foleyAudioSources)
         {
-            audioSource.Stop();
+            if (audioSource != null)
+            {
+                audioSource.Stop();
+            }
         }
 
         foreach (AudioSource audioSource in sfxAudioSources)
         {
-            audioSource.Stop();
+            if (audioSource != null)
+            {
+                audioSource.Stop();
+            }
         }
 
         ClearAudioSources();
@@ -367,17 +384,26 @@ public sealed class SoundManager
     {
         foreach (AudioSource audioSource in musicAudioSources)
         {
-            audioSource.Pause();
+            if (audioSource != null)
+            {
+                audioSource.Pause();
+            }
         }
 
         foreach (AudioSource audioSource in foleyAudioSources)
         {
-            audioSource.Pause();
+            if (audioSource != null)
+            {
+                audioSource.Pause();
+            }
         }
 
         foreach (AudioSource audioSource in sfxAudioSources)
         {
-            audioSource.Pause();
+            if (audioSource != null)
+            {
+                audioSource.Pause();
+            }
         }
     }
 

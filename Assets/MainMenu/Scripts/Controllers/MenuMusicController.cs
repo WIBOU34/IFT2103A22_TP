@@ -8,6 +8,8 @@ public class MenuMusicController : MonoBehaviour
     private float nextTime = 0;
     private bool track1IsPlaying = false;
     private bool track2IsPlaying = false;
+    private float nbSecondeMusic2Joue = 0;
+    private float nbSecondeMusic1Joue = 0;
 
     private void Start()
     {
@@ -55,7 +57,16 @@ public class MenuMusicController : MonoBehaviour
                 {
                     if (mainMenuMusicAudioSourceTrack2.isPlaying)
                     {
+                        nbSecondeMusic2Joue++;
                         float tempsRestantMusic = mainMenuMusicAudioSourceTrack2.clip.length - mainMenuMusicAudioSourceTrack2.time;
+
+                        if (nbSecondeMusic2Joue == soundManager.fonduCroiseTime)
+                        {
+                            track1IsPlaying = false;
+                            soundManager.mainMenuMusicAudioSourceTrack1.Stop();
+                            nbSecondeMusic1Joue = 0;
+                        }
+
                         if (mainMenuMusicAudioSourceTrack2.time < soundManager.fonduCroiseTime)
                         {
                             if (mainMenuMusicAudioSourceTrack2.volume + soundManager.musicVolume / soundManager.fonduCroiseTime < soundManager.musicVolume)
@@ -67,7 +78,7 @@ public class MenuMusicController : MonoBehaviour
                                 mainMenuMusicAudioSourceTrack2.volume = soundManager.musicVolume;
                             }
                         }
-                        else if (tempsRestantMusic < soundManager.fonduCroiseTime)
+                        else if (tempsRestantMusic <= soundManager.fonduCroiseTime)
                         {
                             if (!track1IsPlaying)
                             {
@@ -76,9 +87,9 @@ public class MenuMusicController : MonoBehaviour
                                 track1IsPlaying = true;
                             }
 
-                            if (mainMenuMusicAudioSourceTrack2.volume - mainMenuMusicAudioSourceTrack2.volume / soundManager.fonduCroiseTime > 0)
+                            if (mainMenuMusicAudioSourceTrack2.volume - soundManager.musicVolume / soundManager.fonduCroiseTime > 0)
                             {
-                                mainMenuMusicAudioSourceTrack2.volume -= mainMenuMusicAudioSourceTrack2.volume / soundManager.fonduCroiseTime;
+                                mainMenuMusicAudioSourceTrack2.volume -= soundManager.musicVolume / soundManager.fonduCroiseTime;
                             }
                             else
                             {
@@ -93,6 +104,14 @@ public class MenuMusicController : MonoBehaviour
 
                     if (mainMenuMusicAudioSourceTrack1.isPlaying)
                     {
+                        nbSecondeMusic1Joue++;
+                        if (nbSecondeMusic1Joue == soundManager.fonduCroiseTime)
+                        {
+                            track2IsPlaying = false;
+                            soundManager.mainMenuMusicAudioSourceTrack2.Stop();
+                            nbSecondeMusic2Joue = 0;
+                        }
+
                         float tempsRestantMusic = mainMenuMusicAudioSourceTrack1.clip.length - mainMenuMusicAudioSourceTrack1.time;
                         if (mainMenuMusicAudioSourceTrack1.time < soundManager.fonduCroiseTime)
                         {
@@ -105,7 +124,7 @@ public class MenuMusicController : MonoBehaviour
                                 mainMenuMusicAudioSourceTrack1.volume = soundManager.musicVolume;
                             }
                         }
-                        else if (tempsRestantMusic < soundManager.fonduCroiseTime)
+                        else if (tempsRestantMusic <= soundManager.fonduCroiseTime)
                         {
                             if (!track2IsPlaying)
                             {
@@ -114,9 +133,9 @@ public class MenuMusicController : MonoBehaviour
                                 track2IsPlaying = true;
                             }
 
-                            if (mainMenuMusicAudioSourceTrack1.volume - mainMenuMusicAudioSourceTrack1.volume / soundManager.fonduCroiseTime > 0)
+                            if (mainMenuMusicAudioSourceTrack1.volume - soundManager.musicVolume / soundManager.fonduCroiseTime > 0)
                             {
-                                mainMenuMusicAudioSourceTrack1.volume -= mainMenuMusicAudioSourceTrack1.volume / soundManager.fonduCroiseTime;
+                                mainMenuMusicAudioSourceTrack1.volume -= soundManager.musicVolume / soundManager.fonduCroiseTime;
                             }
                             else
                             {
