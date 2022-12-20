@@ -8,6 +8,7 @@ public class Zombie : MonoBehaviour
     public List<GameObject> zombiePlayerTargets = new List<GameObject>();
     private bool isDead = false;
     public float damagePerAttack = 20;
+    public ZombieSpawner spawner;
     private NavMeshAgent agent;
     private PathingAI pathingAI;
     private SoundManager soundManager;
@@ -50,7 +51,7 @@ public class Zombie : MonoBehaviour
         zombieStepsSoundSource = this.AddComponent<AudioSource>();
         soundManager.PlayZombieStepsSound(zombieStepsSoundSource);
         zombieAudioSources.Add(zombieStepsSoundSource);
-        AjustZombieSoundsBasedOnPlayerDistance();
+        AdjustZombieSoundsBasedOnPlayerDistance();
     }
 
     // Update is called once per frame
@@ -75,7 +76,7 @@ public class Zombie : MonoBehaviour
             }
         }
 
-        AjustZombieSoundsBasedOnPlayerDistance();
+        AdjustZombieSoundsBasedOnPlayerDistance();
     }
 
     // Called by the animation controller
@@ -122,14 +123,21 @@ public class Zombie : MonoBehaviour
         }
     }
 
+    public void PrepareForRespawn()
+    {
+        pathingAI.PrepareForRespawn();
+    }
+
     public void OnKilled()
     {
         this.GetComponent<Animator>().SetBool("Killed", true);
         isDead = true;
         this.GetComponent<CapsuleCollider>().enabled = false;
         GameObject.Destroy(this.gameObject, 5);
+
         // permet de libérer l'espace dans la liste et donc de permettre un nouveau de spawner
-        this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieKilled(this.gameObject);
+        spawner.ZombieKilled(this);
+
         foreach (AudioSource audioSource in zombieAudioSources)
         {
             audioSource.Stop();
@@ -140,10 +148,10 @@ public class Zombie : MonoBehaviour
     private void OnDestroy()
     {
         if (isDead)
-            this.transform.parent.gameObject.GetComponent<ZombieSpawner>().ZombieDestroyed(this.gameObject);
+            spawner.ZombieDestroyed();
     }
 
-    private void AjustZombieSoundsBasedOnPlayerDistance()
+    private void AdjustZombieSoundsBasedOnPlayerDistance()
     {
         float distanceSq = float.PositiveInfinity;
 

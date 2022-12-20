@@ -17,6 +17,7 @@ public class ProceduralStarterScript : MonoBehaviour
     private InputManager inputManager;
     public Material zombieSpawnerParticleEffectMaterial;
     public Material ambianceParticleEffectMaterial;
+    private int nbrSpawners = 2;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,7 +39,10 @@ public class ProceduralStarterScript : MonoBehaviour
         ZombieController.typeToSpawn = zombieTypeToSpawn;
         Poolable zombieSpawnerPoolable = new Poolable();
         zombieSpawnerPoolable.SetCapacity(1);
-        ZombieController.CreateZombieSpawner(new Vector3(-10, 0, 5));
+        //ZombieController.CreateZombieSpawner(new Vector3(-16, 0, 16));
+        ZombieController.CreateZombieSpawner(new Vector3(-16, 0, -16));
+        ZombieController.CreateZombieSpawner(new Vector3(16, 0, 16));
+
         inputManager = InputManager.Instance;
     }
 
@@ -157,7 +161,7 @@ public class ProceduralStarterScript : MonoBehaviour
         renderer.maxParticleSize = 0.01f;
         renderer.sortMode = ParticleSystemSortMode.Distance;
 
-        PoolableManager.CreatePoolable("ZombieSpawnerParticleSystem", obj, 1);
+        PoolableManager.CreatePoolable("ZombieSpawnerParticleSystem", obj, nbrSpawners);
 
         Destroy(obj);
     }

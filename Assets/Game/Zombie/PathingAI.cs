@@ -351,6 +351,11 @@ public class PathingAI : MonoBehaviour
         this.GetComponent<Animator>().SetBool("TargetHittable", false);
     }
 
+    public void PrepareForRespawn()
+    {
+        TargetLost();
+    }
+
     public void OnKilled()
     {
         TargetLost();

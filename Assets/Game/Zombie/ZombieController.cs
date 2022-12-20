@@ -45,10 +45,34 @@ public class ZombieController
         newSpawner.AddComponent<ZombieSpawner>().spawnerNumber = (zombieSpawners.Count()).ToString();
         newSpawner.GetComponent<ZombieSpawner>().name = "ZombieSpawner_" + (zombieSpawners.Count());
         newSpawner.GetComponent<ZombieSpawner>().typeToSpawn = typeToSpawn;
-        newSpawner.GetComponent<ZombieSpawner>().difficulty = MenuManager.persistence.GetComponent<GameLoader>().difficulty;
+        newSpawner.GetComponent<ZombieSpawner>().position = position;
+        if (MenuManager.persistence != null)
+            newSpawner.GetComponent<ZombieSpawner>().difficulty = MenuManager.persistence.GetComponent<GameLoader>().difficulty;
+        else
+            newSpawner.GetComponent<ZombieSpawner>().difficulty = Difficulty.EASY;
         newSpawner.GetComponent<ZombieSpawner>().zombiePlayerTargets = zombiePlayerTargets;
         zombieSpawners.Add(newSpawner);
         newSpawner.GetComponent<ZombieSpawner>().CreateZombie();
+    }
+
+    public static int GetZombieSpawnersCount()
+    {
+        return zombieSpawners.Count;
+    }
+
+    public static void MoveZombieSpawnersToPositions(Vector3[] newSpawnerPositions, Bounds gameBounds)
+    {
+        if (newSpawnerPositions.Length == 0)
+            return;
+
+        for (int i = 0; i < zombieSpawners.Count; i++)
+        {
+            if (i < newSpawnerPositions.Length)
+            {
+                zombieSpawners[i].GetComponent<ZombieSpawner>().position = newSpawnerPositions[i];
+                zombieSpawners[i].GetComponent<ZombieSpawner>().HasMoved(gameBounds);
+            }
+        }
     }
 
     public static void ZombieSpawnerDepleted(GameObject spawner)

@@ -9,13 +9,12 @@ public class MapCreator : MonoBehaviour
     public static GameObject environmentContainer;
     public static GameObject groundContainer;
     public static GameObject levelContainer;
-    public static Vector3 terrainSize = new Vector3(300, 1, 300);
-    //public static Vector3 terrainSize = new Vector3(100, 1, 100);
-    public static Vector3 loadedSize = new Vector3(300, 5, 300);
-    //public static Vector3 loadedSize = new Vector3(75, 5, 75);
+    //public static Vector3 terrainSize = new Vector3(300, 1, 300);
+    public static Vector3 terrainSize = new Vector3(100, 1, 100);
+    //public static Vector3 loadedSize = new Vector3(300, 5, 300);
+    public static Vector3 loadedSize = new Vector3(75, 5, 75);
     //public static Vector3 sizeToTriggerLoad = new Vector3(50, 5, 50);
     public static Vector3 sizeToTriggerLoad = new Vector3(15, 5, 15);
-    public List<GameObject> zombieSpawners;
 
     private static int notWalkableAreaType = 0;
     private static int walkableAreaType = 0;
@@ -25,8 +24,8 @@ public class MapCreator : MonoBehaviour
     private static Bounds oldLoadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds loadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds boundsToTriggerLoad = new Bounds(Vector3.zero, sizeToTriggerLoad);
-    private const int MAX_NBR_WALLS = 5000;
-    //private const int MAX_NBR_WALLS = 300;
+    //private const int MAX_NBR_WALLS = 5000;
+    private const int MAX_NBR_WALLS = 300;
 
     private static List<GameObject> groundList = new List<GameObject>();
     private static Wall[] wallsList = new Wall[MAX_NBR_WALLS];
@@ -68,6 +67,7 @@ public class MapCreator : MonoBehaviour
             boundsToTriggerLoad.center = trackedCenter.transform.position;
             oldLoadedBounds.center = loadedBounds.center;
             loadedBounds.center = boundsToTriggerLoad.center;
+            CalculateNewPositionsOfZombieSpawners();
             UnloadAndLoad(loadedBounds);
             alreadyLoading = false;
         }
@@ -164,7 +164,6 @@ public class MapCreator : MonoBehaviour
         int hardBreak = 0; // only a safety measure and because even in debug you can't stop an infinite loop
         int index = 0;
 
-        //Shuffle(wallsList);
         while (wallsListCount < MAX_NBR_WALLS && index < wallsListCount && hardBreak++ < MAX_NBR_WALLS * 50)
         {
             if (justFoundWall)
@@ -205,7 +204,7 @@ public class MapCreator : MonoBehaviour
             // defines the type of the wall to create
             if (wallToUse.type == WallType.TOWER)
             {
-                if (Random.Range(0, 2) == 0)
+                if (Random.Range(0, 3) == 0)
                     type = WallType.STRAIGHT;
                 else
                     type = WallType.INVISIBLE;
@@ -243,17 +242,6 @@ public class MapCreator : MonoBehaviour
         UpdateNavMesh();
     }
 
-    private static void Shuffle(GameObject[] list)
-    {
-        int n = wallsListCount;
-        int i;
-        while (n > 1)
-        {
-            i = Random.Range(0, n--);
-            (list[n], list[i]) = (list[i], list[n]);
-        }
-    }
-
     private static Vector2 GetRandomDirection()
     {
         int randomNumber = Random.Range(0, 3);
@@ -272,7 +260,7 @@ public class MapCreator : MonoBehaviour
     {
         UnLoad(bounds, ref wallsList);
         UnLoad(bounds, ref groundList);
-        UnLoad(bounds, ref destructiblesList);
+        UnLoad(bounds, ref ZombieController.zombieDestructibleTargets);
     }
 
     private static void UnLoad(Bounds bounds, ref Wall[] list)
@@ -323,11 +311,6 @@ public class MapCreator : MonoBehaviour
     private static bool IsObjectInBounds(GameObject gameObject, Bounds bounds)
     {
         return bounds.Contains(gameObject.transform.position);
-        //if (gameObject.TryGetComponent(out Collider collider))
-        //{
-        //    return bounds.Intersects(collider.bounds)
-        //        || (bounds.Contains(collider.bounds.min) && bounds.Contains(collider.bounds.max));
-        //}
     }
 
     private static bool IsObjectPositionValid(GameObject gameObject)
@@ -407,6 +390,40 @@ public class MapCreator : MonoBehaviour
 
         return number;
     }
+
+
+    private void CalculateNewPositionsOfZombieSpawners()
+    {
+        int nbrSpawners = ZombieController.GetZombieSpawnersCount();
+        Vector3[] newPositions = new Vector3[nbrSpawners];
+        for (int i = 0; i < newPositions.Length; i++)
+        {
+            newPositions[i] = ZombieController.zombieSpawners[i].GetComponent<ZombieSpawner>().position;
+            if (!loadedBounds.Contains(newPositions[i]))
+            {
+                newPositions[i] = FindPositionForSpawner();
+            }
+        }
+
+        ZombieController.MoveZombieSpawnersToPositions(newPositions, loadedBounds);
+    }
+
+    private Vector3 FindPositionForSpawner()
+    {
+        // tant que x et z sont divisible par 8, la position est valide
+        float maxX = loadedBounds.extents.x;
+        float maxY = loadedBounds.extents.y;
+        float posX = Random.Range(4, maxX + 1); // évite de spawner sur les 8 blocs autour du centre
+        float posZ = Random.Range(4, maxY + 1);
+        if (Random.Range(0, 2) == 0)
+            posX = -posX;
+        if (Random.Range(0, 2) == 0)
+            posZ = -posZ;
+        Vector3 posNotDivisibleBy8 = new Vector3(posX, 0, posZ) + loadedBounds.center;
+
+        return FindGroundPosition(new Vector3(8, 0, 8), posNotDivisibleBy8);
+    }
+
 
     private static void AddNavMeshModifierComponentDefault(GameObject gameObject)
     {
