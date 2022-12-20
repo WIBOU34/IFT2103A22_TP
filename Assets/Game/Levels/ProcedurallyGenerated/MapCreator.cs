@@ -60,7 +60,7 @@ public class MapCreator : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void Update() // in Update to prevent physics lag
     {
         if (!alreadyLoading && RequireLoading())
         {
@@ -205,7 +205,7 @@ public class MapCreator : MonoBehaviour
             // defines the type of the wall to create
             if (wallToUse.type == WallType.TOWER)
             {
-                if (Random.Range(0, 3) == 0)
+                if (Random.Range(0, 2) == 0)
                     type = WallType.STRAIGHT;
                 else
                     type = WallType.INVISIBLE;
@@ -239,14 +239,6 @@ public class MapCreator : MonoBehaviour
         }
 
         Destroy(wallGameObject);
-
-        // Pass Through every one of them and make sure there is no loop
-        //for (int i = 0; i < wallsListCount; i++)
-        //{
-        //    if (wallsList[i] == null || wallsList[i].type == WallType.INVISIBLE || wallsList[i].type == WallType.TOWER)
-        //        continue;
-        //    wallsList[i].MakeInvisibleIfBlocage();
-        //}
 
         UpdateNavMesh();
     }
@@ -355,7 +347,9 @@ public class MapCreator : MonoBehaviour
         for (int i = 0; i < wallsListCount; i++)
         {
             if (bounds.Contains(wallsList[i].transform.position))
+            {
                 wallToCheck.AddNeighborIfNeighbor(wallsList[i]);
+            }
         }
     }
 

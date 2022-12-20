@@ -117,6 +117,8 @@ public class Wall : MonoBehaviour
                 // Adds a neighbor
                 otherWall.SetNeighbor(dirFromTargetToHere, this);
                 SetNeighbor(dirFromHereToTarget, otherWall);
+                if (type == WallType.STRAIGHT)
+                    MakeInvisibleIfBlocage();
             }
         }
     }
