@@ -10032,6 +10032,8 @@ MonoBehaviour:
   bulletTrailMaterial: {fileID: 2100000, guid: 815eca29caf737445a61d1d5f8739b25, type: 2}
   cinemachineUpOverrideObject: {fileID: 0}
   terrainMaterial: {fileID: 2100000, guid: d7660f9033824d24aabe2f1e40f03154, type: 2}
+  zombieSpawnerParticleEffectMaterial: {fileID: 2100000, guid: fa6787c0f1c04ba4e99ef089a2911965, type: 2}
+  ambianceParticleEffectMaterial: {fileID: 2100000, guid: ea75f2922486a0b4289f61d3df5c8ee0, type: 2}
 --- !u!1 &1191439355
 GameObject:
   m_ObjectHideFlags: 0

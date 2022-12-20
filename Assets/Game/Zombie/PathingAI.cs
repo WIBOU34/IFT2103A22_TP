@@ -49,28 +49,39 @@ public class PathingAI : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!soundManager.gameIsPaused)
+        if (isDead || PauseOrUnPauseAgent())
+            return;
+
+        if (nbrTimes++ > NBR_TIMES_MAX)
         {
-            if (isDead)
-                return;
+            if (GetTarget())
+                nbrTimes = 0;
+            else
+                nbrTimes = NBR_TIMES_MAX - 1;
+        }
 
-            if (nbrTimes++ > NBR_TIMES_MAX)
+        if (currentTarget != null) // update pathing destination if target exists
+        {
+            // Only the player target can move
+            if (currentTarget.CompareTag(ZombieController.TAG_PLAYER))
             {
-                if (GetTarget())
-                    nbrTimes = 0;
-                else
-                    nbrTimes = NBR_TIMES_MAX - 1;
+                agent.destination = currentTarget.transform.position;
             }
+        }
+    }
 
-            if (currentTarget != null) // update pathing destination if target exists
-            {
-                // Only the player target can move
-                if (currentTarget.CompareTag(ZombieController.TAG_PLAYER))
-                {
-                    agent.destination = currentTarget.transform.position;
-                }
-            }
-        }        
+    private bool PauseOrUnPauseAgent()
+    {
+        if (agent.isStopped)
+        {
+            if (!soundManager.gameIsPaused)
+                ResumeAgent();
+        }
+        else if (soundManager.gameIsPaused)
+        {
+            StopAgent();
+        }
+        return agent.isStopped;
     }
 
     // Validates if the destination corresponds with the current target position (only use with players to test if they moved)
@@ -281,6 +292,21 @@ public class PathingAI : MonoBehaviour
             lastCorner = corner;
         }
         return totalDistance;
+    }
+
+    private void StopAgent()
+    {
+        this.GetComponent<Animator>().SetBool("FoundTarget", false);
+        agent.isStopped = true;
+    }
+
+    private void ResumeAgent()
+    {
+        if (currentTarget != null)
+        {
+            this.GetComponent<Animator>().SetBool("FoundTarget", true);
+        }
+        agent.isStopped = false;
     }
 
     // Preffered since the path will not need to be recalculated

@@ -14,7 +14,6 @@ public class ZombieController
     public static List<GameObject> zombieSpawners = new List<GameObject>();
     public static List<GameObject> zombiePlayerTargets = new List<GameObject>();
     public static List<GameObject> zombieDestructibleTargets = new List<GameObject>();
-    private static bool carvingEnabled = false;
     private static bool isLeavingGame = false;
     private static int agentTypeIdAvoidDestructibles = 0;
     private static int agentTypeIdIgnoreDestructibles = 0;
@@ -36,7 +35,6 @@ public class ZombieController
         {
             DestructibleAdded(destructible);
         }
-        EnableCarving();
     }
 
     public static void CreateZombieSpawner(Vector3 position)
@@ -63,44 +61,13 @@ public class ZombieController
         }
     }
 
-    public static bool isCarvingEnabled()
-    {
-        return carvingEnabled;
-    }
-
-    public static void DisableCarving()
-    {
-        //if (!isCarvingEnabled())
-        //    return;
-
-        //carvingEnabled = false;
-        //foreach (GameObject destructibleTarget in zombieDestructibleTargets)
-        //{
-        //    destructibleTarget.GetComponent<NavMeshObstacle>().carving = false;
-        //}
-    }
-
-    public static void EnableCarving()
-    {
-        //if (isCarvingEnabled())
-        //    return;
-
-        //carvingEnabled = true;
-        //foreach (GameObject destructibleTarget in zombieDestructibleTargets)
-        //{
-        //    destructibleTarget.GetComponent<NavMeshObstacle>().carving = true;
-        //}
-    }
-
     public static void DestructibleAdded(GameObject destructible)
     {
-        //destructible.GetComponent<NavMeshObstacle>().carving = isCarvingEnabled();
         zombieDestructibleTargets.Add(destructible);
         foreach (var item in NavMeshSurface.activeSurfaces)
         {
             if (item.agentTypeID == agentTypeIdAvoidDestructibles)
             {
-                //NavMeshData data = item.navMeshData;
                 item.UpdateNavMesh(item.navMeshData);
             }
         }
@@ -113,7 +80,6 @@ public class ZombieController
         {
             if (item.agentTypeID == agentTypeIdAvoidDestructibles)
             {
-                //NavMeshData data = item.navMeshData;
                 item.UpdateNavMesh(item.navMeshData);
             }
         }
