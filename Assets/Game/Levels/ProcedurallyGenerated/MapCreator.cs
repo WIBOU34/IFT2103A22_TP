@@ -86,11 +86,7 @@ public class MapCreator : MonoBehaviour
     {
         foreach (var item in NavMeshSurface.activeSurfaces)
         {
-            if (item.agentTypeID == agentTypeIdAvoidDestructibles)
-            {
-                //NavMeshData data = item.navMeshData;
-                item.UpdateNavMesh(item.navMeshData);
-            }
+            item.UpdateNavMesh(item.navMeshData);
         }
     }
 
@@ -373,6 +369,7 @@ public class MapCreator : MonoBehaviour
         }
 
         GameObject gameObject = new GameObject("ground");
+        gameObject.isStatic = true;
         gameObject.transform.position = position;
         TerrainData terrainData = new TerrainData();
         terrainData.size = terrainSize;
