@@ -18,9 +18,11 @@ public class ZombieController
     private static bool isLeavingGame = false;
     private static int agentTypeIdAvoidDestructibles = 0;
     private static int agentTypeIdIgnoreDestructibles = 0;
+    private static SoundManager soundManager;
 
     public void Start()
     {
+        soundManager = SoundManager.Instance;
         zombieSpawners.Clear();
         zombiePlayerTargets.Clear();
         zombieDestructibleTargets.Clear();
@@ -44,13 +46,16 @@ public class ZombieController
         GameObject newSpawner = new GameObject();
         newSpawner.transform.position = position;
         newSpawner.tag = "ZombieSpawner";
+        AudioSource zombieSpawnerAudioSource = newSpawner.AddComponent<AudioSource>();
+        soundManager.zombieSpawnerAudioSource = zombieSpawnerAudioSource;
+        soundManager.PlayZombieSpawnerSound();
         newSpawner.AddComponent<ZombieSpawner>().spawnerNumber = (zombieSpawners.Count()).ToString();
         newSpawner.GetComponent<ZombieSpawner>().name = "ZombieSpawner_" + (zombieSpawners.Count());
         newSpawner.GetComponent<ZombieSpawner>().typeToSpawn = typeToSpawn;
         newSpawner.GetComponent<ZombieSpawner>().difficulty = MenuManager.persistence.GetComponent<GameLoader>().difficulty;
         newSpawner.GetComponent<ZombieSpawner>().zombiePlayerTargets = zombiePlayerTargets;
         zombieSpawners.Add(newSpawner);
-        newSpawner.GetComponent<ZombieSpawner>().CreateZombie();
+        newSpawner.GetComponent<ZombieSpawner>().CreateZombie(); //remettre
     }
 
     public static void ZombieSpawnerDepleted(GameObject spawner)

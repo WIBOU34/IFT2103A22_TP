@@ -8,13 +8,19 @@ public class ZombieSpawner : MonoBehaviour
     public List<GameObject> zombiePlayerTargets = new List<GameObject>();
     private List<GameObject> zombies = new List<GameObject>();
     private uint counter = 0;
-    public uint maxZombiesAtOnce = 10;
-    public uint maxZombiesTotal = 15;
+    public uint maxZombiesAtOnce = 10; //10
+    public uint maxZombiesTotal = 15; //15
     public GameObject typeToSpawn;
     public String spawnerNumber;
     public Difficulty difficulty;
     public Poolable poolable;
     private GameObject particleSystemInUse;
+    private SoundManager soundManager;
+
+    private void Awake()
+    {
+        soundManager = SoundManager.Instance;
+    }
 
     // Start is called before the first frame update
     void Start()
