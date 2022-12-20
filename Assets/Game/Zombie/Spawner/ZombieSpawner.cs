@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class ZombieSpawner : MonoBehaviour
 {
+    public Vector3 position = Vector3.zero;
     public List<GameObject> zombiePlayerTargets = new List<GameObject>();
-    private List<GameObject> zombies = new List<GameObject>();
+    private List<Zombie> zombies = new List<Zombie>(maxZombiesAtOnce);
     private uint counter = 0;
-    public uint maxZombiesAtOnce = 10; //10
-    public uint maxZombiesTotal = 15; //15
+    public const int maxZombiesAtOnce = 10;
+    public int maxZombiesTotal = 15;
     public GameObject typeToSpawn;
     public String spawnerNumber;
     public Difficulty difficulty;
@@ -42,33 +44,40 @@ public class ZombieSpawner : MonoBehaviour
         }
     }
 
-    private bool IsSpawnOnNavMesh()
-    {
-        foreach (var item in NavMeshSurface.activeSurfaces)
-        {
-            Bounds bounds = new Bounds(new Vector3(item.center.x, 0, item.center.z), new Vector3(item.size.x, 1, item.size.z));
-            if (bounds.Contains(this.gameObject.transform.position))
-                return true;
-        }
-        return false;
-    }
-
     public void CreateZombie()
     {
         GameObject tmp = Instantiate(typeToSpawn);
         tmp.name = "Zombie_" + spawnerNumber + "_" + counter.ToString();
         counter++;
 
-        tmp.transform.position = CalculatePositionToSpawn();
         tmp.GetComponent<Animator>();
         tmp.AddComponent<Damageable>();
         tmp.AddComponent<PathingAI>().difficulty = difficulty;
+        tmp.GetComponent<NavMeshAgent>().Warp(CalculatePositionToSpawn());
         Zombie zombie = tmp.AddComponent<Zombie>();
         zombie.zombiePlayerTargets = zombiePlayerTargets;
+        zombie.spawner = this;
         tmp.AddComponent<LocomotionSimpleAgent>();
         tmp.transform.SetParent(this.transform);
 
-        zombies.Add(tmp);
+        zombies.Add(zombie);
+    }
+
+    public void HasMoved(Bounds loadedBounds)
+    {
+        particleSystemInUse.transform.position = position;
+        for (int i = 0; i < zombies.Count; i++)
+        {
+            if (!loadedBounds.Contains(zombies[i].gameObject.transform.position))
+            {
+                Respawn(zombies[i]);
+            }
+        }
+    }
+
+    public void Respawn(Zombie zombie)
+    {
+        zombie.GetComponent<NavMeshAgent>().Warp(CalculatePositionToSpawn());
     }
 
     public void PlayerReachable()
@@ -79,11 +88,11 @@ public class ZombieSpawner : MonoBehaviour
         }
     }
 
-    public void ZombieKilled(GameObject zombie)
+    public void ZombieKilled(Zombie zombie)
     {
         zombies.Remove(zombie);
     }
-    public void ZombieDestroyed(GameObject zombie)
+    public void ZombieDestroyed()
     {
         if (zombies.Count == 0)
         {
@@ -93,14 +102,14 @@ public class ZombieSpawner : MonoBehaviour
 
     private Vector3 CalculatePositionToSpawn()
     {
-        return this.transform.position;
+        return position;
     }
 
     private bool IsSpawnFree()
     {
         foreach (var zombie in zombies)
         {
-            if (ZombieController.DistanceSqNoY(zombie.transform.position, this.transform.position) <= 0.8f)
+            if (ZombieController.DistanceSqNoY(zombie.transform.position, CalculatePositionToSpawn()) <= 0.8f)
             {
                 return false;
             }

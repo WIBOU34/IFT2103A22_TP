@@ -24,7 +24,7 @@ public class PauseMenuController : MonoBehaviour
     public void Start()
     {
         soundManager = SoundManager.Instance;
-        menu = GameObject.Find("Menu");        
+        menu = GameObject.Find("Menu");
         pauseMenu = menu.transform.Find("Pause Menu").gameObject;
         optionsMenu = menu.transform.Find("Options Menu").gameObject;
         bindingInProcess = menu.transform.Find("BindingInProcess").gameObject;
@@ -35,7 +35,7 @@ public class PauseMenuController : MonoBehaviour
         if (player != null)
         {
             playerInput = player.GetComponent<PlayerInput>();
-        }        
+        }
     }
 
     public void Pause()
@@ -50,7 +50,7 @@ public class PauseMenuController : MonoBehaviour
     public void Resume()
     {
         soundManager.PlayMenuButtonOnClickSound();
-        soundManager.gameIsPaused = false;
+        UnPause();
         pauseMenu.SetActive(false);
         playerInput.SwitchCurrentActionMap("Player");
         List<GameObject> players = GameObject.FindGameObjectsWithTag("Player").ToList();
@@ -74,13 +74,19 @@ public class PauseMenuController : MonoBehaviour
     public void LeaveGame()
     {
         soundManager.PlayMenuButtonOnClickSound();
-        Time.timeScale = 1f;
         ZombieController.LeavingGame();
+        UnPause();
+        Time.timeScale = 1f;
         GameLoader gameLoader = MenuManager.persistence.GetComponent<GameLoader>();
         MenuManager.IsInitialised = false;
         MenuManager.loadingScreen.SetActive(true);
         gameObject.SetActive(false);
         soundManager.ClearAudioSources();
         gameLoader.LoadGame(1);
+    }
+
+    private void UnPause()
+    {
+        soundManager.gameIsPaused = false;
     }
 }

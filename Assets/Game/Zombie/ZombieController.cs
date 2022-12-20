@@ -14,7 +14,6 @@ public class ZombieController
     public static List<GameObject> zombieSpawners = new List<GameObject>();
     public static List<GameObject> zombiePlayerTargets = new List<GameObject>();
     public static List<GameObject> zombieDestructibleTargets = new List<GameObject>();
-    private static bool carvingEnabled = false;
     private static bool isLeavingGame = false;
     private static int agentTypeIdAvoidDestructibles = 0;
     private static int agentTypeIdIgnoreDestructibles = 0;
@@ -38,7 +37,6 @@ public class ZombieController
         {
             DestructibleAdded(destructible);
         }
-        EnableCarving();
     }
 
     public static void CreateZombieSpawner(Vector3 position)
@@ -52,10 +50,34 @@ public class ZombieController
         newSpawner.AddComponent<ZombieSpawner>().spawnerNumber = (zombieSpawners.Count()).ToString();
         newSpawner.GetComponent<ZombieSpawner>().name = "ZombieSpawner_" + (zombieSpawners.Count());
         newSpawner.GetComponent<ZombieSpawner>().typeToSpawn = typeToSpawn;
-        newSpawner.GetComponent<ZombieSpawner>().difficulty = MenuManager.persistence.GetComponent<GameLoader>().difficulty;
+        newSpawner.GetComponent<ZombieSpawner>().position = position;
+        if (MenuManager.persistence != null)
+            newSpawner.GetComponent<ZombieSpawner>().difficulty = MenuManager.persistence.GetComponent<GameLoader>().difficulty;
+        else
+            newSpawner.GetComponent<ZombieSpawner>().difficulty = Difficulty.EASY;
         newSpawner.GetComponent<ZombieSpawner>().zombiePlayerTargets = zombiePlayerTargets;
         zombieSpawners.Add(newSpawner);
         newSpawner.GetComponent<ZombieSpawner>().CreateZombie(); //remettre
+    }
+
+    public static int GetZombieSpawnersCount()
+    {
+        return zombieSpawners.Count;
+    }
+
+    public static void MoveZombieSpawnersToPositions(Vector3[] newSpawnerPositions, Bounds gameBounds)
+    {
+        if (newSpawnerPositions.Length == 0)
+            return;
+
+        for (int i = 0; i < zombieSpawners.Count; i++)
+        {
+            if (i < newSpawnerPositions.Length)
+            {
+                zombieSpawners[i].GetComponent<ZombieSpawner>().position = newSpawnerPositions[i];
+                zombieSpawners[i].GetComponent<ZombieSpawner>().HasMoved(gameBounds);
+            }
+        }
     }
 
     public static void ZombieSpawnerDepleted(GameObject spawner)
@@ -68,44 +90,13 @@ public class ZombieController
         }
     }
 
-    public static bool isCarvingEnabled()
-    {
-        return carvingEnabled;
-    }
-
-    public static void DisableCarving()
-    {
-        //if (!isCarvingEnabled())
-        //    return;
-
-        //carvingEnabled = false;
-        //foreach (GameObject destructibleTarget in zombieDestructibleTargets)
-        //{
-        //    destructibleTarget.GetComponent<NavMeshObstacle>().carving = false;
-        //}
-    }
-
-    public static void EnableCarving()
-    {
-        //if (isCarvingEnabled())
-        //    return;
-
-        //carvingEnabled = true;
-        //foreach (GameObject destructibleTarget in zombieDestructibleTargets)
-        //{
-        //    destructibleTarget.GetComponent<NavMeshObstacle>().carving = true;
-        //}
-    }
-
     public static void DestructibleAdded(GameObject destructible)
     {
-        //destructible.GetComponent<NavMeshObstacle>().carving = isCarvingEnabled();
         zombieDestructibleTargets.Add(destructible);
         foreach (var item in NavMeshSurface.activeSurfaces)
         {
             if (item.agentTypeID == agentTypeIdAvoidDestructibles)
             {
-                //NavMeshData data = item.navMeshData;
                 item.UpdateNavMesh(item.navMeshData);
             }
         }
@@ -118,7 +109,6 @@ public class ZombieController
         {
             if (item.agentTypeID == agentTypeIdAvoidDestructibles)
             {
-                //NavMeshData data = item.navMeshData;
                 item.UpdateNavMesh(item.navMeshData);
             }
         }

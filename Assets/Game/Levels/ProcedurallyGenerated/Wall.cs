@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class Wall : MonoBehaviour
 {
-    private const ushort MAX_NBR_NEIGHBORS = 4;
+    Wall visitedWall = null;
+    public const ushort MAX_NBR_NEIGHBORS = 4;
     public Vector2 dirConnectFromParent;
     public WallType type;
     public Wall[] neighbors = new Wall[MAX_NBR_NEIGHBORS];
@@ -117,6 +118,10 @@ public class Wall : MonoBehaviour
                 // Adds a neighbor
                 otherWall.SetNeighbor(dirFromTargetToHere, this);
                 SetNeighbor(dirFromHereToTarget, otherWall);
+                //if (type == WallType.STRAIGHT)
+                MakeInvisibleIfBlocage();
+                //else if (otherWall.type == WallType.STRAIGHT)
+                //    otherWall.MakeInvisibleIfBlocage();
             }
         }
     }
@@ -291,10 +296,13 @@ public class Wall : MonoBehaviour
     // does not work for some odd reason...
     bool CheckForBlockages(Wall startingWall, Wall lastWall, uint depth)
     {
-        if (this == startingWall)
+        if (this.visitedWall == startingWall)
             return true;
-        if (this.isInvisible || this.gameObject == lastWall.gameObject || depth == 12)
+        if (this.isInvisible || this.gameObject == lastWall.gameObject)
             return false;
+
+        this.visitedWall = startingWall;
+
         for (ushort i = 0; i < MAX_NBR_NEIGHBORS; i++)
         {
             if (this.neighbors[i] == null)
@@ -317,7 +325,7 @@ public class Wall : MonoBehaviour
             {
                 if (type == WallType.STRAIGHT)
                     type = WallType.INVISIBLE;
-                this.MakeInvisible();
+                MakeInvisible();
                 UpdateInvisibilityForNeighbors();
                 break;
             }
