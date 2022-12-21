@@ -10,36 +10,24 @@ public class GameModeMenuController : MonoBehaviour
         soundManager = SoundManager.Instance;
     }
 
-    public void Solo(GameObject button)
+    public void Solo(GameObject button) //Il faudrait setter le nombre de joueur à quelque part présentement pas grave car on supporte juste le solo pour la remise finale
     {
-        soundManager.PlayMenuButtonOnClickSound();
-        MenuManager.IsInitialised = false;
-        ActivateLoadingScreenToLoadGame(1);
+        soundManager.PlayMenuButtonOnClickSound();      
+        MenuManager.OpenMenu(Menu.BATTLEFIELD_MENU, gameObject);
         button.transform.localScale = initialButtonScale;
     }
 
-    public void Multiplayer(GameObject button)
+    public void Multiplayer(GameObject button) //Il faudrait setter le nombre de joueur à quelque part présentement pas grave car on supporte juste le solo pour la remise finale
     {
         soundManager.PlayMenuButtonOnClickSound();
-        MenuManager.IsInitialised = false;
-        ActivateLoadingScreenToLoadGame(2);
+        MenuManager.OpenMenu(Menu.BATTLEFIELD_MENU, gameObject);
         button.transform.localScale = initialButtonScale;
     }
 
     public void Back(GameObject button)
     {
-        soundManager.PlayMenuButtonOnClickSound();
+        soundManager.PlayMenuButtonOnClickSound();        
         MenuManager.OpenMenu(Menu.DIFFICULTY_MENU, gameObject);
         button.transform.localScale = initialButtonScale;
-    }
-
-    private void ActivateLoadingScreenToLoadGame(int totalPlayers)
-    {
-        GameLoader gameLoader = MenuManager.persistence.GetComponent<GameLoader>();
-        gameLoader.totalPlayers = totalPlayers;
-        MenuManager.loadingScreen.SetActive(true);
-        gameObject.SetActive(false);
-        soundManager.ClearAudioSources();
-        gameLoader.LoadGame(2);
     }
 }
