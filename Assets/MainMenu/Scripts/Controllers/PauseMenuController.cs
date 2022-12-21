@@ -59,7 +59,7 @@ public class PauseMenuController : MonoBehaviour
             player.GetComponent<StarterAssetsInputs>().pause = false;
         }     
         soundManager.StopMainMenuMusic();
-        soundManager.ResumeGameMusic();
+        soundManager.ResumeAudioSources();
     }
 
     public void Options()

@@ -46,7 +46,7 @@ public class ZombieController
         newSpawner.tag = "ZombieSpawner";
         AudioSource zombieSpawnerAudioSource = newSpawner.AddComponent<AudioSource>();
         soundManager.zombieSpawnerAudioSource = zombieSpawnerAudioSource;
-        soundManager.PlayZombieSpawnerSound();
+        //soundManager.PlayZombieSpawnerSound();
         newSpawner.AddComponent<ZombieSpawner>().spawnerNumber = (zombieSpawners.Count()).ToString();
         newSpawner.GetComponent<ZombieSpawner>().name = "ZombieSpawner_" + (zombieSpawners.Count());
         newSpawner.GetComponent<ZombieSpawner>().typeToSpawn = typeToSpawn;

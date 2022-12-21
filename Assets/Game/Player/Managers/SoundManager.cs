@@ -12,7 +12,6 @@ public sealed class SoundManager
     private string fileName = @".\soundsSettings.json";
     private SoundsViewModel soundsViewModel = new SoundsViewModel();
 
-    private AudioMixer gameAudioMixer;
     public AudioSource zombieSpawnerAudioSource;
     public AudioSource titleAnimationAudioSource;
     public AudioSource playerSoundEffectsAudioSource;
@@ -71,8 +70,6 @@ public sealed class SoundManager
         zombieStepsSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Steps/Zombie_Steps_01");
         zombieAttackSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Voice/Zombie_Attack_2");
         zombieDyingSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Voice/Zombie_Dead_Ver1_1");
-        //gameMusic = Resources.Load<AudioClip>("Audios/free horror ambience 2/ha-abomination");
-        //gameMusic2 = Resources.Load<AudioClip>("Audios/free horror ambience 2/ha-amorph");
         gameMusic = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Tension Cue 1 @100 BMP Duration 01_00/Tension Cue 1 @100 BMP Duration 01_00");
         gameMusic2 = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Tension Cue 2 @100 BMP Duration 01_00/Tension Cue 2 @100 BMP Duration 01_00");
         gameMusic3 = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Tension Cue 3 @100 BMP Duration 01_00/Tension Cue 3 @100 BMP Duration 01_00");
@@ -304,7 +301,10 @@ public sealed class SoundManager
     {        
         foreach (AudioSource audioSource in gameMusicsCurrentlyPlaying)
         {
-            audioSource.Play();
+            if (audioSource != null)
+            {
+                audioSource.Play();
+            }
         }
 
         gameMusicsCurrentlyPlaying = new List<AudioSource>();
@@ -319,8 +319,6 @@ public sealed class SoundManager
         audioSource.clip = zombieVoiceSound;
         audioSource.loop = true;
         audioSource.spatialBlend = 1;
-        audioSource.minDistance = 1;
-        audioSource.maxDistance = 10;
         audioSource.Play();
     }
 
@@ -330,8 +328,6 @@ public sealed class SoundManager
         audioSource.clip = zombieStepsSound;
         audioSource.loop = true;
         audioSource.spatialBlend = 1;
-        audioSource.minDistance = 1;
-        audioSource.maxDistance = 10;
         audioSource.Play();
     }
 
@@ -434,30 +430,22 @@ public sealed class SoundManager
 
     public void ResumeAudioSources()
     {
-        foreach (AudioSource audioSource in musicAudioSources)
-        {
-            if (audioSource.clip.name == mainMenuMusic.name)
-            {
-                audioSource.Stop();
-            }
-        }
-
-        foreach (AudioSource audioSource in musicAudioSources)
-        {
-            if (audioSource.clip.name != mainMenuMusic.name)
-            {
-                audioSource.Play();
-            }
-        }
+        ResumeGameMusic();
 
         foreach (AudioSource audioSource in foleyAudioSources)
         {
-            audioSource.Play();
+            if (audioSource != null)
+            {
+                audioSource.Play();
+            }            
         }
 
         foreach (AudioSource audioSource in sfxAudioSources)
         {
-            audioSource.Play();
+            if (audioSource != null)
+            {
+                audioSource.Play();
+            }
         }
     }
 

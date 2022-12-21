@@ -10,8 +10,8 @@ public class ZombieSpawner : MonoBehaviour
     public List<GameObject> zombiePlayerTargets = new List<GameObject>();
     private List<Zombie> zombies = new List<Zombie>(maxZombiesAtOnce);
     private uint counter = 0;
-    public const int maxZombiesAtOnce = 10; //10
-    public int maxZombiesTotal = 15; //15
+    public const int maxZombiesAtOnce = 10;
+    public int maxZombiesTotal = 15;
     public GameObject typeToSpawn;
     public String spawnerNumber;
     public Difficulty difficulty;

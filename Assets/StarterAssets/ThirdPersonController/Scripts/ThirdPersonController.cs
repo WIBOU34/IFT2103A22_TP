@@ -123,9 +123,12 @@ namespace StarterAssets
             }
         }
 
+        private SoundManager soundManager;
 
         private void Awake()
         {
+            soundManager = SoundManager.Instance;
+
             // get a reference to our main camera
             if (_mainCamera == null)
             {
@@ -383,8 +386,8 @@ namespace StarterAssets
             {
                 if (FootstepAudioClips.Length > 0)
                 {
-                    var index = Random.Range(0, FootstepAudioClips.Length);
-                    AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(_controller.center), FootstepAudioVolume);
+                    var index = Random.Range(0, FootstepAudioClips.Length);                   
+                    AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(_controller.center), soundManager.foleyVolume);
                 }
             }
         }
@@ -393,7 +396,7 @@ namespace StarterAssets
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
-                AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+                AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), soundManager.foleyVolume);
             }
         }
     }
