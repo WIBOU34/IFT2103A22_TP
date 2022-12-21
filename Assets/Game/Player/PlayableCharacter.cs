@@ -13,10 +13,16 @@ public class PlayableCharacter : MonoBehaviour
     private GameObject playerMainCamera;
     private GameObject virtualPlayerCam;
     private GameObject playerCameraRoot;
+    private Poolable poolable;
+    private GameObject particleSystemInUse;
 
     // Start is called before the first frame update
     void Start()
     {
+        poolable = PoolableManager.GetPoolable<ParticleSystem>("AmbianceParticleSystem");
+        particleSystemInUse = poolable.Get();
+        particleSystemInUse.transform.position = new Vector3(particleSystemInUse.transform.position.x, particleSystemInUse.transform.position.y + 1, particleSystemInUse.transform.position.z);
+
         playerMainCamera = this.transform.parent.Find("MainCamera").gameObject;
         virtualPlayerCam = this.transform.parent.Find("PlayerFollowCamera").gameObject;
         playerCameraRoot = this.transform.Find("PlayerCameraRoot").gameObject;
@@ -37,7 +43,7 @@ public class PlayableCharacter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        particleSystemInUse.transform.position = this.transform.position;
     }
 
     public void OnKilled()
@@ -112,5 +118,9 @@ public class PlayableCharacter : MonoBehaviour
         {
             cinemachineTransposer.m_FollowOffset = new Vector3(cinemachineTransposer.m_FollowOffset.x, cinemachineTransposer.m_FollowOffset.y + 1, cinemachineTransposer.m_FollowOffset.z);
         }
+    }
+    private void OnDestroy()
+    {
+        Destroy(particleSystemInUse.gameObject);
     }
 }

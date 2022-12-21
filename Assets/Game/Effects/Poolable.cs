@@ -55,6 +55,14 @@ public class Poolable
         return instance;
     }
 
+    public GameObject Get()
+    {
+        GameObject instance = pool.Pop();
+        instance.SetActive(true);
+        nbrActive++;
+        return instance;
+    }
+
     public void Release(GameObject instance)
     {
         pool.Push(instance);
