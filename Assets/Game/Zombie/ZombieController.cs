@@ -57,7 +57,7 @@ public class ZombieController
             newSpawner.GetComponent<ZombieSpawner>().difficulty = Difficulty.EASY;
         newSpawner.GetComponent<ZombieSpawner>().zombiePlayerTargets = zombiePlayerTargets;
         zombieSpawners.Add(newSpawner);
-        newSpawner.GetComponent<ZombieSpawner>().CreateZombie(); //remettre
+        newSpawner.GetComponent<ZombieSpawner>().CreateZombie();
     }
 
     public static int GetZombieSpawnersCount()
