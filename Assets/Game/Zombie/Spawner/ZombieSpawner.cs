@@ -15,7 +15,7 @@ public class ZombieSpawner : MonoBehaviour
     public GameObject typeToSpawn;
     public String spawnerNumber;
     public Difficulty difficulty;
-    public Poolable poolable;
+    private Poolable poolable;
     private GameObject particleSystemInUse;
     private SoundManager soundManager;
 
