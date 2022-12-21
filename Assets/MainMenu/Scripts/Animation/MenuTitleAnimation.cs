@@ -27,7 +27,7 @@ public class MenuTitleAnimation : MonoBehaviour
         endColor = new Color(0.6509804f, 0.572549f, 0.09019608f, 1f);
         title.color = startColor;
         soundManager.titleAnimationAudioSource = audioSource;
-        initialPosition = transform.localPosition;
+        initialPosition = new Vector3(initialPosition.x, 500, initialPosition.z);
         finalPosition = new Vector3(initialPosition.x, 275, initialPosition.z);
         initialScale = transform.localScale;
         stretchfinalScale = new Vector3(initialScale.x * stretchScaleMultiplier.x, initialScale.y * stretchScaleMultiplier.y, initialScale.z * stretchScaleMultiplier.z);
@@ -37,6 +37,8 @@ public class MenuTitleAnimation : MonoBehaviour
 
     private void OnEnable()
     {
+        transform.localPosition = initialPosition;
+        isAnimatingStretch = false;
         SquatchAndStretchTitle();
     }
 

@@ -51,14 +51,13 @@ public class GameMusicController : MonoBehaviour
                     {
                         if (!track1IsPlaying)
                         {
-                            gameMusicAudioSourceTrack1.volume += soundManager.musicVolume / soundManager.fonduCroiseTimeGame;
-                            soundManager.PlayGameMusicTrack1();
+                            soundManager.PlayGameMusicTrack1();                        
                             track1IsPlaying = true;
                         }
 
-                        if (gameMusicAudioSourceTrack3.volume - gameMusicAudioSourceTrack3.volume / soundManager.fonduCroiseTimeGame > 0)
+                        if (gameMusicAudioSourceTrack3.volume - soundManager.musicVolume / soundManager.fonduCroiseTimeGame > 0)
                         {
-                            gameMusicAudioSourceTrack3.volume -= gameMusicAudioSourceTrack3.volume / soundManager.fonduCroiseTimeGame;
+                            gameMusicAudioSourceTrack3.volume -= soundManager.musicVolume / soundManager.fonduCroiseTimeGame;
                         }
                         else
                         {
@@ -89,14 +88,14 @@ public class GameMusicController : MonoBehaviour
                     {
                         if (!track3IsPlaying)
                         {
-                            gameMusicAudioSourceTrack3.volume += soundManager.musicVolume / soundManager.fonduCroiseTimeGame;
                             soundManager.PlayGameMusicTrack3();
+                            gameMusicAudioSourceTrack3.volume += soundManager.musicVolume / soundManager.fonduCroiseTimeGame;                            
                             track3IsPlaying = true;
                         }
 
-                        if (gameMusicAudioSourceTrack2.volume - gameMusicAudioSourceTrack2.volume / soundManager.fonduCroiseTimeGame > 0)
+                        if (gameMusicAudioSourceTrack2.volume - soundManager.musicVolume / soundManager.fonduCroiseTimeGame > 0)
                         {
-                            gameMusicAudioSourceTrack2.volume -= gameMusicAudioSourceTrack2.volume / soundManager.fonduCroiseTimeGame;
+                            gameMusicAudioSourceTrack2.volume -= soundManager.musicVolume / soundManager.fonduCroiseTimeGame;
                         }
                         else
                         {
@@ -127,14 +126,14 @@ public class GameMusicController : MonoBehaviour
                     {
                         if (!track2IsPlaying)
                         {
-                            gameMusicAudioSourceTrack2.volume += soundManager.musicVolume / soundManager.fonduCroiseTimeGame;
                             soundManager.PlayGameMusicTrack2();
+                            gameMusicAudioSourceTrack2.volume += soundManager.musicVolume / soundManager.fonduCroiseTimeGame;                            
                             track2IsPlaying = true;
                         }
 
-                        if (gameMusicAudioSourceTrack1.volume - gameMusicAudioSourceTrack1.volume / soundManager.fonduCroiseTimeGame > 0)
+                        if (gameMusicAudioSourceTrack1.volume - soundManager.musicVolume / soundManager.fonduCroiseTimeGame > 0)
                         {
-                            gameMusicAudioSourceTrack1.volume -= gameMusicAudioSourceTrack1.volume / soundManager.fonduCroiseTimeGame;
+                            gameMusicAudioSourceTrack1.volume -= soundManager.musicVolume / soundManager.fonduCroiseTimeGame;
                         }
                         else
                         {

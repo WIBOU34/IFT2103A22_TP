@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -20,6 +21,7 @@ public sealed class SoundManager
     public AudioSource gameMusicAudioSourceTrack1;
     public AudioSource gameMusicAudioSourceTrack2;
     public AudioSource gameMusicAudioSourceTrack3;
+    private List<AudioSource> gameMusicsCurrentlyPlaying = new List<AudioSource>();
     public AudioSource mainMenuMusicAudioSourceTrack1;
     public AudioSource mainMenuMusicAudioSourceTrack2;
     public AudioSource menuButtonEffectsAudioSource;
@@ -168,7 +170,7 @@ public sealed class SoundManager
     {
         if (!pauseGameMusic)
         {
-            StopGameMusic();
+            //StopGameMusic(); //Gérer pause
         }        
         stopMenuMusic = false;
         AddToMusicAudioSources(mainMenuMusicAudioSourceTrack1);
@@ -227,7 +229,7 @@ public sealed class SoundManager
         stopGameMusic = false;
         AddToMusicAudioSources(gameMusicAudioSourceTrack2);
 
-        gameMusicAudioSourceTrack2.clip = gameMusic;
+        gameMusicAudioSourceTrack2.clip = gameMusic2;
         lastGameMusicPlaying = gameMusicAudioSourceTrack2.clip;
         gameMusicAudioSourceTrack2.volume = 0; //Pour fondu croisé, volume ajusté dans GameMusicController
         gameMusicAudioSourceTrack2.Play();
@@ -239,7 +241,7 @@ public sealed class SoundManager
         stopGameMusic = false;
         AddToMusicAudioSources(gameMusicAudioSourceTrack3);
 
-        gameMusicAudioSourceTrack3.clip = gameMusic;
+        gameMusicAudioSourceTrack3.clip = gameMusic3;
         lastGameMusicPlaying = gameMusicAudioSourceTrack3.clip;
         gameMusicAudioSourceTrack3.volume = 0; //Pour fondu croisé, volume ajusté dans GameMusicController
         gameMusicAudioSourceTrack3.Play();
@@ -267,17 +269,31 @@ public sealed class SoundManager
 
     public void PauseGameMusic()
     {
-        if (lastGameMusicPlaying.name == gameMusic.name)
+        if (gameMusicAudioSourceTrack1.isPlaying)
         {
             gameMusicAudioSourceTrack1.Pause();
+            if (!gameMusicsCurrentlyPlaying.Any(x => x.clip.name == gameMusicAudioSourceTrack1.clip.name))
+            {
+                gameMusicsCurrentlyPlaying.Add(gameMusicAudioSourceTrack1);
+            }            
         }
-        else if (lastGameMusicPlaying.name == gameMusic2.name)
+        
+        if (gameMusicAudioSourceTrack2.isPlaying)
         {
             gameMusicAudioSourceTrack2.Pause();
+            if (!gameMusicsCurrentlyPlaying.Any(x => x.clip.name == gameMusicAudioSourceTrack2.clip.name))
+            {
+                gameMusicsCurrentlyPlaying.Add(gameMusicAudioSourceTrack2);
+            }
         }
-        else if (lastGameMusicPlaying.name == gameMusic3.name)
+
+        if (gameMusicAudioSourceTrack3.isPlaying)
         {
             gameMusicAudioSourceTrack3.Pause();
+            if (!gameMusicsCurrentlyPlaying.Any(x => x.clip.name == gameMusicAudioSourceTrack3.clip.name))
+            {
+                gameMusicsCurrentlyPlaying.Add(gameMusicAudioSourceTrack3);
+            }
         }
 
         pauseGameMusic = true;
@@ -285,22 +301,16 @@ public sealed class SoundManager
     }
 
     public void ResumeGameMusic()
-    {
+    {        
+        foreach (AudioSource audioSource in gameMusicsCurrentlyPlaying)
+        {
+            audioSource.Play();
+        }
+
+        gameMusicsCurrentlyPlaying = new List<AudioSource>();
+
         stopGameMusic = false;
         pauseGameMusic = false;
-
-        if (lastGameMusicPlaying.name == gameMusic.name)
-        {
-            gameMusicAudioSourceTrack1.Play();
-        }
-        else if (lastGameMusicPlaying.name == gameMusic2.name)
-        {
-            gameMusicAudioSourceTrack2.Play();
-        }
-        else if (lastGameMusicPlaying.name == gameMusic3.name)
-        {
-            gameMusicAudioSourceTrack3.Play();
-        }
     }
 
     public void PlayZombieVoiceSound(AudioSource audioSource)
@@ -403,13 +413,7 @@ public sealed class SoundManager
 
     public void PauseAudioSources()
     {
-        foreach (AudioSource audioSource in musicAudioSources)
-        {
-            if (audioSource != null)
-            {
-                audioSource.Pause();
-            }
-        }
+        PauseGameMusic();
 
         foreach (AudioSource audioSource in foleyAudioSources)
         {

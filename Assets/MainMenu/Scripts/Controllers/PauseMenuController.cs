@@ -57,8 +57,7 @@ public class PauseMenuController : MonoBehaviour
         foreach (var player in players)
         {
             player.GetComponent<StarterAssetsInputs>().pause = false;
-        }
-        Time.timeScale = 1f;        
+        }     
         soundManager.StopMainMenuMusic();
         soundManager.ResumeGameMusic();
     }
@@ -74,9 +73,8 @@ public class PauseMenuController : MonoBehaviour
     public void LeaveGame()
     {
         soundManager.PlayMenuButtonOnClickSound();
-        ZombieController.LeavingGame();
         UnPause();
-        Time.timeScale = 1f;
+        ZombieController.LeavingGame();
         GameLoader gameLoader = MenuManager.persistence.GetComponent<GameLoader>();
         MenuManager.IsInitialised = false;
         MenuManager.loadingScreen.SetActive(true);

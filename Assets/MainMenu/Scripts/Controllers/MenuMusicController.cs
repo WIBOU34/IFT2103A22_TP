@@ -88,8 +88,8 @@ public class MenuMusicController : MonoBehaviour
                         {
                             if (!track1IsPlaying)
                             {
-                                mainMenuMusicAudioSourceTrack1.volume += soundManager.musicVolume / soundManager.fonduCroiseTime;
                                 soundManager.PlayMainMenuMusicTrack1();
+                                //mainMenuMusicAudioSourceTrack1.volume += soundManager.musicVolume / soundManager.fonduCroiseTime;                                
                                 track1IsPlaying = true;
                             }
 
@@ -134,8 +134,8 @@ public class MenuMusicController : MonoBehaviour
                         {
                             if (!track2IsPlaying)
                             {
-                                mainMenuMusicAudioSourceTrack2.volume += soundManager.musicVolume / soundManager.fonduCroiseTime;
                                 soundManager.PlayMainMenuMusicTrack2();
+                                mainMenuMusicAudioSourceTrack2.volume += soundManager.musicVolume / soundManager.fonduCroiseTime;                                
                                 track2IsPlaying = true;
                             }
 

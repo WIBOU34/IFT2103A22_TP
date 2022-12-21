@@ -18,6 +18,13 @@ public class ProceduralStarterScript : MonoBehaviour
     public Material zombieSpawnerParticleEffectMaterial;
     public Material ambianceParticleEffectMaterial;
     private int nbrSpawners = 2;
+    private SoundManager soundManager;
+
+    private void Awake()
+    {
+        soundManager = SoundManager.Instance;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -63,6 +70,9 @@ public class ProceduralStarterScript : MonoBehaviour
         int playerNumber = 0;
         foreach (var player in players)
         {
+            AudioSource playerSoundEffectsAudioSource = player.AddComponent<AudioSource>();
+            soundManager.playerSoundEffectsAudioSource = playerSoundEffectsAudioSource;
+
             player.transform.parent.name = "Player_" + (playerNumber + 1) + "_Container";
             player.name = "Player_" + (playerNumber + 1);
 

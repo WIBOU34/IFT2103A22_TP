@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -40,6 +41,7 @@ public class MapCreator : MonoBehaviour
         Physics.autoSyncTransforms = true;
         trackedCenter = this.gameObject;
         environmentContainer = GameObject.Find("Environment");
+        environmentContainer.AddComponent<GameMusicController>();
         groundContainer = environmentContainer.transform.Find("Ground").gameObject;
         levelContainer = environmentContainer.transform.Find("Level").gameObject;
         notWalkableAreaType = NavMesh.GetAreaFromName("Not Walkable");
