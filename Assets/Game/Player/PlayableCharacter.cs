@@ -63,7 +63,7 @@ public class PlayableCharacter : MonoBehaviour
         cmvc.Follow = playerCameraRoot.transform;
         cmvc.LookAt = playerCameraRoot.transform;
         CinemachineTransposer body = cmvc.AddCinemachineComponent<CinemachineTransposer>();
-        body.m_FollowOffset = new Vector3(0, 10, 0);
+        body.m_FollowOffset = new Vector3(0, 30, 0);
         body.m_BindingMode = CinemachineTransposer.BindingMode.LockToTargetWithWorldUp;
         virtualPlayerCam.transform.rotation = Quaternion.AngleAxis(90, Vector3.right);
         SetTopDownSettingForMovement();

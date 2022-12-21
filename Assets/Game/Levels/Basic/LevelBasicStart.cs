@@ -137,7 +137,7 @@ public class LevelBasicStart : MonoBehaviour
         sizeOverLifetimeModule.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.Linear(0, 1, 1, 0));
         ParticleSystem.EmissionModule emissionModule = particleSys.emission;
         emissionModule.enabled = true;
-        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(100);
+        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(1000);
         ParticleSystem.ShapeModule shapeModule = particleSys.shape;
         //shapeModule.texture = CreateTexture(new Color(0.5f, 0.5f, 0.5f, 0.2f), 1, 1);
         shapeModule.shapeType = ParticleSystemShapeType.Sphere;

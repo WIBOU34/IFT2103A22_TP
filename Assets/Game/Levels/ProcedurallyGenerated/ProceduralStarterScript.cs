@@ -44,8 +44,6 @@ public class ProceduralStarterScript : MonoBehaviour
         zombieController = new ZombieController();
         zombieController.Start();
         ZombieController.typeToSpawn = zombieTypeToSpawn;
-        Poolable zombieSpawnerPoolable = new Poolable();
-        zombieSpawnerPoolable.SetCapacity(1);
         //ZombieController.CreateZombieSpawner(new Vector3(-16, 0, 16));
         ZombieController.CreateZombieSpawner(new Vector3(-16, 0, -16));
         ZombieController.CreateZombieSpawner(new Vector3(16, 0, 16));
@@ -189,7 +187,7 @@ public class ProceduralStarterScript : MonoBehaviour
         sizeOverLifetimeModule.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.Linear(0, 1, 1, 0));
         ParticleSystem.EmissionModule emissionModule = particleSys.emission;
         emissionModule.enabled = true;
-        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(100);
+        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(1000);
         ParticleSystem.ShapeModule shapeModule = particleSys.shape;
         shapeModule.shapeType = ParticleSystemShapeType.Sphere;
         shapeModule.radius = 50;
