@@ -17,7 +17,12 @@ public class ZombieSpawner : MonoBehaviour
     public Difficulty difficulty;
     private Poolable poolable;
     private GameObject particleSystemInUse;
-    //private Zombie[] zombiesToRespawn = new Zombie[maxZombiesAtOnce];
+    private SoundManager soundManager;
+
+    private void Awake()
+    {
+        soundManager = SoundManager.Instance;
+    }
 
     // Start is called before the first frame update
     void Start()

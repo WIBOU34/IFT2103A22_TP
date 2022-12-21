@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public sealed class SoundManager
 {
@@ -10,6 +11,8 @@ public sealed class SoundManager
     private string fileName = @".\soundsSettings.json";
     private SoundsViewModel soundsViewModel = new SoundsViewModel();
 
+    private AudioMixer gameAudioMixer;
+    public AudioSource zombieSpawnerAudioSource;
     public AudioSource titleAnimationAudioSource;
     public AudioSource playerSoundEffectsAudioSource;
     public AudioSource gameEndingMusic;
@@ -44,6 +47,7 @@ public sealed class SoundManager
     private AudioClip victoryMusic;
     private AudioClip gameOverMusic;
     private AudioClip titleAnimationSound;
+    private AudioClip zombieSpawnerSound;
     private bool dyingSoundHasPlayed = false;
     public float musicVolume = 1;
     public float foleyVolume = 1;
@@ -80,6 +84,7 @@ public sealed class SoundManager
         victoryMusic = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Moods/Victory music @88 BPM duration 00_20/Victory music @88 BPM duration 00_20");
         gameOverMusic = Resources.Load<AudioClip>("Audios/Music/Complete Mysterious Forest Game Music Pack/Moods/Sad Music @88 BPM duration 00_20/Sad Music @88 BPM duration 00_20");
         titleAnimationSound = Resources.Load<AudioClip>("Audios/lamp wave/sfx lamp wave");
+        zombieSpawnerSound = Resources.Load<AudioClip>("Audios/Enemies/Zombie/Spawner/TMM SOUND FX POOL VOL. 3 -  CINEMATIC 26");
         LoadVolumes();
     }
 
@@ -96,6 +101,15 @@ public sealed class SoundManager
                 return instance;
             }
         }
+    }
+
+    public void PlayZombieSpawnerSound()
+    {
+        AddToFoleyAudioSources(zombieSpawnerAudioSource);
+        zombieSpawnerAudioSource.clip = zombieSpawnerSound;
+        zombieSpawnerAudioSource.spatialBlend = 1;
+        zombieSpawnerAudioSource.loop = true;
+        zombieSpawnerAudioSource.Play();
     }
 
     public void PlayTitleAnimationSound()
@@ -253,17 +267,15 @@ public sealed class SoundManager
 
     public void PauseGameMusic()
     {
-        if (gameMusicAudioSourceTrack1 != null)
+        if (lastGameMusicPlaying.name == gameMusic.name)
         {
             gameMusicAudioSourceTrack1.Pause();
         }
-
-        if (gameMusicAudioSourceTrack2 != null)
+        else if (lastGameMusicPlaying.name == gameMusic2.name)
         {
             gameMusicAudioSourceTrack2.Pause();
         }
-
-        if (gameMusicAudioSourceTrack3 != null)
+        else if (lastGameMusicPlaying.name == gameMusic3.name)
         {
             gameMusicAudioSourceTrack3.Pause();
         }
@@ -277,17 +289,15 @@ public sealed class SoundManager
         stopGameMusic = false;
         pauseGameMusic = false;
 
-        if (gameMusicAudioSourceTrack1 != null)
+        if (lastGameMusicPlaying.name == gameMusic.name)
         {
             gameMusicAudioSourceTrack1.Play();
         }
-
-        if (gameMusicAudioSourceTrack2 != null)
+        else if (lastGameMusicPlaying.name == gameMusic2.name)
         {
             gameMusicAudioSourceTrack2.Play();
         }
-
-        if (gameMusicAudioSourceTrack3 != null)
+        else if (lastGameMusicPlaying.name == gameMusic3.name)
         {
             gameMusicAudioSourceTrack3.Play();
         }
