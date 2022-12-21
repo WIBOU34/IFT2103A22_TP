@@ -20,7 +20,7 @@ public sealed class SoundManager
     public AudioSource gameMusicAudioSourceTrack1;
     public AudioSource gameMusicAudioSourceTrack2;
     public AudioSource gameMusicAudioSourceTrack3;
-    private List<AudioSource> gameMusicsCurrentlyPlaying = new List<AudioSource>();
+    public List<AudioSource> gameMusicsCurrentlyPlaying = new List<AudioSource>();
     public AudioSource mainMenuMusicAudioSourceTrack1;
     public AudioSource mainMenuMusicAudioSourceTrack2;
     public AudioSource menuButtonEffectsAudioSource;
@@ -340,6 +340,7 @@ public sealed class SoundManager
     public void PlayZombieDyingSound(AudioSource audioSource)
     {
         AddToSFXAudioSources(audioSource);
+        audioSource.volume = sfxVolume / 2;
         audioSource.PlayOneShot(zombieDyingSound);
     }
 
@@ -402,6 +403,7 @@ public sealed class SoundManager
 
     public void ClearAudioSources()
     {
+        gameMusicsCurrentlyPlaying = new List<AudioSource>();
         musicAudioSources = new List<AudioSource>();
         foleyAudioSources = new List<AudioSource>();
         sfxAudioSources = new List<AudioSource>();

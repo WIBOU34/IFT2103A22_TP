@@ -15,6 +15,7 @@ public class Zombie : MonoBehaviour
     private List<AudioSource> zombieAudioSources = new List<AudioSource>();
     private AudioSource zombieVoiceSoundSource;
     private AudioSource zombieStepsSoundSource;
+    private AudioSource zombieDyingSoundSource;
 
     private void Awake()
     {
@@ -51,6 +52,8 @@ public class Zombie : MonoBehaviour
         zombieStepsSoundSource = this.AddComponent<AudioSource>();
         soundManager.PlayZombieStepsSound(zombieStepsSoundSource);
         zombieAudioSources.Add(zombieStepsSoundSource);
+        zombieDyingSoundSource = this.AddComponent<AudioSource>();
+        zombieAudioSources.Add(zombieDyingSoundSource);
         AdjustZombieSoundsBasedOnPlayerDistance();
     }
 
@@ -142,7 +145,7 @@ public class Zombie : MonoBehaviour
         {
             audioSource.Stop();
         }
-        soundManager.PlayZombieDyingSound(zombieVoiceSoundSource);
+        soundManager.PlayZombieDyingSound(zombieDyingSoundSource);
     }
 
     private void OnDestroy()
