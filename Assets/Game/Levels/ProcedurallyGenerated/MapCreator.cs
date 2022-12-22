@@ -1,5 +1,5 @@
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,34 +10,40 @@ public class MapCreator : MonoBehaviour
     public static GameObject environmentContainer;
     public static GameObject groundContainer;
     public static GameObject levelContainer;
-    //public static Vector3 terrainSize = new Vector3(300, 1, 300);
-    public static Vector3 terrainSize = new Vector3(100, 1, 100);
-    //public static Vector3 loadedSize = new Vector3(300, 5, 300);
-    public static Vector3 loadedSize = new Vector3(75, 5, 75);
-    //public static Vector3 sizeToTriggerLoad = new Vector3(50, 5, 50);
-    public static Vector3 sizeToTriggerLoad = new Vector3(15, 5, 15);
+    public static Vector3 terrainSize = new Vector3(300, 1, 300);
+    //public static Vector3 terrainSize = new Vector3(100, 1, 100);
+    public static Vector3 loadedSize = new Vector3(300, 5, 300);
+    //public static Vector3 loadedSize = new Vector3(75, 5, 75);
+    public static Vector3 sizeToTriggerLoad = new Vector3(50, 5, 50);
+    //public static Vector3 sizeToTriggerLoad = new Vector3(15, 5, 15);
 
     private static int notWalkableAreaType = 0;
     private static int walkableAreaType = 0;
-    private static int agentTypeIdAvoidDestructibles = 0;
-    private static int agentTypeIdIgnoreDestructibles = 0;
     private static int agentTypeIdAll = -1;
     private static Bounds oldLoadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds loadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds boundsToTriggerLoad = new Bounds(Vector3.zero, sizeToTriggerLoad);
-    //private const int MAX_NBR_WALLS = 5000;
-    private const int MAX_NBR_WALLS = 300;
+    private const int MAX_NBR_WALLS = 5000;
+    //private const int MAX_NBR_WALLS = 300;
 
     private static List<GameObject> groundList = new List<GameObject>();
     private static Wall[] wallsList = new Wall[MAX_NBR_WALLS];
     private static int wallsListCount = 0;
     private static int wallsListIndex = 0;
-    public static List<GameObject> destructiblesList = new List<GameObject>(); // destructibles are never obtained
 
     private static bool alreadyLoading = false;
 
     public void Init()
     {
+        alreadyLoading = true;
+        for (int i = 0; i < wallsList.Length; i++)
+        {
+            wallsList[i] = null;
+        }
+        wallsListCount = 0;
+        wallsListIndex = 0;
+        groundList.Clear();
+
         Physics.autoSyncTransforms = true;
         trackedCenter = this.gameObject;
         environmentContainer = GameObject.Find("Environment");
@@ -46,15 +52,17 @@ public class MapCreator : MonoBehaviour
         levelContainer = environmentContainer.transform.Find("Level").gameObject;
         notWalkableAreaType = NavMesh.GetAreaFromName("Not Walkable");
         notWalkableAreaType = NavMesh.GetAreaFromName("Walkable");
-        agentTypeIdAvoidDestructibles = ZombieController.GetAgenTypeIDByName(ZombieController.AGENT_TYPE_NAME_AVOID_DESTRUCTIBLE);
-        agentTypeIdIgnoreDestructibles = ZombieController.GetAgenTypeIDByName(ZombieController.AGENT_TYPE_NAME_IGNORE_DESTRUCTIBLE);
 
         if (groundList.Count == 0)
             CreateGround(new Vector3(trackedCenter.transform.position.x, 0, trackedCenter.transform.position.z));
+        oldLoadedBounds.center = trackedCenter.transform.position;
         loadedBounds.center = trackedCenter.transform.position;
         boundsToTriggerLoad.center = trackedCenter.transform.position;
         Load(loadedBounds);
+        UpdateNavMeshWait();
+        alreadyLoading = false;
     }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -79,14 +87,27 @@ public class MapCreator : MonoBehaviour
     {
     }
 
+    public static bool IsProceduralLevelLoading()
+    {
+        return alreadyLoading;
+    }
+
     private bool RequireLoading()
     {
         return !boundsToTriggerLoad.Contains(trackedCenter.transform.position);
     }
 
-    private static void UpdateNavMesh()
+    private void UpdateNavMeshWait()
     {
-        foreach (var item in NavMeshSurface.activeSurfaces)
+        foreach (NavMeshSurface item in NavMeshSurface.activeSurfaces)
+        {
+            item.UpdateNavMeshWait(item.navMeshData);
+        }
+    }
+
+    private void UpdateNavMeshAsync()
+    {
+        foreach (NavMeshSurface item in NavMeshSurface.activeSurfaces)
         {
             item.UpdateNavMesh(item.navMeshData);
         }
@@ -103,6 +124,8 @@ public class MapCreator : MonoBehaviour
         // Check for ground
         LoadGround(bounds);
         LoadWalls(bounds);
+
+        UpdateNavMeshAsync();
     }
 
     private void LoadGround(Bounds bounds)
@@ -240,8 +263,6 @@ public class MapCreator : MonoBehaviour
         }
 
         Destroy(wallGameObject);
-
-        UpdateNavMesh();
     }
 
     private static Vector2 GetRandomDirection()
@@ -457,4 +478,9 @@ public class MapCreator : MonoBehaviour
         wallsListCount--;
         wallsListIndex--;
     }
+
+    //void OnDestroy()
+    //{
+    //    UnLoad(new Bounds(Vector3.zero, Vector3.zero));
+    //}
 }

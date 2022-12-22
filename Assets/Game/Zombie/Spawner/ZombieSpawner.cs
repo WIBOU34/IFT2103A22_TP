@@ -37,7 +37,7 @@ public class ZombieSpawner : MonoBehaviour
     {
         if (zombies.Count < maxZombiesAtOnce && counter < maxZombiesTotal)
         {
-            if (IsSpawnFree())
+            if (IsSpawnFree() && !MapCreator.IsProceduralLevelLoading())
             {
                 CreateZombie();
             }
