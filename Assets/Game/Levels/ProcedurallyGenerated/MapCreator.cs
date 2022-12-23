@@ -11,10 +11,10 @@ public class MapCreator : MonoBehaviour
     public static GameObject groundContainer;
     public static GameObject levelContainer;
     //public static Vector3 terrainSize = new Vector3(300, 1, 300);
-    public static Vector3 terrainSize = new Vector3(100, 1, 100);
     //public static Vector3 loadedSize = new Vector3(300, 5, 300);
-    public static Vector3 loadedSize = new Vector3(75, 5, 75);
     //public static Vector3 sizeToTriggerLoad = new Vector3(50, 5, 50);
+    public static Vector3 terrainSize = new Vector3(100, 1, 100);
+    public static Vector3 loadedSize = new Vector3(75, 5, 75);
     public static Vector3 sizeToTriggerLoad = new Vector3(15, 5, 15);
 
     private static int notWalkableAreaType = 0;
@@ -163,8 +163,6 @@ public class MapCreator : MonoBehaviour
             CreateGround(maxXmaxZ);
     }
 
-    // TODO:
-    // and make sure the players aren't getting stuck
     private void LoadWalls(Bounds bounds)
     {
         bool currentWallValid = false;
@@ -478,9 +476,4 @@ public class MapCreator : MonoBehaviour
         wallsListCount--;
         wallsListIndex--;
     }
-
-    //void OnDestroy()
-    //{
-    //    UnLoad(new Bounds(Vector3.zero, Vector3.zero));
-    //}
 }
