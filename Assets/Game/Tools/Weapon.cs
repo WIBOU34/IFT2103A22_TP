@@ -15,6 +15,17 @@ public class Weapon : MonoBehaviour
     private SoundManager soundManager;
     private bool makeReloadSound = false;
     private Poolable weaponTrailPoolable;
+    private const int layerMask = (1 << 0)
+        | (1 << 1)
+        | (1 << 2)
+        | (1 << 4)
+        | (0 << 5)
+        | (0 << 6)
+        | (1 << 7)
+        | (0 << 10)
+        | (0 << 11)
+        | (0 << 12)
+        | (0 << 13);
 
     // Start is called before the first frame update
     void Start()
@@ -59,7 +70,7 @@ public class Weapon : MonoBehaviour
             bullet.GetComponent<LineRenderer>().numCornerVertices = 2;
             bullet.GetComponent<LineRenderer>().numCapVertices = 2;
 
-            if (Physics.Raycast(ray, out RaycastHit hit, maxBulletTravelDistance))
+            if (Physics.Raycast(ray, out RaycastHit hit, maxBulletTravelDistance, layerMask))
             {
                 bullet.GetComponent<LineRenderer>().SetPosition(0, bulletStartPosition);
                 bullet.GetComponent<LineRenderer>().SetPosition(1, hit.point);
