@@ -64,7 +64,7 @@ public class Weapon : MonoBehaviour
             bullet.AddComponent<LineRenderer>();
             bullet.GetComponent<LineRenderer>().startWidth = 0.01f;
             bullet.GetComponent<LineRenderer>().endWidth = 0.01f;
-            bullet.GetComponent<LineRenderer>().startColor = Color.grey;
+            bullet.GetComponent<LineRenderer>().startColor = new Color(0.7f, 0.7f, 0.7f, 1);
             bullet.GetComponent<LineRenderer>().endColor = Color.clear;
             bullet.GetComponent<LineRenderer>().material = Instantiate(bulletTrailMaterial);
             bullet.GetComponent<LineRenderer>().numCornerVertices = 2;

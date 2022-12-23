@@ -16,6 +16,7 @@ public class LevelBasicStart : MonoBehaviour
     public Material zombieSpawnerParticleEffectMaterial;
     public Material ambianceParticleEffectMaterial;
     private InputManager inputManager;
+    private int nbrSpawners = 1;
     private SoundManager soundManager;
 
     // Start is called before the first frame update
@@ -25,7 +26,7 @@ public class LevelBasicStart : MonoBehaviour
         cinemachineUpOverrideObject = new GameObject("CinemachineUpOverrideObject");
         cinemachineUpOverrideObject.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
 
-        int totalPlayers = 2;
+        int totalPlayers = 1;
         if (MenuManager.persistence != null)
         {
             totalPlayers = MenuManager.persistence.GetComponent<GameLoader>().totalPlayers;
@@ -137,7 +138,7 @@ public class LevelBasicStart : MonoBehaviour
         sizeOverLifetimeModule.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.Linear(0, 1, 1, 0));
         ParticleSystem.EmissionModule emissionModule = particleSys.emission;
         emissionModule.enabled = true;
-        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(1000);
+        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(100);
         ParticleSystem.ShapeModule shapeModule = particleSys.shape;
         //shapeModule.texture = CreateTexture(new Color(0.5f, 0.5f, 0.5f, 0.2f), 1, 1);
         shapeModule.shapeType = ParticleSystemShapeType.Sphere;
@@ -154,7 +155,7 @@ public class LevelBasicStart : MonoBehaviour
         renderer.maxParticleSize = 0.01f;
         renderer.sortMode = ParticleSystemSortMode.Distance;
 
-        PoolableManager.CreatePoolable("ZombieSpawnerParticleSystem", obj, 1);
+        PoolableManager.CreatePoolable("ZombieSpawnerParticleSystem", obj, nbrSpawners);
 
         Destroy(obj);
     }
@@ -172,7 +173,7 @@ public class LevelBasicStart : MonoBehaviour
         sizeOverLifetimeModule.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.Linear(0, 1, 1, 0));
         ParticleSystem.EmissionModule emissionModule = particleSys.emission;
         emissionModule.enabled = true;
-        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(100);
+        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(1000);
         ParticleSystem.ShapeModule shapeModule = particleSys.shape;
         shapeModule.shapeType = ParticleSystemShapeType.Sphere;
         shapeModule.radius = 50;
