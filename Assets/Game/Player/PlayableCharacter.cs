@@ -114,7 +114,7 @@ public class PlayableCharacter : MonoBehaviour
     public void UnZoomMainCamera()
     {
         CinemachineTransposer cinemachineTransposer = virtualPlayerCam.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineTransposer>();
-        if (cinemachineTransposer.m_FollowOffset.y < 50)
+        if (cinemachineTransposer.m_FollowOffset.y < 45)
         {
             cinemachineTransposer.m_FollowOffset = new Vector3(cinemachineTransposer.m_FollowOffset.x, cinemachineTransposer.m_FollowOffset.y + 1, cinemachineTransposer.m_FollowOffset.z);
         }

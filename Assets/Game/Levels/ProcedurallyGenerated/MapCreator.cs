@@ -10,12 +10,12 @@ public class MapCreator : MonoBehaviour
     public static GameObject environmentContainer;
     public static GameObject groundContainer;
     public static GameObject levelContainer;
-    public static Vector3 terrainSize = new Vector3(300, 1, 300);
-    //public static Vector3 terrainSize = new Vector3(100, 1, 100);
-    public static Vector3 loadedSize = new Vector3(300, 5, 300);
-    //public static Vector3 loadedSize = new Vector3(75, 5, 75);
-    public static Vector3 sizeToTriggerLoad = new Vector3(50, 5, 50);
-    //public static Vector3 sizeToTriggerLoad = new Vector3(15, 5, 15);
+    //public static Vector3 terrainSize = new Vector3(300, 1, 300);
+    public static Vector3 terrainSize = new Vector3(100, 1, 100);
+    //public static Vector3 loadedSize = new Vector3(300, 5, 300);
+    public static Vector3 loadedSize = new Vector3(75, 5, 75);
+    //public static Vector3 sizeToTriggerLoad = new Vector3(50, 5, 50);
+    public static Vector3 sizeToTriggerLoad = new Vector3(15, 5, 15);
 
     private static int notWalkableAreaType = 0;
     private static int walkableAreaType = 0;
@@ -23,8 +23,8 @@ public class MapCreator : MonoBehaviour
     private static Bounds oldLoadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds loadedBounds = new Bounds(Vector3.zero, loadedSize);
     private static Bounds boundsToTriggerLoad = new Bounds(Vector3.zero, sizeToTriggerLoad);
-    private const int MAX_NBR_WALLS = 5000;
-    //private const int MAX_NBR_WALLS = 300;
+    //private const int MAX_NBR_WALLS = 5000;
+    private const int MAX_NBR_WALLS = 300;
 
     private static List<GameObject> groundList = new List<GameObject>();
     private static Wall[] wallsList = new Wall[MAX_NBR_WALLS];

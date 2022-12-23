@@ -97,6 +97,8 @@ public class Wall : MonoBehaviour
             return false;
 
         SetNeighbor(direction, possibleNeighbor);
+        if (type == WallType.TOWER)
+            MakeInvisibleIfNoVisibleNeighbor();
         return true;
     }
 
@@ -118,6 +120,7 @@ public class Wall : MonoBehaviour
                 // Adds a neighbor
                 otherWall.SetNeighbor(dirFromTargetToHere, this);
                 SetNeighbor(dirFromHereToTarget, otherWall);
+                otherWall.MakeInvisibleIfNoVisibleNeighbor();
                 MakeInvisibleIfBlocage();
             }
         }
@@ -262,7 +265,6 @@ public class Wall : MonoBehaviour
     void SetNeighbor(Vector2 direction, Wall neighbor)
     {
         neighbors[GetNeighborIndex(direction)] = neighbor;
-        MakeInvisibleIfNoVisibleNeighbor();
     }
 
     // Vector2.up = 0
@@ -291,12 +293,12 @@ public class Wall : MonoBehaviour
     }
 
     // does not work for some odd reason...
-    bool CheckForBlockages(Wall startingWall, Wall lastWall, uint depth)
+    bool CheckForBlockages(Wall startingWall, Wall lastWall)
     {
-        if (this.visitedWall == startingWall)
-            return true;
         if (this.isInvisible || this.gameObject == lastWall.gameObject)
             return false;
+        if (this.visitedWall == startingWall)
+            return true;
 
         this.visitedWall = startingWall;
 
@@ -304,7 +306,7 @@ public class Wall : MonoBehaviour
         {
             if (this.neighbors[i] == null)
                 continue;
-            if (this.neighbors[i].CheckForBlockages(startingWall, this, depth + 1))
+            if (this.neighbors[i].CheckForBlockages(startingWall, this))
                 return true;
         }
         return false;
@@ -318,10 +320,8 @@ public class Wall : MonoBehaviour
         {
             if (this.neighbors[i] == null)
                 continue;
-            if (this.neighbors[i].CheckForBlockages(this, this, 1))
+            if (this.neighbors[i].CheckForBlockages(this, this))
             {
-                if (type == WallType.STRAIGHT)
-                    type = WallType.INVISIBLE;
                 MakeInvisible();
                 UpdateInvisibilityForNeighbors();
                 break;
@@ -341,7 +341,7 @@ public class Wall : MonoBehaviour
 
     void MakeInvisibleIfNoVisibleNeighbor()
     {
-        if (type == WallType.INVISIBLE || type == WallType.STRAIGHT)
+        if (type == WallType.INVISIBLE)
             return;
 
         for (var i = 0; i < MAX_NBR_NEIGHBORS; i++)
@@ -355,16 +355,20 @@ public class Wall : MonoBehaviour
         MakeInvisible();
     }
 
-    private void MakeInvisible()
+    void MakeInvisible()
     {
+        if (isInvisible)
+            return;
         isInvisible = true;
         this.gameObject.GetComponent<MeshRenderer>().enabled = false;
         this.gameObject.GetComponent<BoxCollider>().isTrigger = true;
         this.gameObject.layer = 6;
     }
 
-    private void MakeVisible()
+    void MakeVisible()
     {
+        if (!isInvisible || type == WallType.INVISIBLE)
+            return;
         isInvisible = false;
         this.gameObject.layer = 0;
         this.gameObject.GetComponent<MeshRenderer>().enabled = true;
